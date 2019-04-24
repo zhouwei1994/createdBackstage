@@ -12,18 +12,20 @@ var {
     upload
 } = require('./../app/service/upload');
 const build = require("./../stack/webpack/webpack.build.config");
-module.exports = function (router,check) {
+module.exports = function (router, check) {
     //项目打包
-    router.post('/project/create', check(["pages"], function (req, res) {
+    router.post('/project/create', check(["pages", "baseSetting"], function (req, res) {
         build({
             //输出路径
-            outputPath:"/public/createdFile/ceshi"
+            outputPath: "/public/createdFile/ceshi",
+            //网站基础设置
+            ...req.baseSetting
         });
-        res.result({a:111});
+        res.result({ a: 111 });
     }));
     //注册
     router.post('/user/register', function (req, res) {
-        
+
         var username = req.body.username;
         var nickname = req.body.nickname;
         var password = req.body.password;

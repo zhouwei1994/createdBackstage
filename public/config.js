@@ -1,4 +1,14 @@
 var config = {
+    "baseSetting": {
+        //网站title
+        "title": "后台管理",
+        //网站说明
+        "keywords": "一个快速生成的后台管理",
+        //网站seo关键字
+        "description": "后台管理,后台,生成",
+        //网站图标
+        "favicon":""
+    },
     "pages": [
         {
             "id": "login-465134694",
