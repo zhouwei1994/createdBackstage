@@ -11,7 +11,16 @@ var {
 var {
     upload
 } = require('./../app/service/upload');
-module.exports = function (router) {
+const build = require("./../stack/webpack/webpack.build.config");
+module.exports = function (router,check) {
+    //项目打包
+    router.post('/project/create', check(["pages"], function (req, res) {
+        build({
+            //输出路径
+            outputPath:"/public/createdFile/ceshi"
+        });
+        res.result({a:111});
+    }));
     //注册
     router.post('/user/register', function (req, res) {
         

@@ -4,15 +4,18 @@ const path = require('path');
 const rimraf = require('rimraf')
 const merge = require('webpack-merge');
 const webpackConfig = require('./webpack.base.config');
-module.exports = function(){
-  console.log(13214323434);
+module.exports = function (options) {
+  console.log(path.join(__dirname, "../.." + options.outputPath));
   //删除之前的包
-  rimraf(path.join(path.resolve(__dirname, "../dist")), err => {
-    if (err) throw err;
+  rimraf(path.join(path.resolve(__dirname, "../.." + options.outputPath)), err => {
+    if (err) {
+      console.log(err);
+      return false;
+    };
     //执行webpack
-    webpack(merge(webpackConfig),
+    webpack(merge(webpackConfig(options)),
       function (err, stats) {
-        if (err) throw err
+        console.log(err,stats);
         process.stdout.write(stats.toString({
           colors: true,
           modules: false,

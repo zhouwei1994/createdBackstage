@@ -4,20 +4,48 @@ var router = express.Router();
 router.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type,Access-Token,x-requested-with");
-    // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    // res.header("X-Powered-By", ' 3.2.1');
-    // // res.header("Content-Type", "application/json;charset=utf-8");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By", ' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
 // 没有挂载路径的中间件，应用的每个请求都会执行该中间件
 router.use(function (req, res, next) {
-    console.log(req, res);
+    // console.log(req, res);
     next();
 });
-
+//数据检查
+function check(must,callback) {
+    return function (req, res) {
+        var data = req.method == "POST" ? req.body : req.params;
+        var success = true;
+        for (var item of must) {
+            if (!data[item]) {
+                success = false;
+                res.send({
+                    success: false,
+                    code:0,
+                    data: {},
+                    msg: "缺少参数：" + item
+                });
+                break;
+            }
+        }
+        //输出配置
+        res.result = function (data, success, msg, code) {
+            res.send({
+                success: success == false ? false : true,
+                code: code || 0,
+                data: data || {},
+                msg: msg || ""
+            });
+        };
+        success && callback(data, res);
+    };
+};
 //引入路由文件
-require('./user')(router);
-require('./chat')(router);
-require('./reptile')(router);
+require('./user')(router,check);
+require('./chat')(router,check);
+require('./reptile')(router,check);
 
 module.exports = router;

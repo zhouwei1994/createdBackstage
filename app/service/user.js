@@ -9,7 +9,6 @@ var {
     friendRecordingSpl,
     agreeAddFriendSpl
 } = require('./../dao/index');
-const build = require("./../../build/webpack.build.config");
 module.exports = {
     //用户注册
     registerService: function (username, nickname, password) {
@@ -74,8 +73,6 @@ module.exports = {
     //根据用户名搜索用户
     searchFriend: function (username) {
         return new Promise((resolve, reject) => {
-            build();
-            console.log(2222222222);
             if (!username) {
                 resolve(global.apiInfo('', 300, 'username为空'));
             } else {
