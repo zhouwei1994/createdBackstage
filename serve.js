@@ -6,14 +6,9 @@ var app = require('./app');
 // debug模式
 var debug = require('debug')('expressapp:server');
 var http = require('http').createServer(app);
-var {
+var {  
     port
 } = require('./config/env');
-var {
-    socketServer
-} = require('./app/module/socket');
-//启动socket服务
-socketServer();
 app.set('port', port);
 /**
  * 在所有网络接口上监听提供的端口。
@@ -29,26 +24,9 @@ http.on('listening', onListening);
  */
 
 function onError(error) {
+    console.error(error);
     if (error.syscall !== 'listen') {
         throw error;
-    }
-
-    var bind = typeof myport === 'string' ?
-        'Pipe ' + myport :
-        'Port ' + myport;
-
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
-        default:
-            throw error;
     }
 }
 /**

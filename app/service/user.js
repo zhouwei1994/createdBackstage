@@ -13,7 +13,6 @@ module.exports = {
     //用户注册
     registerService: function (username, nickname, password) {
         return new Promise((resolve, reject) => {
-            
             if (!username) {
                 resolve(global.apiInfo('', 301, '用户名不能为空'));
             } else if (!password) {

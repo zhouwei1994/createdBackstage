@@ -1,6 +1,6 @@
 module.exports = {
     //端口号
-    port: 8080,
+    port: 8000,
     //mysql 数据库地址
     mysqlInfo: {
         connectionLimit: 10,

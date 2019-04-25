@@ -14,12 +14,8 @@ var routes = require('./routes/index'); // page接口
 
 //常用工具
 require('./utils/utils');
-
-
-
 //定义模板（views ）搜索路径，在根目录的 views 文件夹下,可自定义
 app.set('views', path.join(__dirname, 'views'));
-//设置模板引擎 为： EJS, 可自定义
 app.set('view engine', 'ejs');
 // 将您的图标放入/公开后取消注释
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

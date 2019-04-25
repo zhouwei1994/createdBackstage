@@ -44,8 +44,6 @@ function check(must,callback) {
     };
 };
 //引入路由文件
-require('./user')(router,check);
-require('./chat')(router,check);
-require('./reptile')(router,check);
+require('./view')(router,check);
 
 module.exports = router;
