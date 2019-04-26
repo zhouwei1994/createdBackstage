@@ -11,17 +11,9 @@ var {
 var {
     upload
 } = require('./../app/service/upload');
+var svgCaptcha = require('svg-captcha');
 module.exports = function (router, check) {
-    //项目打包
-    router.post('/project/create', check(["pages", "baseSetting"], function (req, res) {
-        // build({
-        //     //输出路径
-        //     outputPath: "/public/createdFile/ceshi",
-        //     //网站基础设置
-        //     ...req.baseSetting
-        // });
-        res.result({ a: 111 });
-    }));
+
     //注册
     router.post('/user/register', function (req, res) {
 
@@ -35,21 +27,46 @@ module.exports = function (router, check) {
         );
     });
     //登录
-    router.post('/user/login', function (req, res, next) {
-        var username = req.body.username;
-        var password = req.body.password;
-        loginService(username, password).then(
-            data => {
-                if (data.code == 200) {
-                    res.cookie('token', data.data, {
-                        maxAge: 900000,
-                        path: '/'
-                    });
+    router.post('/user/login', check(["username", "password", "code"], function (req, res) {
+        if (req.cookies.captcha == req.data.code) {
+            loginService(username, password).then(
+                data => {
+                    if (data.code == 200) {
+                        res.cookie('token', data.data, {
+                            maxAge: 900000,
+                            path: '/'
+                        });
+                    }
+                    res.send(data);
                 }
-                res.send(data);
-            }
-        );
-    });
+            );
+        } else {
+            res.result({},false,"验证码不正确");
+        }
+    }));
+    //图片验证码
+    router.get('/user/setCode', check([], function (req, res) {
+        var captcha = svgCaptcha.create({
+            // 翻转颜色 
+            inverse: false,
+            // 字体大小 
+            fontSize: 36,
+            // 噪声线条数 
+            noise: 2,
+            // 宽度 
+            width: 106,
+            // 高度 
+            height: 36,
+        });
+        // 保存到session,忽略大小写 
+        req.session = captcha.text.toLowerCase();
+        console.log(req); //0xtg 生成的验证码
+        //保存到cookie 方便前端调用验证
+        res.cookie('captcha', req.session);
+        res.setHeader('Content-Type', 'image/svg+xml');
+        res.write(String(captcha.data));
+        res.end();
+    }));
     //根据用户名搜索用户
     router.get('/searchFriend', function (req, res) {
         console.log(111111111);

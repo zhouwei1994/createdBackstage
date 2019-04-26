@@ -40,10 +40,12 @@ function check(must,callback) {
                 msg: msg || ""
             });
         };
-        success && callback(data, res);
+        req.data = data;
+        success && callback(req, res);
     };
 };
 //引入路由文件
 require('./view')(router,check);
+require('./user')(router,check);
 
 module.exports = router;

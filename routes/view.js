@@ -7,6 +7,18 @@ module.exports = function (router, check) {
         var login = {
             //模板名称
             template: "login",
+            forget: {
+                page: "忘记密码",
+                path:"forget.html"
+            },
+            registered: false,
+            supplier: false,
+            children: [
+                {
+                    //模板名称
+                    template: "login",
+                }
+            ]
         };
         viewRend(login, function (state, html) {
             if (state) {
