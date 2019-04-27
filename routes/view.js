@@ -7,22 +7,54 @@ module.exports = function (router, check) {
         var login = {
             //模板名称
             template: "login",
+            pageType:"page",
             forget: {
                 page: "忘记密码",
                 path:"forget.html"
             },
+            projectName:"一个后台管理",
             registered: false,
             supplier: false,
             children: [
                 {
                     //模板名称
-                    template: "login",
+                    template: "loginInput",
+                    title: "用户名",
+                    name: "username",
+                    placeholder:"用户名",
+                    icon:"layui-icon-username"
+                },
+                {
+                    //模板名称
+                    template: "loginInput",
+                    title: "验证码",
+                    placeholder:"验证码",
+                    name: "username",
+                    icon:"layui-icon-username"
+                }
+            ],
+            children1: [
+                {
+                    //模板名称
+                    template: "loginInput",
+                    title: "用户名q",
+                    name: "username",
+                    placeholder:"用户名q",
+                    icon:"layui-icon-username"
+                },
+                {
+                    //模板名称
+                    template: "loginInput",
+                    title: "验证码q",
+                    placeholder:"验证码q",
+                    name: "username",
+                    icon:"layui-icon-username"
                 }
             ]
         };
         viewRend(login, function (state, html) {
             if (state) {
-                res.send(html);
+                res.end(html.templateHtml);
             } else {
                 console.error(html);
             }

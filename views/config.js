@@ -1,5 +1,12 @@
 //模板类型：html,view,popup,childHtml,module
 module.exports = {
+    pageHtml: {
+        type: "page",
+        path: "/views/template/pageHtml.html"
+    },
+    loginInput: {
+        path: "/views/template/loginInput.html"
+    },
     //普通登录页表单
     baseLoginInput: function (data) {
         var defaultData = {

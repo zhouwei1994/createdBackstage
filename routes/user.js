@@ -1,14 +1,4 @@
 var {
-    registerService,
-    loginService,
-    searchFriend,
-    getUserInfoService,
-    modifyUserInfo,
-    addFriendService,
-    agreeAddFriendService,
-    addFriendListService
-} = require('./../app/service/user');
-var {
     upload
 } = require('./../app/service/upload');
 var svgCaptcha = require('svg-captcha');

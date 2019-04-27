@@ -136,5 +136,5 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
         }
     };
     //输出test接口
-    exports('http', http);
+    exports('$http', http);
 }); 

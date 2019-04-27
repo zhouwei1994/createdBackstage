@@ -1,4 +1,15 @@
-
-</body>
-
-</html>
+<template>
+    </body>
+    </html>
+</template>
+<script name="compile">
+    function compile(data){
+        var defaultData = {
+            type: "module"
+        };
+        return {
+            success:true,
+            result: Object.assign(defaultData,data)
+        };
+    }
+</script>

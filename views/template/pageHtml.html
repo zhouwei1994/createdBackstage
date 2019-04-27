@@ -1,0 +1,46 @@
+<template>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <% if ( keywords ) { %>
+        <meta name="keywords" content="<%= keywords %>">
+        <% } %>
+        <% if ( description ) { %>
+        <meta name="description" content="<%= description %>">
+        <% } %>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title><%= title %></title>
+        <link rel="stylesheet" href="/layui/css/layui.css">
+        <link rel="stylesheet" href="/layui/css/admin.css">
+    </head>
+    <body>
+        <!--&&htmlchildren-->
+        <script src="/layui/layui.js"></script>
+        <script>
+            layui.extend({
+                $http: '/config/request' //主入口模块
+            }).use(['form', "$http"], function () {
+                var $ = layui.$,
+                    form = layui.form,
+                    $http = layui.$http
+                    /*&&scriptchildren*/
+            });
+        </script>
+    </body>
+    </html>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            title: "后台管理",
+            favicon: "favicon.ico",
+            type: "page"
+        };
+        return {
+            success: true,
+            result: Object.assign(defaultData, data)
+        };
+    }
+</script>

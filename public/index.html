@@ -13,11 +13,12 @@
     <script src="./config.js"></script>
     <script>
         function onCreated() {
-            request("/project/create",config,function(res){
+            request("/project/create", config, function (res) {
                 console.log(res);
             });
         }
-        function request(url,data,callback) {
+
+        function request(url, data, callback) {
             var requestObj = new XMLHttpRequest();
             requestObj.open("POST", url, true);
             requestObj.setRequestHeader("Content-Type", "application/json");
@@ -36,6 +37,29 @@
                 }
             }
         }
+        var bbb = "aaaaa&&&@@@bbbb";
+        var ccc = ["1111", "2222", "3333", "4444"];
+        var qqq = ["5555", "6666", "77777", "88888"];
+
+        function aaa(i, name) {
+            if (i >= ccc.length - 1) {
+                var abc = qqq[i];
+                console.log("最后",i,abc);
+                return name.replace("&&&", abc);
+            } else {
+                var abc = qqq[i] + "&&&";
+                var abc = ccc[i] + "@@@";
+                var ppp = aaa(i + 1, abc);
+                var val = name.replace("&&&", ppp);
+                console.log(val);
+                return val;
+            }
+        }
+        console.log("结果", aaa(0, bbb));
+        //3
+            //       0     1       2       3
+        // aaaaa + 5555 + 6666 + 7777+ bbbb
+
     </script>
 </body>
 

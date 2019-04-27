@@ -18,10 +18,18 @@
     <script src="/layui/layui.js"></script>
 </template>
 <script name="compile">
-    function aa(){
-        console.log(1231324);
+    function compile(data){
+        var defaultData = {
+            title: "后台管理",
+            favicon: "favicon.ico",
+            type: "module"
+        };
+        return {
+            success:true,
+            result: Object.assign(defaultData,data)
+        };
     }
 </script>
 <script name="template">
-    var a = 1;
+    
 </script>
