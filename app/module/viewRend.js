@@ -46,7 +46,7 @@ module.exports = function (page, callback) {
             pageOptions = options[i];
             var url = config[pageOptions.template].path;
         } else {
-            var url = config[options.template].path;
+            var url = config[pageOptions.template].path;
         }
 
         var data = fs.readFileSync(path.join(__dirname, './../..', url));
@@ -58,9 +58,9 @@ module.exports = function (page, callback) {
             //编译代码
             var compile = contentText.match(/<script name="compile">[\d\D]*?<\/script>/);
             //模板js
-            var templateScript = contentText.match(/<script name="template">[\d\D]*?<\/script>/);
+            var templateScript = contentText.match(/<script name="templateScript">[\d\D]*?<\/script>/);
             if (templateScript) {
-                templateScript = templateScript[0].replace(/<script name="template">|<\/script>/g, "");
+                templateScript = templateScript[0].replace(/<script name="templateScript">|<\/script>/g, "");
             }
             if (template && compile) {
                 template = template[0].replace(/<template>|<\/template>/g, "");
@@ -81,6 +81,7 @@ module.exports = function (page, callback) {
                             });
                         } else {
                             templateHtml = templateHtml + "<!--&&html" + name + "-->";
+                            console.log(scriptText);
                             if (scriptText) {
                                 scriptText = scriptText + "/*&&scriptchildren*/";
                             }
@@ -110,9 +111,9 @@ module.exports = function (page, callback) {
                     }
                     var childrenLen = childrenNameList.length;
                     if (childrenLen > 0) {
-                        var pageChildData = [];
-                        childrenNameList.forEach((key, index) => {
+                        for (var key  of childrenNameList){
                             templateHtml = templateHtml + "<!--&&html" + name + "-->";
+                            console.log(scriptText);
                             if (scriptText) {
                                 scriptText = scriptText + "/*&&scriptchildren*/";
                             }
@@ -122,7 +123,7 @@ module.exports = function (page, callback) {
                             if (getChildrenData.scriptText) {
                                 scriptText = getChildrenData.scriptText;
                             }
-                        });
+                        };
                         return dataProcessing(
                             pageTemplateHtml,
                             pageTemplateScript,
@@ -136,7 +137,6 @@ module.exports = function (page, callback) {
                             templateHtml: templateHtml,
                             scriptText: scriptText
                         });
-                        console.log(22222222222, value1);
                         return value1;
                     }
                 } else {
@@ -158,15 +158,16 @@ module.exports = function (page, callback) {
         if (pageTemplateHtml) {
             var reg = new RegExp("<!--&&html" + name + "-->");
             callbackData.templateHtml = pageTemplateHtml.replace(reg, content.templateHtml);
-            if (content.scriptText) {
-                callbackData.scriptText = pageTemplateHtml.replace("/*&&scriptchildren*/", content.scriptText);
-            }
         } else {
             callbackData.templateHtml = content.templateHtml;
-            if (content.scriptText) {
+        }
+        if (content.scriptText) { 
+            if (pageTemplateScript) {
+                callbackData.scriptText = pageTemplateScript.replace("/*&&scriptchildren*/", content.scriptText);
+            } else {
                 callbackData.scriptText = content.scriptText;
             }
-        }
+        } 
         return callbackData;
     }
 };

@@ -26,11 +26,12 @@ module.exports = function (router, check) {
                 },
                 {
                     //模板名称
-                    template: "loginInput",
+                    template: "imgLoginInput",
                     title: "验证码",
                     placeholder:"验证码",
-                    name: "username",
-                    icon:"layui-icon-username"
+                    name: "code",
+                    icon: "layui-icon-code",
+                    codeUrl:"/user/setCode"
                 }
             ],
             children1: [

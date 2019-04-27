@@ -1,0 +1,53 @@
+<template>
+    <div class="layui-form-item">
+        <div class="layui-row">
+            <div class="layui-col-xs7">
+                <label class="layadmin-user-login-icon layui-icon <%= icon %>"></label>
+                <input type="<%= inputType %>" id="<%= 'input-' + inputType +'-'+ name %>" name="<%= name %>"
+                    <% if ( required ) { %> lay-verify="required" <% } %> placeholder="<%= placeholder %>"
+                    class="layui-input">
+            </div>
+            <div class="layui-col-xs5">
+                <div style="margin-left: 10px;">
+                    <img src="<%= codeUrl %>" class="layadmin-user-login-codeimg" id="img-code-<%= name %>">
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            placeholder: "",
+            required: true,
+            inputType: "text",
+        };
+        var callback = {
+            success: true,
+            result: Object.assign(defaultData, data)
+        };
+        if (!data.title) {
+            callback.success = false;
+            callback.result = "请输入表单名称，参数名：title";
+        }
+        if (!data.name) {
+            callback.success = false;
+            callback.result = "请输入参数名称，参数名：name";
+        }
+        if (!data.icon) {
+            callback.success = false;
+            callback.result = "请选择表单图标，参数名：icon";
+        }
+        if (!data.codeUrl) {
+            callback.success = false;
+            callback.result = "请输入验证码图片地址，参数名：codeUrl";
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    $("#img-code-<%= name %>").on("click", function () {
+        alert(1111);
+    });
+</script>
