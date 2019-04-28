@@ -2,6 +2,9 @@ var {
     upload
 } = require('./../app/service/upload');
 var svgCaptcha = require('svg-captcha');
+var {
+    loginDao
+} = require('./../app/dao/index');
 module.exports = function (router, check) {
 
     //注册
@@ -19,15 +22,17 @@ module.exports = function (router, check) {
     //登录
     router.post('/user/login', check(["username", "password", "code"], function (req, res) {
         if (req.cookies.captcha == req.data.code) {
-            loginService(username, password).then(
+            loginDao(req.data.username, req.data.password).then(
                 data => {
-                    if (data.code == 200) {
-                        res.cookie('token', data.data, {
+                    if (data.length <= 0) {
+                        res.result({},false,"用户名或密码错误");
+                    } else {
+                        res.cookie('token', data[0].data, {
                             maxAge: 900000,
                             path: '/'
                         });
+                        res.result(data[0].data);
                     }
-                    res.send(data);
                 }
             );
         } else {
@@ -50,7 +55,6 @@ module.exports = function (router, check) {
         });
         // 保存到session,忽略大小写 
         req.session = captcha.text.toLowerCase();
-        console.log(req); //0xtg 生成的验证码
         //保存到cookie 方便前端调用验证
         res.cookie('captcha', req.session);
         res.setHeader('Content-Type', 'image/svg+xml');

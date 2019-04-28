@@ -4,7 +4,7 @@
             <div class="layui-col-xs7">
                 <label class="layadmin-user-login-icon layui-icon <%= icon %>"></label>
                 <input type="<%= inputType %>" id="<%= 'input-' + inputType +'-'+ name %>" name="<%= name %>"
-                    <% if ( required ) { %> lay-verify="required" <% } %> placeholder="<%= placeholder %>"
+                <% if ( verify ) { %> lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>"
                     class="layui-input">
             </div>
             <div class="layui-col-xs5">
@@ -22,6 +22,7 @@
             placeholder: "",
             required: true,
             inputType: "text",
+            verify: "required",
         };
         var callback = {
             success: true,
@@ -48,6 +49,8 @@
 </script>
 <script name="templateScript">
     $("#img-code-<%= name %>").on("click", function () {
-        alert(1111);
+        $(this).attr("src","<%= codeUrl %>?t="+new Date().getTime());
     });
+    //&&insert:scriptchildren1
+    $("#img-code-<%= name %>").attr("src","<%= codeUrl %>?t="+new Date().getTime());
 </script>

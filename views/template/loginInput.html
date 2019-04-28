@@ -2,7 +2,7 @@
     <div class="layui-form-item">
         <label class="layadmin-user-login-icon layui-icon <%= icon %>"></label>
         <input type="<%= inputType %>" name="<%= name %>" id="<%= 'input-' + inputType +'-'+ name %>"
-            <% if ( required ) { %> lay-verify="required" <% } %> placeholder="<%= placeholder %>" class="layui-input">
+            <% if ( verify ) { %> lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>" class="layui-input">
     </div>
 </template>
 <script name="compile">
@@ -10,22 +10,23 @@
         var defaultData = {
             type: "module",
             placeholder: "",
-            required: true,
+            verify: "required",
             inputType: "text",
+            verify:false
         };
         var callback = {
             success: true,
             result: Object.assign(defaultData, data)
         };
-        if(!data.title){
+        if (!data.title) {
             callback.success = false;
             callback.result = "请输入表单名称，参数名：title";
         }
-        if(!data.name){
+        if (!data.name) {
             callback.success = false;
             callback.result = "请输入参数名称，参数名：name";
         }
-        if(!data.icon){
+        if (!data.icon) {
             callback.success = false;
             callback.result = "请选择表单图标，参数名：icon";
         }

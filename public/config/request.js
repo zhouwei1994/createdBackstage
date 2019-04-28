@@ -6,12 +6,12 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
     var $ = layui.$;
     var http = {
         //请求地址
-        requestUrl: "/",
+        requestUrl: "http://localhost:8000",
         //文件上传
-        fileUrl: "/",
+        fileUrl: "http://localhost:8000",
         //默认请求头
         headers: {
-            "Content-Type": "application/json;charset=utf-8"
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
         },
         //默认配置
         config: {
@@ -41,10 +41,10 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                 result: ""
             };
             //判断数据是否请求成功
-            if (resolve.result == 0) {
+            if (resolve.success) {
                 callback.success = true;
                 callback.result = resolve.data;
-            } else if (resolve.result == 10403) { //code == 10403 是用户未登录
+            } else if (resolve.code == 10403) { //code == 10403 是用户未登录
                 var content = '您还未登录，请先登录!';
                 if (_this.userInfo.token) {
                     content = '您的登录已失效，请重新登录!';
@@ -82,6 +82,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
         request: function (options, data, callback) {
             var _this = this;
             var index;
+            console.log(options,data);
             $.ajax({
                 type: options.method,
                 url: options.httpUrl,

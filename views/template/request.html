@@ -1,0 +1,35 @@
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            //是否提示--默认提示
+            isPrompt: true,
+            //是否显示请求动画
+            load: true,
+
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        if (!newData.requestUrl) {
+            callback.success = false;
+            callback.result = "请输入请求url地址,参数名：requestUrl";
+        }
+        if (!newData.data) {
+            callback.success = false;
+            callback.result = "请输入请求url的参数,参数名：data";
+        }
+        if (!newData.method) {
+            callback.success = false;
+            callback.result = "请输入请求url请求方式,参数名：method";
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    $http.<%= method %>("<%= requestUrl %>", <%= data %>, {}, function (res) {
+        //&&scriptchildren
+    });
+</script>

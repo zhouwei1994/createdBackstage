@@ -20,4 +20,16 @@ module.exports = {
     login: {
         path: "/views/template/login.html"
     },
+    //弹窗模板
+    alert: {
+        path: "/views/template/alert.html"
+    },
+    //导航模板
+    router: {
+        path: "/views/template/router.html"
+    },
+    //请求模板
+    request: {
+        path: "/views/template/request.html"
+    },
 }

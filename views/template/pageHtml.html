@@ -18,6 +18,7 @@
     <body>
         <!--&&htmlchildren-->
         <script src="/layui/layui.js"></script>
+        <script src="/config/md5.js"></script>
         <script>
             layui.extend({
                 $http: '/config/request' //主入口模块
@@ -25,7 +26,18 @@
                 var $ = layui.$,
                     form = layui.form,
                     $http = layui.$http
-                    /*&&scriptchildren*/
+                    form.verify({
+                        <% verifyList.forEach(function(key){ %>
+                            <%- key.value %>: function (value, item) { //value：表单的值、item：表单的DOM对象
+                                <% key.verify.forEach(function(item){ %>
+                                    if (<%- item.rule %>.test(value)) {
+                                        return "<%- item.prompt %>";
+                                    }
+                                <% }); %>
+                            },
+                        <% }); %>
+                    });
+                    //&&scriptchildren
             });
         </script>
     </body>

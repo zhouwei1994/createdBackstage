@@ -1,0 +1,73 @@
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            title: "提示",
+            type: "module",
+            popupType:"msg",
+            icon:false,
+            formType:0,
+            value:"",
+            width:"800px",
+            height:"350px",
+            maxlength: 140,
+            verify:false
+        };
+        var callback = {
+            success: true,
+            result: Object.assign(defaultData, data)
+        };
+        if (!data.content) {
+            callback.success = false;
+            callback.result = "请输入要提示的内容";
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    <% if ( popupType == 'msg' ) { %>
+        layer.msg(<%- content %>, {
+            <% if (icon) { %>
+                icon: <%- icon %>,
+            <% } %>
+        },function(){
+            //&&scriptchildren
+        }); 
+    <% } else if( popupType == 'alert' ){ %> 
+        layer.alert(<%- content %>, {
+            <% if (icon) { %>
+                icon: <%- icon %>,
+            <% } %>
+        }, function (index) {
+            //&&scriptchildren
+            layer.close(index);
+        });
+    <% } else if( popupType == 'confirm' ){ %> 
+        layer.confirm(<%- content %>, { 
+            <% if (icon) { %>
+                icon: <%- icon %>,
+            <% } %>
+            title: "<%- title %>" }, function (index) {
+            //&&scriptchildren
+            layer.close(index);
+        });
+    <% } else if( popupType == 'prompt' ){ %> 
+        layer.prompt({
+            formType: <%- formType %>,//支持0（文本）默认1（密码）2（多行文本）
+            value: <%- value %>,
+            title: "<%- title %>",
+            maxlength: <%- maxlength %>,
+            area: ["<%- width %>", "<%- height %>"] //自定义文本域宽高
+        }, function (value, index, elem) {
+            <% if (verify) { %>
+                <% verify.forEach(function(item,index){ %>
+                    if (<%- item.rule %>.test(value)) {
+                        layer.msg("<%- item.prompt %>");
+                        return false;
+                    }
+                <% }); %>
+            <% } %>
+            //&&scriptchildren
+            layer.close(index);
+        });
+    <% } %>
+</script>

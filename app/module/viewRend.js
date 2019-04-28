@@ -20,7 +20,47 @@ var defaultData = {
         "headers": {
 
         }
-    }
+    },
+    "verifyList": [
+        {
+            name: "用户名验证",
+            value: "username",
+            verify: [
+                {
+                    rule: "!/^[a-zA-Z0-9_\\u4e00-\\u9fa5\\\\s·]+$/",
+                    prompt: "用户名不能有特殊字符"
+                },
+                {
+                    rule: "/(^\\_)|(\\__)|(\\_+$)/",
+                    prompt: "用户名首尾不能出现下划线\'_\'"
+                },
+                {
+                    rule: "/^\\d+\\d+\\d$/",
+                    prompt: "用户名不能全为数字"
+                },
+            ]
+        },
+        {
+            name: "密码验证",
+            value: "password",
+            verify: [
+                {
+                    rule: "/^[\S]{6,12}$/",
+                    prompt: "密码必须6到12位，且不能出现空格"
+                }
+            ]
+        },
+        {
+            name: "数字验证",
+            value: "number",
+            verify: [
+                {
+                    rule: "!/^\\b$/",
+                    prompt: "必须全部是数字"
+                }
+            ]
+        },
+    ]
 };
 
 module.exports = function (page, callback) {
@@ -28,73 +68,59 @@ module.exports = function (page, callback) {
     if (page.pageType == "page" || page.pageType == "childPage") {
         var pageHtmlContent = getFile({
             template: "pageHtml",
-            ...defaultData.baseSetting
+            ...defaultData.baseSetting,
+            verifyList: defaultData.verifyList
         }, "", "");
-        pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("<!--&&htmlchildren-->", pageContent.templateHtml + "<!--&&htmlchildren-->");
-        if (pageContent.scriptText) {
-            pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("/*&&scriptchildren*/", pageContent.scriptText + "/*&&scriptchildren*/");
+        if (pageHtmlContent) {
+            pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("<!--&&htmlchildren-->", pageContent.templateHtml);
+            if (pageContent.scriptText) {
+                pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("//&&scriptchildren", pageContent.scriptText);
+            }
+            callback(true, pageHtmlContent);
         }
-        callback(true, pageHtmlContent);
     }
-    callback(true, pageContent);
-
+    if (pageContent) {
+        callback(true, pageContent);
+    }
     function getFile(options, pageTemplateHtml, pageTemplateScript, i, name) {
-        var pageOptions = options;
+        let pageOptions = options;
+        let url;
+        let len
+        let childrenNameList = [];
         name = name || "children";
         if (i >= 0 && name) {
-            var len = options.length;
-            pageOptions = options[i];
-            var url = config[pageOptions.template].path;
+            len = options.content.length;
+            pageOptions = options.content[i];
+            url = config[pageOptions.template].path;
         } else {
-            var url = config[pageOptions.template].path;
+            url = config[pageOptions.template].path;
         }
-
-        var data = fs.readFileSync(path.join(__dirname, './../..', url));
+        let data = fs.readFileSync(path.join(__dirname, './../..', url));
         // 读取文件失败/错误
         if (data) {
-            var contentText = data.toString();
+            let contentText = data.toString();
             //模板文本
-            var template = contentText.match(/<template>[\d\D]*?<\/template>/);
+            let template = contentText.match(/<template>[\d\D]*?<\/template>/);
             //编译代码
-            var compile = contentText.match(/<script name="compile">[\d\D]*?<\/script>/);
+            let compile = contentText.match(/<script name="compile">[\d\D]*?<\/script>/);
             //模板js
-            var templateScript = contentText.match(/<script name="templateScript">[\d\D]*?<\/script>/);
-            if (templateScript) {
-                templateScript = templateScript[0].replace(/<script name="templateScript">|<\/script>/g, "");
-            }
-            if (template && compile) {
-                template = template[0].replace(/<template>|<\/template>/g, "");
+            let templateScript = contentText.match(/<script name="templateScript">[\d\D]*?<\/script>/);
+            if (template && compile || templateScript && compile) {
                 compile = compile[0].replace(/<script name="compile">|<\/script>/g, "");
                 eval(compile);
-                var compileData = templateCompile(pageOptions);
+                let compileData = templateCompile(pageOptions);
                 if (compileData.success) {
-                    var templateHtml = ejs.render(template, compileData.result);
-                    var scriptText;
+                    let templateHtml;
+                    let scriptText;
+                    if (template) {
+                        template = template[0].replace(/<template>|<\/template>/g, "");
+                        templateHtml = ejs.render(template, compileData.result);
+                    }
                     if (templateScript) {
+                        templateScript = templateScript[0].replace(/<script name="templateScript">|<\/script>/g, "");
                         scriptText = ejs.render(templateScript, compileData.result);
                     }
-                    if (i >= 0 && name) {
-                        if (i >= len - 1) {
-                            return dataProcessing(pageTemplateHtml, pageTemplateScript, name, {
-                                templateHtml: templateHtml,
-                                scriptText: scriptText
-                            });
-                        } else {
-                            templateHtml = templateHtml + "<!--&&html" + name + "-->";
-                            console.log(scriptText);
-                            if (scriptText) {
-                                scriptText = scriptText + "/*&&scriptchildren*/";
-                            }
-                            return dataProcessing(
-                                pageTemplateHtml,
-                                pageTemplateScript,
-                                name,
-                                getFile(options, templateHtml, scriptText, i + 1, name)
-                            );
-                        }
-                    }
-                    var childrenNameList = [];
-                    for (var index = 0; index < 100; index++) {
+                    for (let index = 0; index < 100; index++) {
                         if (index == 0) {
                             if (pageOptions["children"]) {
                                 childrenNameList.push("children");
@@ -109,17 +135,13 @@ module.exports = function (page, callback) {
                             }
                         }
                     }
-                    var childrenLen = childrenNameList.length;
+                    let childrenLen = childrenNameList.length;
                     if (childrenLen > 0) {
-                        for (var key  of childrenNameList){
-                            templateHtml = templateHtml + "<!--&&html" + name + "-->";
-                            console.log(scriptText);
-                            if (scriptText) {
-                                scriptText = scriptText + "/*&&scriptchildren*/";
+                        for (let key of childrenNameList) {
+                            let getChildrenData = getFile(pageOptions[key], templateHtml, scriptText, 0, key);
+                            if (templateHtml) {
+                                templateHtml = getChildrenData.templateHtml;
                             }
-                            var getChildrenData = getFile(pageOptions[key], templateHtml, scriptText, 0, key);
-
-                            templateHtml = getChildrenData.templateHtml;
                             if (getChildrenData.scriptText) {
                                 scriptText = getChildrenData.scriptText;
                             }
@@ -133,41 +155,114 @@ module.exports = function (page, callback) {
                             }
                         );
                     } else {
-                        var value1 = dataProcessing(pageTemplateHtml, pageTemplateScript, "children", {
-                            templateHtml: templateHtml,
-                            scriptText: scriptText
-                        });
-                        return value1;
+                        if (i >= 0 && name) {
+                            if (i >= len - 1) {
+                                return dataProcessing(pageTemplateHtml, pageTemplateScript, name, {
+                                    templateHtml: templateHtml,
+                                    scriptText: scriptText
+                                });
+                            } else {
+                                if (templateHtml) {
+                                    templateHtml = templateHtml + "<!--&&html" + name + "-->";
+                                }
+                                if (scriptText) {
+                                    scriptText = scriptText + "//&&script" + name;
+                                }
+                                return dataProcessing(
+                                    pageTemplateHtml,
+                                    pageTemplateScript,
+                                    name,
+                                    getFile(options, templateHtml, scriptText, i + 1, name)
+                                );
+                            }
+                        } else {
+                            let value1 = dataProcessing(pageTemplateHtml, pageTemplateScript, "children", {
+                                templateHtml: templateHtml,
+                                scriptText: scriptText
+                            });
+                            return value1;
+                        }
                     }
                 } else {
-                    console.error(compileData.result);
+                    callback(false, "模板【" + pageOptions.template + "】错误消息：" + compileData.result);
+                    return false;
                 }
             } else {
-                console.error("未找到模板");
+                callback(false, "未找到模板，url=" + url);
+                return false;
             }
         } else {
-            console.error("文件读取失败");
+            callback(false, "文件读取失败，url=" + url);
+            return false;
         }
     }
 
     function dataProcessing(pageTemplateHtml, pageTemplateScript, name, content) {
-        var callbackData = {
+        let callbackData = {
             templateHtml: pageTemplateHtml,
             scriptText: pageTemplateScript,
         };
-        if (pageTemplateHtml) {
-            var reg = new RegExp("<!--&&html" + name + "-->");
-            callbackData.templateHtml = pageTemplateHtml.replace(reg, content.templateHtml);
-        } else {
-            callbackData.templateHtml = content.templateHtml;
+        if (content.templateHtml) {
+            if (pageTemplateHtml) {
+                let reg = new RegExp("<!--&&html" + name + "-->");
+                callbackData.templateHtml = pageTemplateHtml.replace(reg, content.templateHtml);
+            } else {
+                callbackData.templateHtml = content.templateHtml;
+            }
         }
-        if (content.scriptText) { 
+        if (content.scriptText) {
             if (pageTemplateScript) {
-                callbackData.scriptText = pageTemplateScript.replace("/*&&scriptchildren*/", content.scriptText);
+                let reg;
+                console.log(content.scriptText);
+                if (content.scriptText.indexOf("//&&insert:scriptchildren") == -1) {
+                    reg = new RegExp("//&&script" + name);
+                    callbackData.scriptText = pageTemplateScript.replace(reg, content.scriptText);
+                } else {
+                    var insertList = content.scriptText.split("//&&insert:scriptchildren");
+                    callbackData.scriptText = contentInsert(pageTemplateScript,insertList,0,name);
+                }
             } else {
                 callbackData.scriptText = content.scriptText;
             }
-        } 
+        }
         return callbackData;
+    }
+    function trim(str){   
+        return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');   
+    }  
+    function contentInsert(pageTemplateScript,insertList,index,name) {
+        var insert = trim(insertList[index]);
+        var len = insertList.length;
+        let reg;
+        if (insert) {
+            var subIndex = insert.substring(0, 1);
+
+            if (/\d/.test(subIndex)) {
+                reg = new RegExp("//&&scriptchildren" + subIndex);
+                insert = insert.substring(1);
+                if (name != "children" + subIndex) {
+                    insert = insert + "//&&scriptchildren" + subIndex;
+                }
+            } else {
+                if (name != "children") {
+                    insert = insert + "//&&script" + name;
+                }
+                reg = new RegExp("//&&scriptchildren");
+            }
+        }
+        if (index >= len - 1) {
+            if (reg) {
+                var content = pageTemplateScript.replace(reg, insert);
+                return content;
+            } else {
+                return pageTemplateScript;
+            }
+        } else {
+            if (reg) {
+                return contentInsert(pageTemplateScript, insertList, index + 1, name).replace(reg, insert);
+            } else {
+                return contentInsert(pageTemplateScript, insertList, index + 1, name);
+            }
+        }
     }
 };

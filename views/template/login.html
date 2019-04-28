@@ -43,7 +43,8 @@
             forget: false,
             registered: false,
             supplier: false,
-            type: "module"
+            type: "module",
+            md5:false
         };
         var callback = {
             success: true,
@@ -55,33 +56,28 @@
         }
         if (!data.children) {
             callback.success = false;
-            callback.result = "请选择表单参数";
+            callback.result = "请选择表单模板";
         }
+        // if (!data.children1) {
+        //     callback.success = false;
+        //     callback.result = "请选择提交成功模板";
+        // }
         return callback;
     }
 </script>
 <script name="templateScript">
     form.render();
-    /*&&scriptchildren*/
+    
+    //&&scriptchildren
     //提交
     form.on('submit(LAY-user-login-submit)', function (obj) {
         console.log(obj);
-        http.post("/user/login", obj, {}, function (res) {
-            console.log(res);
-        });
-        //请求成功后，写入 access_token
-        layui.data(setter.tableName, {
-            key: setter.request.tokenName,
-            value: res.data.access_token
-        });
-
-        //登入成功的提示与跳转
-        layer.msg('登入成功', {
-            offset: '15px',
-            icon: 1,
-            time: 1000
-        }, function () {
-            location.href = '../'; //后台主页
-        });
+        var data = obj.field;
+        <% if( md5 ){ %>
+            <% md5.forEach(function(item,index){ %>
+                data.<%= item %> = md5(data.<%= item %>);
+            <% }); %>
+        <% } %>
+        //&&scriptchildren1
     });
 </script>
