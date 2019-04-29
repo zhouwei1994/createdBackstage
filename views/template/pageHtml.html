@@ -15,14 +15,15 @@
         <link rel="stylesheet" href="/layui/css/layui.css">
         <link rel="stylesheet" href="/layui/css/admin.css">
     </head>
-    <body>
+    <body class="layui-layout-body">
         <!--&&htmlchildren&&-->
         <script src="/layui/layui.js"></script>
         <script src="/config/md5.js"></script>
         <script>
             layui.extend({
-                $http: '/config/request' //主入口模块
-            }).use(['form', "$http"], function () {
+                $http: '/config/request',
+                index: '/config/index',
+            }).use(['form', "$http","index"], function () {
                 var $ = layui.$,
                     form = layui.form,
                     $http = layui.$http,

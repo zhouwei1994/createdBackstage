@@ -323,8 +323,8 @@ module.exports = function (router, check) {
             }
         });
     }));
-    //注册页面
-    router.get('/registered.html', check([], function (req, res) {
+    //主页面
+    router.get('/main.html', check([], function (req, res) {
         //设置html请求头
         res.set('Content-Type','text/html');
         var login = {

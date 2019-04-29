@@ -32,4 +32,8 @@ module.exports = {
     request: {
         path: "/views/template/request.html"
     },
+    //主页面模板
+    main: {
+        path: "/views/template/main.html"
+    },
 }
