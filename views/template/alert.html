@@ -25,33 +25,33 @@
 </script>
 <script name="templateScript">
     <% if ( popupType == 'msg' ) { %>
-        layer.msg(<%- content %>, {
+        popup.msg(<%- content %>, {
             <% if (icon) { %>
                 icon: <%- icon %>,
             <% } %>
         },function(){
-            //&&scriptchildren
+            //&&scriptchildren&&
         }); 
     <% } else if( popupType == 'alert' ){ %> 
-        layer.alert(<%- content %>, {
+        popup.alert(<%- content %>, {
             <% if (icon) { %>
                 icon: <%- icon %>,
             <% } %>
         }, function (index) {
-            //&&scriptchildren
-            layer.close(index);
+            //&&scriptchildren&&
+            popup.close(index);
         });
     <% } else if( popupType == 'confirm' ){ %> 
-        layer.confirm(<%- content %>, { 
+        popup.confirm(<%- content %>, { 
             <% if (icon) { %>
                 icon: <%- icon %>,
             <% } %>
             title: "<%- title %>" }, function (index) {
-            //&&scriptchildren
-            layer.close(index);
+            //&&scriptchildren&&
+            popup.close(index);
         });
     <% } else if( popupType == 'prompt' ){ %> 
-        layer.prompt({
+        popup.prompt({
             formType: <%- formType %>,//支持0（文本）默认1（密码）2（多行文本）
             value: <%- value %>,
             title: "<%- title %>",
@@ -61,13 +61,13 @@
             <% if (verify) { %>
                 <% verify.forEach(function(item,index){ %>
                     if (<%- item.rule %>.test(value)) {
-                        layer.msg("<%- item.prompt %>");
+                        popup.msg("<%- item.prompt %>");
                         return false;
                     }
                 <% }); %>
             <% } %>
-            //&&scriptchildren
-            layer.close(index);
+            //&&scriptchildren&&
+            popup.close(index);
         });
     <% } %>
 </script>

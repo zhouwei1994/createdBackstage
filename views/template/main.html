@@ -1,0 +1,29 @@
+<template>
+
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            projectName: "周威-后台管理",
+            description: "一个快速生成的后台管理",
+            forget: false,
+            registered: false,
+            supplier: false,
+            type: "module",
+            submitText: "登 入",
+            md5: false
+        };
+        var callback = {
+            success: true,
+            result: Object.assign(defaultData, data)
+        };
+        if (!data.projectName) {
+            callback.success = false;
+            callback.result = "请输入项目名称";
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    //&&scriptchildren&&
+</script>

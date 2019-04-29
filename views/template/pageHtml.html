@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="/layui/css/admin.css">
     </head>
     <body>
-        <!--&&htmlchildren-->
+        <!--&&htmlchildren&&-->
         <script src="/layui/layui.js"></script>
         <script src="/config/md5.js"></script>
         <script>
@@ -25,7 +25,8 @@
             }).use(['form', "$http"], function () {
                 var $ = layui.$,
                     form = layui.form,
-                    $http = layui.$http
+                    $http = layui.$http,
+                    popup = layer;
                     form.verify({
                         <% verifyList.forEach(function(key){ %>
                             <%- key.value %>: function (value, item) { //value：表单的值、item：表单的DOM对象
@@ -37,7 +38,7 @@
                             },
                         <% }); %>
                     });
-                    //&&scriptchildren
+                    //&&scriptchildren&&
             });
         </script>
     </body>

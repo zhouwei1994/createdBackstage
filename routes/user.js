@@ -62,13 +62,10 @@ module.exports = function (router, check) {
         res.end();
     }));
     //根据用户名搜索用户
-    router.get('/searchFriend', function (req, res) {
+    router.get('/searchFriend',  check([], function (req, res) {
         console.log(111111111);
-        var username = req.query.username;
-        searchFriend(username).then(data => {
-            res.send(data);
-        });
-    });
+        res.result({});
+    }));
     //根据用户ID搜索用户
     router.get('/set_user_info', function (req, res) {
         var id = req.query.id;

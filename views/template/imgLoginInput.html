@@ -51,6 +51,7 @@
     $("#img-code-<%= name %>").on("click", function () {
         $(this).attr("src","<%= codeUrl %>?t="+new Date().getTime());
     });
-    //&&insert:scriptchildren1
+    //&&insertStart:(scriptchildren1)&&
     $("#img-code-<%= name %>").attr("src","<%= codeUrl %>?t="+new Date().getTime());
+    //&&insertEnd&&
 </script>

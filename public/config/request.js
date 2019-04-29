@@ -24,13 +24,13 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
         },
         //用户信息
         userInfo: {},
-        get: function (url, data, options, callback) {
+        get: function (url, data, options, callback,errCallback) {
             var requestInfo = this.getDefault(url, options, "GET");
-            this.request(requestInfo, data, callback);
+            this.request(requestInfo, data, callback,errCallback);
         },
-        post: function (url, data, options, callback) {
+        post: function (url, data, options, callback,errCallback) {
             var requestInfo = this.getDefault(url, options, "POST");
-            this.request(requestInfo, data, callback);
+            this.request(requestInfo, data, callback,errCallback);
         },
         //默认模板
         dataFactory: function (options, resolve) {
@@ -79,7 +79,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
             config.headers = this.modifyJson(options.headers, this.headers);
             return config;
         },
-        request: function (options, data, callback) {
+        request: function (options, data, callback,errCallback) {
             var _this = this;
             var index;
             console.log(options,data);
@@ -104,7 +104,12 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                     var factoryInfo = _this.dataFactory(options, result);
                     if (factoryInfo.success) {
                         callback(result);
+                    } else {
+                        errCallback && errCallback(result);
                     }
+                },
+                error: function (err) {
+                    errCallback && errCallback(err);
                 }
             });
         },

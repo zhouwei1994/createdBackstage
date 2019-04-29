@@ -60,6 +60,16 @@ var defaultData = {
                 }
             ]
         },
+        {
+            name: "手机号验证验证",
+            value: "phone",
+            verify: [
+                {
+                    rule: "!/^1\\d{10}$/",
+                    prompt: "手机号格式不正确"
+                }
+            ]
+        },
     ]
 };
 
@@ -72,9 +82,9 @@ module.exports = function (page, callback) {
             verifyList: defaultData.verifyList
         }, "", "");
         if (pageHtmlContent) {
-            pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("<!--&&htmlchildren-->", pageContent.templateHtml);
+            pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("<!--&&htmlchildren&&-->", pageContent.templateHtml);
             if (pageContent.scriptText) {
-                pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("//&&scriptchildren", pageContent.scriptText);
+                pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("//&&scriptchildren&&", pageContent.scriptText);
             }
             callback(true, pageHtmlContent);
         }
@@ -85,9 +95,8 @@ module.exports = function (page, callback) {
     function getFile(options, pageTemplateHtml, pageTemplateScript, i, name) {
         let pageOptions = options;
         let url;
-        let len
-        let childrenNameList = [];
-        name = name || "children";
+        let len;
+        let childName = name;
         if (i >= 0 && name) {
             len = options.content.length;
             pageOptions = options.content[i];
@@ -118,70 +127,44 @@ module.exports = function (page, callback) {
                     }
                     if (templateScript) {
                         templateScript = templateScript[0].replace(/<script name="templateScript">|<\/script>/g, "");
-                        scriptText = ejs.render(templateScript, compileData.result);
+                        scriptText = trim(ejs.render(templateScript, compileData.result));
                     }
-                    for (let index = 0; index < 100; index++) {
-                        if (index == 0) {
-                            if (pageOptions["children"]) {
-                                childrenNameList.push("children");
-                            } else {
-                                break;
-                            }
-                        } else {
-                            if (pageOptions["children" + index]) {
-                                childrenNameList.push("children" + index);
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-                    let childrenLen = childrenNameList.length;
-                    if (childrenLen > 0) {
-                        for (let key of childrenNameList) {
-                            let getChildrenData = getFile(pageOptions[key], templateHtml, scriptText, 0, key);
-                            if (templateHtml) {
-                                templateHtml = getChildrenData.templateHtml;
-                            }
-                            if (getChildrenData.scriptText) {
-                                scriptText = getChildrenData.scriptText;
-                            }
-                        };
-                        return dataProcessing(
-                            pageTemplateHtml,
-                            pageTemplateScript,
-                            "children", {
-                                templateHtml: templateHtml,
-                                scriptText: scriptText
-                            }
-                        );
-                    } else {
-                        if (i >= 0 && name) {
-                            if (i >= len - 1) {
-                                return dataProcessing(pageTemplateHtml, pageTemplateScript, name, {
-                                    templateHtml: templateHtml,
-                                    scriptText: scriptText
-                                });
-                            } else {
-                                if (templateHtml) {
-                                    templateHtml = templateHtml + "<!--&&html" + name + "-->";
-                                }
-                                if (scriptText) {
-                                    scriptText = scriptText + "//&&script" + name;
-                                }
-                                return dataProcessing(
-                                    pageTemplateHtml,
-                                    pageTemplateScript,
-                                    name,
-                                    getFile(options, templateHtml, scriptText, i + 1, name)
-                                );
-                            }
-                        } else {
-                            let value1 = dataProcessing(pageTemplateHtml, pageTemplateScript, "children", {
+                    if (i >= 0 && name) {
+                        if (i >= len - 1) {
+                            var ccc = forChild(pageOptions, {
                                 templateHtml: templateHtml,
                                 scriptText: scriptText
                             });
-                            return value1;
+                            var qqq = dataProcessing(pageTemplateHtml, pageTemplateScript, childName,
+                                ccc
+                            );
+                            return qqq;
+                        } else {
+                            var forChildData = forChild(pageOptions, {
+                                templateHtml: templateHtml,
+                                scriptText: scriptText
+                            });
+                            if (forChildData.templateHtml) {
+                                forChildData.templateHtml = forChildData.templateHtml + "<!--&&html" + childName + "&&-->";
+                            }
+                            if (forChildData.scriptText) {
+                                forChildData.scriptText = forChildData.scriptText + "//&&script" + childName + "&&";
+                            }
+                            var aaa = getFile(options, forChildData.templateHtml, forChildData.scriptText, i + 1, childName);
+                            var bbb = dataProcessing(
+                                pageTemplateHtml,
+                                pageTemplateScript,
+                                childName,
+                                aaa
+                            );
+                            return bbb;
                         }
+                    } else {
+                        return dataProcessing(pageTemplateHtml, pageTemplateScript, childName,
+                            forChild(pageOptions, {
+                                templateHtml: templateHtml,
+                                scriptText: scriptText
+                            }));
                     }
                 } else {
                     callback(false, "模板【" + pageOptions.template + "】错误消息：" + compileData.result);
@@ -196,15 +179,55 @@ module.exports = function (page, callback) {
             return false;
         }
     }
-
+    function forChild(pageOptions, content) {
+        let callbackData = content;
+        let childrenNameList = [];
+        for (let index = 0; index < 100; index++) {
+            if (index == 0) {
+                if (pageOptions["children"]) {
+                    childrenNameList.push("children");
+                } else {
+                    break;
+                }
+            } else {
+                if (pageOptions["children" + index]) {
+                    childrenNameList.push("children" + index);
+                } else {
+                    break;
+                }
+            }
+        };
+        let childrenLen = childrenNameList.length;
+        if (childrenLen > 0) {
+            recursive(0);
+            function recursive(index) {
+                let getChildrenData = dataProcessing(
+                    "",
+                    "",
+                    childrenNameList[index],
+                    getFile(pageOptions[childrenNameList[index]], callbackData.templateHtml, callbackData.scriptText, 0, childrenNameList[index])
+                );
+                if (getChildrenData.templateHtml) {
+                    callbackData.templateHtml = getChildrenData.templateHtml;
+                }
+                if (getChildrenData.scriptText) {
+                    callbackData.scriptText = getChildrenData.scriptText;
+                }
+                if (index < childrenLen - 1) {
+                    recursive(index + 1);
+                }
+            }
+        }
+        return callbackData;
+    }
     function dataProcessing(pageTemplateHtml, pageTemplateScript, name, content) {
         let callbackData = {
             templateHtml: pageTemplateHtml,
-            scriptText: pageTemplateScript,
+            scriptText: pageTemplateScript
         };
         if (content.templateHtml) {
             if (pageTemplateHtml) {
-                let reg = new RegExp("<!--&&html" + name + "-->");
+                let reg = new RegExp("<!--&&html" + name + "&&-->");
                 callbackData.templateHtml = pageTemplateHtml.replace(reg, content.templateHtml);
             } else {
                 callbackData.templateHtml = content.templateHtml;
@@ -212,14 +235,17 @@ module.exports = function (page, callback) {
         }
         if (content.scriptText) {
             if (pageTemplateScript) {
-                let reg;
-                console.log(content.scriptText);
-                if (content.scriptText.indexOf("//&&insert:scriptchildren") == -1) {
-                    reg = new RegExp("//&&script" + name);
-                    callbackData.scriptText = pageTemplateScript.replace(reg, content.scriptText);
+                let insertReg = /\/\/&&insertStart:\([\d\D]*?\/\/&&insertEnd&&/g;
+                let reg = new RegExp("//&&script" + name + "&&");
+                if (insertReg.test(content.scriptText)) {
+                    var insertList = content.scriptText.match(insertReg);
+                    var normalScriptText = trim(content.scriptText.replace(insertReg, ""));
+                    if (normalScriptText) {
+                        callbackData.scriptText = pageTemplateScript.replace(reg, normalScriptText);
+                    }
+                    callbackData.scriptText = contentInsert(callbackData.scriptText, insertList, 0, name);
                 } else {
-                    var insertList = content.scriptText.split("//&&insert:scriptchildren");
-                    callbackData.scriptText = contentInsert(pageTemplateScript,insertList,0,name);
+                    callbackData.scriptText = pageTemplateScript.replace(reg, content.scriptText);
                 }
             } else {
                 callbackData.scriptText = content.scriptText;
@@ -227,39 +253,47 @@ module.exports = function (page, callback) {
         }
         return callbackData;
     }
-    function trim(str){   
-        return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');   
-    }  
-    function contentInsert(pageTemplateScript,insertList,index,name) {
-        var insert = trim(insertList[index]);
+    function trim(str) {
+        return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');
+    }
+    function contentInsert(pageTemplateScript, insertList, index, name) {
+        var insert = insertList[index];
         var len = insertList.length;
+        insertContent = insert.substring(17, insert.length - 15);
+        var bitIndex = insertContent.indexOf(")&&");
         let reg;
-        if (insert) {
-            var subIndex = insert.substring(0, 1);
-
-            if (/\d/.test(subIndex)) {
-                reg = new RegExp("//&&scriptchildren" + subIndex);
-                insert = insert.substring(1);
-                if (name != "children" + subIndex) {
-                    insert = insert + "//&&scriptchildren" + subIndex;
+        if (bitIndex == -1) {
+            console.log("模板插入指定位置参数错误");
+        } else {
+            var subName = insertContent.substring(0, bitIndex);
+            if (new RegExp("//&&" + subName + "&&").test(pageTemplateScript)) {
+                insertContent = insertContent.substring(bitIndex + 3);
+                if (subName ) {
+                    reg = new RegExp("//&&" + subName + "&&");
+                    if ("script" + name != subName) {
+                        insertContent = insertContent + "//&&" + subName + "&&";
+                    }
+                } else {
+                    if (name != "children") {
+                        insertContent = insertContent + "//&&script" + name + "&&";
+                    }
+                    reg = new RegExp("//&&scriptchildren&&");
                 }
             } else {
-                if (name != "children") {
-                    insert = insert + "//&&script" + name;
-                }
-                reg = new RegExp("//&&scriptchildren");
+                insertContent = insert + "//&&script" + name + "&&";
+                reg = new RegExp("//&&scriptchildren&&");
             }
         }
         if (index >= len - 1) {
             if (reg) {
-                var content = pageTemplateScript.replace(reg, insert);
+                var content = pageTemplateScript.replace(reg, insertContent);
                 return content;
             } else {
                 return pageTemplateScript;
             }
         } else {
             if (reg) {
-                return contentInsert(pageTemplateScript, insertList, index + 1, name).replace(reg, insert);
+                return contentInsert(pageTemplateScript, insertList, index + 1, name).replace(reg, insertContent);
             } else {
                 return contentInsert(pageTemplateScript, insertList, index + 1, name);
             }

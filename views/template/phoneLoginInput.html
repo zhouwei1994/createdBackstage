@@ -4,12 +4,12 @@
             <div class="layui-col-xs7">
                 <label class="layadmin-user-login-icon layui-icon <%= icon %>"></label>
                 <input type="<%= inputType %>" id="<%= 'input-' + inputType +'-'+ name %>" name="<%= name %>"
-                <% if ( verify ) { %> lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>"
+                    <% if ( verify ) { %> lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>"
                     class="layui-input">
             </div>
             <div class="layui-col-xs5">
-                <div style="margin-left: 10px;">
-                    <img src="<%= codeUrl %>" class="layadmin-user-login-codeimg" id="img-code-<%= name %>">
+                <div style="margin-left: 10px;"> 
+                    <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="phone-code-<%= name %>">获取验证码</button>
                 </div>
             </div>
         </div>
@@ -23,6 +23,7 @@
             required: true,
             inputType: "text",
             verify: "required",
+            phoneVerify:false
         };
         var callback = {
             success: true,
@@ -40,10 +41,62 @@
             callback.success = false;
             callback.result = "请选择表单图标，参数名：icon";
         }
-        if (!data.codeUrl) {
+        if (!data.requestUrl) {
             callback.success = false;
-            callback.result = "请输入验证码图片地址，参数名：codeUrl";
+            callback.result = "请输入发送短信验证码地址，参数名：requestUrl";
+        }
+        if (!data.method) {
+            callback.success = false;
+            callback.result = "请输入发送短信验证码请求方式，参数名：method";
+        }
+        if (!data.phoneInputName) {
+            callback.success = false;
+            callback.result = "请输入手机号输入框的name值，参数名：phoneInputName";
         }
         return callback;
     }
+</script>
+<script name="templateScript">
+    var clear;
+    var codeSendState = true;
+    var second = 60;
+    $("#phone-code-<%= name %>").on("click", function () {
+        var inputPhone = $("#input-text-<%= phoneInputName %>");
+        var phoneValue = inputPhone.val();
+        var _this = this;
+        if(!codeSendState){
+            popup.msg("短信验证码已发送");
+            inputPhone.focus();
+            return false;
+        }
+        if (!phoneValue) {
+            popup.msg("请输入手机号"); 
+            inputPhone.focus();
+            return false;
+        }
+        <% phoneVerify.forEach(function(item){ %>
+            if (<%- item.rule %>.test(phoneValue)) {
+                popup.msg("<%- item.prompt %>"); 
+                inputPhone.focus();
+                return false;
+            }
+        <% }); %>
+        codeSendState = false;
+        $http.<%= method %>("<%= requestUrl %>", {
+            <%= name %>: phoneValue
+        }, {}, function (res) {
+            $(_this).text("60秒后重发");
+            clear = setInterval(function(){
+                second--;
+                $(_this).text(second+"秒后重发");
+                if(second <= 0){
+                    codeSendState = true;
+                    $(_this).text("获取验证码");
+                    clearInterval(clear);
+                }
+            },1000);
+        },function(err){
+            codeSendState = true;
+        });
+    });
 </script>
