@@ -32,9 +32,8 @@ function check(must,callback) {
             }
         }
         //输出配置
-        res.result = function (data, success, msg, code) {
+        res.result = function (data, code, msg) {
             res.send({
-                success: success == false ? false : true,
                 code: code || 0,
                 data: data || {},
                 msg: msg || ""

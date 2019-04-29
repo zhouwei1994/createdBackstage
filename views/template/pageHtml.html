@@ -21,9 +21,8 @@
         <script src="/config/md5.js"></script>
         <script>
             layui.extend({
-                $http: '/config/request',
                 index: '/config/index',
-            }).use(['form', "$http","index"], function () {
+            }).use(['form',"index"], function () {
                 var $ = layui.$,
                     form = layui.form,
                     $http = layui.$http,

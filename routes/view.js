@@ -88,7 +88,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},false,html);
+                res.result({},2001,html);
                 console.error(html);
             }
         });
@@ -203,7 +203,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},false,html);
+                res.result({},2001,html);
                 console.error(html);
             }
         });
@@ -318,7 +318,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},false,html);
+                res.result({},2003,html);
                 console.error(html);
             }
         });
@@ -336,7 +336,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},false,html);
+                res.result({},2004,html);
                 console.error(html);
             }
         });

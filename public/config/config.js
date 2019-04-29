@@ -36,7 +36,15 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
           ,logout: 1001 //登录状态失效的状态码
         }
         ,msgName: 'msg' //状态信息的字段名称
-        ,dataName: 'data' //数据详情的字段名称
+        , dataName: 'data', //数据详情的字段名称
+        //请求地址
+        requestUrl: "http://localhost:8000",
+        //文件上传
+        fileUrl: "http://localhost:8000",
+        //默认请求头
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
       }
       
       //扩展的第三方模块

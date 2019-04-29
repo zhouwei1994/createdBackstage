@@ -4,15 +4,9 @@
 **/
 layui.define(['layer'], function (exports) { //提示：模块也可以依赖其它模块，如：layui.define('layer', callback);
     var $ = layui.$;
+    console.log(layui);
+    var setter = layui.setter.response;
     var http = {
-        //请求地址
-        requestUrl: "http://localhost:8000",
-        //文件上传
-        fileUrl: "http://localhost:8000",
-        //默认请求头
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        },
         //默认配置
         config: {
             //是否提示--默认提示
@@ -41,10 +35,10 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                 result: ""
             };
             //判断数据是否请求成功
-            if (resolve.success) {
+            if (resolve[setter.statusName] == setter.statusCode.ok) {
                 callback.success = true;
-                callback.result = resolve.data;
-            } else if (resolve.code == 10403) { //code == 10403 是用户未登录
+                callback.result = resolve[setter.dataName];
+            } else if (resolve[setter.statusName] == setter.statusCode.logout) { //code == 10403 是用户未登录
                 var content = '您还未登录，请先登录!';
                 if (_this.userInfo.token) {
                     content = '您的登录已失效，请重新登录!';
@@ -55,9 +49,9 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                 });
             } else { //其他错误提示
                 if (options.isPrompt) {
-                    layer.msg(resolve.msg);
+                    layer.msg(resolve[setter.msgName]);
                 }
-                callback.result = resolve.data;
+                callback.result = resolve[setter.dataName];
             }
             return callback;
         },
@@ -67,16 +61,16 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
             var urlType = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~/])+$/.test(url);
             var httpUrl;
             if (method == "file") {
-                httpUrl = urlType ? url : this.fileUrl + url;
+                httpUrl = urlType ? url : setter.fileUrl + url;
             } else {
-                httpUrl = urlType ? url : this.requestUrl + url;
+                httpUrl = urlType ? url : setter.requestUrl + url;
             };
             var config = this.modifyJson(options, this.config);
             //请求地址
             config.httpUrl = httpUrl;
             config.method = method;
             //请求头
-            config.headers = this.modifyJson(options.headers, this.headers);
+            config.headers = this.modifyJson(options.headers, setter.headers);
             return config;
         },
         request: function (options, data, callback,errCallback) {

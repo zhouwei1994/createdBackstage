@@ -25,7 +25,7 @@ module.exports = function (router, check) {
             loginDao(req.data.username, req.data.password).then(
                 data => {
                     if (data.length <= 0) {
-                        res.result({},false,"用户名或密码错误");
+                        res.result({},1001,"用户名或密码错误");
                     } else {
                         res.cookie('token', data[0].data, {
                             maxAge: 900000,
@@ -36,7 +36,7 @@ module.exports = function (router, check) {
                 }
             );
         } else {
-            res.result({},false,"验证码不正确");
+            res.result({},1002,"验证码不正确");
         }
     }));
     //图片验证码

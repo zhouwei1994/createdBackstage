@@ -54,6 +54,9 @@
         shade: function () {
             P.sideFlexible()
         },
+        logout: function () {
+            console.log(1132424);
+        },
         im: function () {
             P.popup({ id: "LAY-popup-layim-demo", shade: 0, area: ["800px", "300px"], title: "面板外的操作示例", offset: "lb", success: function () { layui.view(this.id).render("layim/demo").then(function () { layui.use("im") }) } })
         }
