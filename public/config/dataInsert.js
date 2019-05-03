@@ -68,49 +68,63 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                         var name = attr.name;
                         var arr = attr.value.split('.');
                         var value = data;
-                        if (name.indexOf("v-") != -1) {
+
+                        if (name == 'v-model') {
                             for (var key = 0; key < arr.length; key++) {
                                 value = value[arr[key]];
                             }
-                            if (name == 'v-model') {
-                                node.value = value;
-                                domList.push({
-                                    node: node,
-                                    type: "value",
-                                    oldValue: value,
-                                    route: attr.value
-                                });
-                                node.addEventListener('input', e => {
-                                    var newVal = e.target.value;
-                                    var val = data;
-                                    for (var key = 0; key < arr.length; key++) {
-                                        if (key === arr.length - 1) {
-                                            val[arr[key]] = newVal;
-                                            render();
-                                            return
-                                        }
-                                        val = val[arr[key]];
+                            node.value = value;
+                            domList.push({
+                                node: node,
+                                type: "value",
+                                oldValue: value,
+                                route: attr.value
+                            });
+                            node.addEventListener('input', e => {
+                                var newVal = e.target.value;
+                                var val = data;
+                                for (var key = 0; key < arr.length; key++) {
+                                    if (key === arr.length - 1) {
+                                        val[arr[key]] = newVal;
+                                        render();
+                                        return
                                     }
-                                });
+                                    val = val[arr[key]];
+                                }
+                            });
+                        } else if (name == 'v-text') {
+                            for (var key = 0; key < arr.length; key++) {
+                                value = value[arr[key]];
                             }
-                            if (name == 'v-text') {
-                                domList.push({
-                                    node: node,
-                                    type: "innerText",
-                                    oldValue: value,
-                                    route: attr.value
-                                });
-                                node.innerText = value;
+                            domList.push({
+                                node: node,
+                                type: "innerText",
+                                oldValue: value,
+                                route: attr.value
+                            });
+                            node.innerText = value;
+                        } else if (name == 'v-html') {
+                            for (var key = 0; key < arr.length; key++) {
+                                value = value[arr[key]];
                             }
-                            if (name == 'v-html') {
-                                domList.push({
-                                    node: node,
-                                    type: "innerHTML",
-                                    oldValue: value,
-                                    route: attr.value
-                                });
-                                node.innerHTML = value;
+                            domList.push({
+                                node: node,
+                                type: "innerHTML",
+                                oldValue: value,
+                                route: attr.value
+                            });
+                            node.innerHTML = value;
+                        } else if (name == 'v-show') {
+                            domList.push({
+                                node: node,
+                                type: "innerHTML",
+                                oldValue: value,
+                                route: attr.value
+                            });
+                            if (value) {
+
                             }
+                            node.stype.display = value;
                         }
                     }
                 }
