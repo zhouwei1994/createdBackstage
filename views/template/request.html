@@ -6,7 +6,10 @@
             isPrompt: true,
             //是否显示请求动画
             load: true,
-
+            //储存页面数据中心的名称
+            resultName:false,
+            //数据储存
+            storeData:false
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
@@ -25,11 +28,29 @@
             callback.success = false;
             callback.result = "请输入请求url请求方式,参数名：method";
         }
+        if (newData.storeData) {
+            if(!newData.storeData instanceof String){
+                callback.success = false;
+                callback.result = "数据储存格式不正确，正确的格式为json,参数名：storeData";
+            }
+        }
         return callback;
     }
 </script>
 <script name="templateScript">
     $http.<%= method %>("<%= requestUrl %>", <%= data %>, {}, function (res) {
+        <% if(resultName){ %>
+            if(insert){
+                insert.setData({
+                   <%= resultName %> : res
+                });
+            }else{
+                pageData.<%= resultName %> = res;
+            }
+        <% } %>
+        <% if(storeData){ %>
+            $http.setData(<%= storeData %>);
+        <% } %>
         //&&scriptchildren&&
     });
 </script>

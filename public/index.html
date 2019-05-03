@@ -10,8 +10,34 @@
 
 <body>
     <button onclick="onCreated()">生成项目</button>
+    <div id="app">
+        <span v-text="userInfo.aaa"></span>
+        {{userInfo.aaa}}
+        <div>
+            {{userInfo.bbb}}
+            <input type="text" v-model="userInfo.aaa">
+        </div>
+    </div>
     <script src="./config.js"></script>
     <script>
+        // var abc = {
+        //     userInfo: {
+        //         aaa: "1111",
+        //         bbb: "啊啊啊啊啊"
+        //     }
+        // };
+        // var ret = new dataInsert("app", abc);
+        // setTimeout(function () {
+        //     ret.setData({
+        //         userInfo: {
+        //             aaa: "2222",
+        //             ccc: "555"
+        //         }
+        //     });
+        // }, 1000)
+        
+        
+
         function onCreated() {
             request("/project/create", config, function (res) {
                 console.log(res);
@@ -37,29 +63,6 @@
                 }
             }
         }
-        var bbb = "aaaaa&&&@@@bbbb";
-        var ccc = ["1111", "2222", "3333", "4444"];
-        var qqq = ["5555", "6666", "77777", "88888"];
-
-        function aaa(i, name) {
-            if (i >= ccc.length - 1) {
-                var abc = qqq[i];
-                console.log("最后",i,abc);
-                return name.replace("&&&", abc);
-            } else {
-                var abc = qqq[i] + "&&&";
-                var abc = ccc[i] + "@@@";
-                var ppp = aaa(i + 1, abc);
-                var val = name.replace("&&&", ppp);
-                console.log(val);
-                return val;
-            }
-        }
-        console.log("结果", aaa(0, bbb));
-        //3
-            //       0     1       2       3
-        // aaaaa + 5555 + 6666 + 7777+ bbbb
-
     </script>
 </body>
 

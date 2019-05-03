@@ -27,11 +27,12 @@ module.exports = function (router, check) {
                     if (data.length <= 0) {
                         res.result({},1001,"用户名或密码错误");
                     } else {
-                        res.cookie('token', data[0].data, {
+                        res.cookie('token', data[0].id, {
                             maxAge: 900000,
                             path: '/'
                         });
-                        res.result(data[0].data);
+                        res.setHeader("token",data[0].id);
+                        res.result(data[0]);
                     }
                 }
             );

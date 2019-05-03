@@ -6,8 +6,8 @@ module.exports = {
         connectionLimit: 10,
         host: 'localhost',
         user: 'root',
-        password: '123123',
-        database: 'test',
+        password: '123456',
+        database: 'test1',
         dateStrings: true //将时间转换为字符串
     }
 }

@@ -57,8 +57,10 @@ module.exports = function (router, check) {
                     {
                         template: "request",
                         requestUrl: "/user/login",
-                        data:"data",
-                        method:"post",
+                        data: "data",
+                        method: "post",
+                        resultName: "login",
+                        storeData:"{userInfo:res}",
                         children: {
                             title: "",
                             name: "请求结果模块",
@@ -73,7 +75,7 @@ module.exports = function (router, check) {
                                             {
                                                 template: "router",
                                                 routerType: "page",
-                                                routerUrl:"main"
+                                                routerUrl:"main.html"
                                             }
                                         ]
                                     }
@@ -330,7 +332,8 @@ module.exports = function (router, check) {
         var login = {
             //模板名称
             template: "main",
-            pageType:"page",
+            pageType: "page",
+            projectName: "后台管理",
         };
         viewRend(login, function (state, html) {
             if (state) {

@@ -26,7 +26,10 @@
                 var $ = layui.$,
                     form = layui.form,
                     $http = layui.$http,
-                    popup = layer;
+                    popup = layer,
+                    dataInsert = layui.dataInsert,
+                    insert,
+                    pageData = {};
                     form.verify({
                         <% verifyList.forEach(function(key){ %>
                             <%- key.value %>: function (value, item) { //value：表单的值、item：表单的DOM对象
