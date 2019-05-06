@@ -15,17 +15,32 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
             for (var index = 0; index < len; index++) {
                 var item = domList[index];
                 var value = data;
-                var arr = item.route.split('.');
-                for (var key = 0; key < arr.length; key++) {
-                    value = value[arr[key]];
-                }
-                if (item.oldValue != value) {
-                    if (item.type == "textContent") {
-                        item.node[item.type] = item.initValue.replace(/\{\{(.*?)\}\}/g, value).trim();
-                    } else {
-                        item.node[item.type] = value;
+                if (item.make == "v-show") {
+                    var showValue = attr.value;
+                    for (var key in data) {
+                        var reg = new RegExp(key, "g");
+                        showValue = showValue.replace(reg, "data." + key);
                     }
-                    domList.oldValue = value;
+                    if (eval(showValue) != item.oldValue) {
+                        if (item.oldValue) {
+                            node.style.display = "none";
+                        } else {
+                            node.style.display = "inherit";
+                        }
+                    }
+                } else {
+                    var arr = item.route.split('.');
+                    for (var key = 0; key < arr.length; key++) {
+                        value = value[arr[key]];
+                    }
+                    if (item.oldValue != value) {
+                        if (item.type == "textContent") {
+                            item.node[item.type] = item.initValue.replace(/\{\{(.*?)\}\}/g, value).trim();
+                        } else {
+                            item.node[item.type] = value;
+                        }
+                        domList.oldValue = value;
+                    }
                 }
             }
         }
@@ -54,6 +69,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                     node.textContent = txt.replace(reg, val).trim();
                     domList.push({
                         node: node,
+                        make: "",
                         type: "textContent",
                         oldValue: val,
                         initValue: txt,
@@ -76,6 +92,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                             node.value = value;
                             domList.push({
                                 node: node,
+                                make: name,
                                 type: "value",
                                 oldValue: value,
                                 route: attr.value
@@ -98,6 +115,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                             }
                             domList.push({
                                 node: node,
+                                make: name,
                                 type: "innerText",
                                 oldValue: value,
                                 route: attr.value
@@ -109,22 +127,30 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                             }
                             domList.push({
                                 node: node,
+                                make: name,
                                 type: "innerHTML",
                                 oldValue: value,
                                 route: attr.value
                             });
                             node.innerHTML = value;
                         } else if (name == 'v-show') {
+                            var showValue = attr.value;
+                            for (var key in data) {
+                                var reg = new RegExp(key, "g");
+                                showValue = showValue.replace(reg, "data." + key);
+                            }
+                            if (eval(showValue)) {
+                                node.style.display = "inherit";
+                            } else {
+                                node.style.display = "none";
+                            }
                             domList.push({
                                 node: node,
-                                type: "innerHTML",
-                                oldValue: value,
+                                make: name,
+                                type: "style",
+                                oldValue: showValue,
                                 route: attr.value
                             });
-                            if (value) {
-
-                            }
-                            node.stype.display = value;
                         }
                     }
                 }

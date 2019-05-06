@@ -27,7 +27,7 @@
                             <i class="layui-icon layui-icon-notice"></i>
 
                             <!-- 如果有新消息，则显示小圆点 -->
-                            <span class="layui-badge-dot"></span>
+                            <span class="layui-badge-dot" v-show="userInfo.username == 0"></span>
                         </a>
                     </li>
                     <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -139,12 +139,12 @@
     }
 </script>
 <script name="templateScript">
-    if($http.data.userInfo){
+    if ($http.data.userInfo) {
         pageData.userInfo = $http.data.userInfo;
     }
-    setTimeout(function(){
+    setTimeout(function () {
         console.log($http.data.userInfo);
-    },2000)
-    insert = dataInsert("LAY_app",pageData);
+    }, 2000)
+    insert = dataInsert("LAY_app", pageData);
     //&&scriptchildren&&
 </script>
