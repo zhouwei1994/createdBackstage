@@ -30,7 +30,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
     function dataInsert(el, data) {
         var $el = document.getElementById(el);
         var domList = [];
-
+        var waitWithList = [];
         function render(options) {
             var len = domList.length;
             for (var index = 0; index < len; index++) {
@@ -48,11 +48,30 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                         }
                     }
                     if (state) {
+                        waitWithList = [];
                         var listLen = value.length;
-                        console.log(item.parent);
                         for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
                             var dom = domReplace(item.node.cloneNode(true), { item: value[itemIndex], index: itemIndex }, false);
-                            item.parent.insertBefore(dom, item.node);
+                            if (item.getNextSibling) {
+                                item.parent.insertBefore(dom, item.getNextSibling);
+                            } else {
+                                item.parent.insertBefore(dom, item.getNextSibling);
+                            }
+                        }
+                        for (var r = 0; r < item.removeList.length; r++) {
+                            item.parent.removeChild(item.removeList[r]);
+                        }
+                        //处理元素
+                        if (waitWithList.length > 0) {
+                            console.log(waitWithList);
+                            for (var a = 0; a < waitWithList.length; a++) {
+                                var item = waitWithList[a];
+                                if (item.value1) {
+                                    item.aims[item.type](item.value, item.value1);
+                                } else {
+                                    item.aims[item.type](item.value);
+                                }
+                            }
                         }
                     }
                 } else if (item.make == "v-show") {
@@ -63,6 +82,11 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                         } else {
                             item.node.style.display = "none";
                         }
+                    }
+                } else if (item.type == "attr") {
+                    var newVal = eval(item.route);
+                    if (newVal != item.oldValue) {
+                        item.aims.setAttribute(item.make, newVal)
                     }
                 } else {
                     var value = data;
@@ -87,7 +111,6 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
             }
             render(options);
         };
-        var waitWithList = [];
         domReplace($el, data, true);
         //处理元素
         if (waitWithList.length > 0) {
@@ -243,24 +266,48 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                                 type: "removeAttribute",
                                 value: "v-for",
                             });
+                            var getNextSibling = null;
+                            findSibling(node);
+                            function findSibling(dom) {
+                                var sibling = dom.nextSibling;
+                                if (sibling) {
+                                    if (sibling.nodeName == "#text") {
+                                        findSibling(sibling);
+                                    } else {
+                                        getNextSibling = sibling;
+                                    }
+                                }
+                            }
                             var getParentNode = node.parentNode;
                             var listLen = value.length;
+                            var forDomList = new Array;
                             for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
                                 var dom = domReplace(node.cloneNode(true), { item: value[itemIndex], index: itemIndex }, false);
-                                waitWithList.push({
-                                    aims: getParentNode,
-                                    type: "insertBefore",
-                                    value: dom,
-                                    value1: node,
-                                });
+                                forDomList.push(dom);
+                                if (getNextSibling) {
+                                    waitWithList.push({
+                                        aims: getParentNode,
+                                        type: "insertBefore",
+                                        value: dom,
+                                        value1: getNextSibling,
+                                    });
+                                } else {
+                                    waitWithList.push({
+                                        aims: getParentNode,
+                                        type: "appendChild",
+                                        value: dom,
+                                    });
+                                }
                             }
                             if (store) {
                                 domList.push({
                                     node: node,
+                                    getNextSibling: getNextSibling,
                                     make: name,
                                     type: "for",
                                     parent: getParentNode,
-                                    route: attr.value
+                                    route: attr.value,
+                                    removeList: forDomList
                                 });
                             }
                             waitWithList.push({
@@ -286,7 +333,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                             if (store) {
                                 domList.push({
                                     node: node,
-                                    make: name,
+                                    make: name.substring(1),
                                     type: "attr",
                                     oldValue: stringValue,
                                     route: showValue
