@@ -18,7 +18,8 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                     if (x == 0) {
                         value = "data." + value;
                     } else {
-                        if (value.substring(x - 1, x) != ".") {
+                        var value1 = value.substring(x - 1, x);
+                        if (value1 != "." && value1 != "'" && value1 != '"' && value1 != ':') {
                             value = value.substring(0, x) + "data." + value.substring(x);
                         }
                     }
@@ -35,8 +36,9 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
             var len = domList.length;
             for (var index = 0; index < len; index++) {
                 var item = domList[index];
-                if (item.make == "v-for") {
+                if (options && item.make == "v-for") {
                     var value = options;
+                    console.log(value);
                     var arr = item.route.split('.');
                     var state = true;
                     for (var key = 0; key < arr.length; key++) {
@@ -114,7 +116,6 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
         domReplace($el, data, true);
         //处理元素
         if (waitWithList.length > 0) {
-            console.log(waitWithList);
             for (var a = 0; a < waitWithList.length; a++) {
                 var item = waitWithList[a];
                 if (item.value1) {
@@ -133,23 +134,30 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                 var isChildlen = true;
                 var reg = /\{\{(.*?)\}\}/g; // 正则匹配{{}}
 
-                if (node.nodeType === 3 && reg.test(txt)) { // 即是文本节点又有大括号的情况{{}}
-                    var arr = RegExp.$1.split('.');
-                    var val = data;
-                    for (var key = 0; key < arr.length; key++) {
-                        val = val[arr[key]];
-                    }
-                    // 用trim方法去除一下首尾空格
-                    node.textContent = txt.replace(reg, val).trim();
-                    if (store) {
-                        domList.push({
-                            node: node,
-                            make: "",
-                            type: "textContent",
-                            oldValue: val,
-                            initValue: txt,
-                            route: RegExp.$1
-                        });
+                if (node.nodeType === 3) { // 即是文本节点又有大括号的情况{{}}
+                    var txtList = txt.match(reg);
+                    if (txtList) {
+                        var txtLen = txtList.length
+                        for (var t = 0; t < txtLen; t++) {
+                            var arrtext = txtList[t].substring(2, txtList[t].length - 2);
+                            var arr = arrtext.split('.')
+                            var val = data;
+                            for (var key = 0; key < arr.length; key++) {
+                                val = val[arr[key]];
+                            }
+                            // 用trim方法去除一下首尾空格
+                            node.textContent = node.textContent.replace(txtList[t], val).trim();
+                            if (store) {
+                                domList.push({
+                                    node: node,
+                                    make: "",
+                                    type: "textContent",
+                                    oldValue: val,
+                                    initValue: txt,
+                                    route: arrtext
+                                });
+                            }
+                        }
                     }
                 }
                 if (node.nodeType === 1) { // 元素节点
@@ -174,15 +182,17 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                                     oldValue: value,
                                     route: attr.value
                                 });
-                            } else {
-                                waitWithList.push({
-                                    aims: node,
-                                    type: "removeAttribute",
-                                    value: name,
-                                });
                             }
+                            // else {
+                            //     waitWithList.push({
+                            //         aims: node,
+                            //         type: "removeAttribute",
+                            //         value: name,
+                            //     });
+                            // }
                             node.addEventListener('input', e => {
                                 var newVal = e.target.value;
+                                var arr = e.target.getAttribute("v-model").split('.');
                                 var val = data;
                                 for (var key = 0; key < arr.length; key++) {
                                     if (key === arr.length - 1) {
