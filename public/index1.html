@@ -28,18 +28,20 @@
         </div>
         <br />
         <div>5.v-show指令</div>
-        <div v-show="aaa.b == 2222">可以看见我了</div>
-        <div v-show="aaa.b != 2222">真正的我隐藏了</div>
+        <div v-show="aaa.b">可以看见我了{{aaa.b}}</div>
+        <div v-show="!aaa.b">真正的我隐藏了</div>
         <br />
         <div>6. :指令</div>
         <div :style="'color:'+color">我是红色的</div>
+        <div>7. 加减乘除</div>
+        <div>{{1 + 1}}</div>
     </div>
     <script src="./config.js"></script>
     <script>
         var insert = new dataInsert("app", {
             aaa: {
                 a: 111,
-                b: 2222,
+                // b: 2222,
                 aa: {
                     a: 222
                 },
@@ -51,7 +53,6 @@
             insert.setData({
                 aaa: {
                     a: "aaa",
-                    b: 3333,
                     aa: {
                         a: "a11a1"
                     },
@@ -60,7 +61,19 @@
 
             });
         }, 2000)
-
+        setTimeout(function () {
+            insert.setData({
+                aaa: {
+                    a: "啊啊啊",
+                    b: 2222,
+                    aa: {
+                        a: "啊啊啊"
+                    },
+                    list: ["啊", "吧", "去", "的", "是", "费", "个"]
+                },
+                color: "#0f0"
+            });
+        }, 6000)
         function trim(str) {
             return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');
         }
@@ -97,7 +110,6 @@
                     var item = domList[index];
                     if (options && item.make == "v-for") {
                         var value = options;
-                        console.log(value);
                         var arr = item.route.split('.');
                         var state = true;
                         for (var key = 0; key < arr.length; key++) {
@@ -110,9 +122,11 @@
                         }
                         if (state) {
                             waitWithList = [];
+                            var forDomList = [];
                             var listLen = value.length;
                             for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
                                 var dom = domReplace(item.node.cloneNode(true), { item: value[itemIndex], index: itemIndex }, false);
+                                forDomList.push(dom);
                                 if (item.getNextSibling) {
                                     item.parent.insertBefore(dom, item.getNextSibling);
                                 } else {
@@ -122,9 +136,9 @@
                             for (var r = 0; r < item.removeList.length; r++) {
                                 item.parent.removeChild(item.removeList[r]);
                             }
+                            item.removeList = forDomList;
                             //处理元素
                             if (waitWithList.length > 0) {
-                                console.log(waitWithList);
                                 for (var a = 0; a < waitWithList.length; a++) {
                                     var item = waitWithList[a];
                                     if (item.value1) {
@@ -143,11 +157,13 @@
                             } else {
                                 item.node.style.display = "none";
                             }
+                            item.oldValue = booleanVal;
                         }
                     } else if (item.type == "attr") {
                         var newVal = eval(item.route);
                         if (newVal != item.oldValue) {
-                            item.aims.setAttribute(item.make, newVal)
+                            item.node.setAttribute(item.make, newVal)
+                            item.oldValue = newVal;
                         }
                     } else {
                         var value = data;
@@ -161,7 +177,7 @@
                             } else {
                                 item.node[item.type] = value;
                             }
-                            domList.oldValue = value;
+                            item.oldValue = value;
                         }
                     }
                 }
@@ -243,13 +259,6 @@
                                         route: attr.value
                                     });
                                 }
-                                // else {
-                                //     waitWithList.push({
-                                //         aims: node,
-                                //         type: "removeAttribute",
-                                //         value: name,
-                                //     });
-                                // }
                                 node.addEventListener('input', e => {
                                     var newVal = e.target.value;
                                     var arr = e.target.getAttribute("v-model").split('.');
@@ -409,6 +418,8 @@
                                         route: showValue
                                     });
                                 }
+                            } else if (name == 'v-if') {
+
                             }
                         }
                     }
