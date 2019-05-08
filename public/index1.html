@@ -4,49 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
     <title>前台</title>
 </head>
 
 <body>
     <div id="app">
         <div>1.v-text指令</div>
-        <div v-text="aaa.aa.a"></div>
+        <div v-text="{{aaa.aa.a}}"></div>
         <br />
         <div>2.{{指令</div>
-        <div>{{aaa.b}}</div>
+        <div>{{aaa.b}} 啊啊啊啊啊{{aaa.a}}</div>
         <br />
-        <div>
-            <div>3.输入框双向绑定</div>
-            {{aaa.a}}
-            <br />
-            <input type="text" v-model="aaa.a">
-            <br />
-            <br />
-            <div>4.列表循环</div>
-            <div v-for="aaa.list">{{index}}{{item}}</div>
-        </div>
+        <div>3.输入框双向绑定</div>
+        <div>{{aaa.a}}</div>
+        <br />
+        <input type="text" value="{{aaa.a}}">
+        <input type="text" value="{{aaa.b}}">
+        <br />
+        <br />
+        <div>4.v-html指令</div>
+        <div v-html="{{html}}"></div>
+        <div>4.列表循环</div>
+        <div v-for="{{list:(item,index)}}">{{index}}{{item.a}} <span
+                v-for="{{item.list:(childItem,childIndex)}}">{{childItem}}</span></div>
         <br />
         <div>5.v-show指令</div>
-        <div v-show="aaa.b">可以看见我了{{aaa.b}}</div>
-        <div v-show="!aaa.b">真正的我隐藏了</div>
+        <div v-show="{{aaa.b}}">可以看见我了{{aaa.b}}</div>
+        <div v-show="{{!aaa.b}}">真正的我隐藏了</div>
         <br />
         <div>6. :指令</div>
-        <div :style="'color:'+color">我是红色的</div>
+        <div :style="{{'color:'+color}}">我是红色的</div>
         <div>7. 加减乘除</div>
-        <div>{{1 + 1}}</div>
+        <div>{{1 + (2 / 5)}}</div>
     </div>
-    <script src="./config.js"></script>
     <script>
+        var qqqq = [1, 2, 3, 4, 5];
         var insert = new dataInsert("app", {
             aaa: {
                 a: 111,
-                // b: 2222,
+                b: 2222,
                 aa: {
                     a: 222
                 },
-                list: [1, 2, 3, 4, 5, 6, 7]
             },
+            list: [{
+                a: 1,
+                list: [1, 2, 3, 4]
+            }, {
+                a: 2,
+                list: [1, 2, 3, 4]
+            }],
+            html: "<a href='http://www.baidu.com'>百度</a>",
             color: "#F00"
         });
         setTimeout(function () {
@@ -56,11 +65,9 @@
                     aa: {
                         a: "a11a1"
                     },
-                    list: ["a", "b", "c", "d", "e", "f", "g"]
                 },
-
             });
-        }, 2000)
+        }, 2000);
         setTimeout(function () {
             insert.setData({
                 aaa: {
@@ -69,129 +76,199 @@
                     aa: {
                         a: "啊啊啊"
                     },
-                    list: ["啊", "吧", "去", "的", "是", "费", "个"]
                 },
+                list: [{
+                    a: "啊",
+                    list: [1, 2, 3, 4]
+                }, {
+                    a: "哦",
+                    list: [1, 2, 3, 4]
+                }],
                 color: "#0f0"
             });
-        }, 6000)
+        }, 6000);
+
         function trim(str) {
             return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');
         }
-        function jsMatch(value, data) {
-            for (var key in data) {
-                var reg = new RegExp(key, "g");
-                var matchList = value.match(reg);
-                if (matchList) {
-                    for (var m = 0; m < matchList.length; m++) {
-                        var x = value.indexOf(matchList[m]);
-                        for (var w = 1; w < m + 1; w++) {
-                            x = value.indexOf(matchList[m], x + 1);
-                        }
-                        if (x == 0) {
-                            value = "data." + value;
-                        } else {
-                            var value1 = value.substring(x - 1, x);
-                            if (value1 != "." && value1 != "'" && value1 != '"' && value1 != ':') {
-                                value = value.substring(0, x) + "data." + value.substring(x);
+
+        function jsMatch(text, data, callback) {
+            if (text && trim(text)) {
+                var reg = /\{\{(.*?)\}\}/g;
+                var backString = false;
+                if (text.replace(reg, "")) {
+                    backString = true;
+                };
+                var textList = text.match(reg);
+                //条件列表
+                var conditionList = [];
+                //js方法列表
+                var jsList = [];
+                if (textList) {
+                    var textLen = textList.length;
+                    for (var t = 0; t < textLen; t++) {
+                        var arrtext = textList[t].substring(2, textList[t].length - 2);
+                        conditionList.push(arrtext);
+                        for (var key in data) {
+                            var keyReg = new RegExp(key, "g");
+                            var matchList = arrtext.match(keyReg);
+                            if (matchList) {
+                                for (var m = 0; m < matchList.length; m++) {
+                                    var x = arrtext.indexOf(matchList[m]);
+                                    for (var w = 1; w < m + 1; w++) {
+                                        x = arrtext.indexOf(matchList[m], x + 1);
+                                    };
+                                    if (x == 0) {
+                                        arrtext = "data." + arrtext;
+                                    } else {
+                                        var value1 = arrtext.substring(x - 1, x);
+                                        if (value1 != "." && value1 != "'" && value1 != '"' && value1 != ':') {
+                                            arrtext = arrtext.substring(0, x) + "data." + arrtext.substring(x);
+                                        };
+                                    };
+                                }
                             }
                         }
+                        try {
+                            jsList.push(arrtext);
+                            var dataVal = eval(arrtext);
+                            if (!backString && textLen <= 1) {
+                                text = dataVal;
+                            } else {
+                                text = text.replace(textList[t], dataVal)
+                            }
+                        } catch (err) {
+                            console.log(err);
+                            text = false;
+                        }
                     }
+                    callback && callback(text, conditionList, jsList);
+                    return text;
+                } else {
+                    callback && callback(false, conditionList, jsList);
+                    return false;
                 }
+            } else {
+                callback && callback(false, [], []);
+                return false;
             }
-            return value;
         }
+
         function dataInsert(el, data) {
             var $el = document.getElementById(el);
             var domList = [];
             var waitWithList = [];
-            function render(options) {
-                var len = domList.length;
-                for (var index = 0; index < len; index++) {
-                    var item = domList[index];
-                    if (options && item.make == "v-for") {
-                        var value = options;
-                        var arr = item.route.split('.');
-                        var state = true;
-                        for (var key = 0; key < arr.length; key++) {
-                            if (value[arr[key]]) {
-                                value = value[arr[key]];
-                            } else {
-                                state = false;
-                                break;
-                            }
+
+            function dataDiff(newData, oldData, jsonPath, arrPath) {
+                for (var key in newData) {
+                    jsonPath = jsonPath ? jsonPath + '.' + key : key;
+                    arrPath = arrPath ? arrPath + '[' + key + ']' : key;
+                    if (newData[key] instanceof Array) {
+                        oldData[key] = newData[key];
+                        render(newData[key], jsonPath, arrPath,"array");
+                    } else if (newData[key] instanceof Object) {
+                        if (oldData[key] && oldData[key] instanceof Object) {
+                            dataDiff(newData[key], oldData[key], jsonPath, arrPath);
+                        } else {
+                            oldData[key] = newData[key];
+                            render(newData[key], jsonPath, arrPath,"");
                         }
-                        if (state) {
-                            waitWithList = [];
-                            var forDomList = [];
-                            var listLen = value.length;
-                            for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
-                                var dom = domReplace(item.node.cloneNode(true), { item: value[itemIndex], index: itemIndex }, false);
-                                forDomList.push(dom);
-                                if (item.getNextSibling) {
-                                    item.parent.insertBefore(dom, item.getNextSibling);
-                                } else {
-                                    item.parent.insertBefore(dom, item.getNextSibling);
-                                }
-                            }
-                            for (var r = 0; r < item.removeList.length; r++) {
-                                item.parent.removeChild(item.removeList[r]);
-                            }
-                            item.removeList = forDomList;
-                            //处理元素
-                            if (waitWithList.length > 0) {
-                                for (var a = 0; a < waitWithList.length; a++) {
-                                    var item = waitWithList[a];
-                                    if (item.value1) {
-                                        item.aims[item.type](item.value, item.value1);
-                                    } else {
-                                        item.aims[item.type](item.value);
-                                    }
-                                }
-                            }
-                        }
-                    } else if (item.make == "v-show") {
-                        var booleanVal = eval(item.route);
-                        if (booleanVal != item.oldValue) {
-                            if (booleanVal) {
-                                item.node.style.display = "inherit";
-                            } else {
-                                item.node.style.display = "none";
-                            }
-                            item.oldValue = booleanVal;
-                        }
-                    } else if (item.type == "attr") {
-                        var newVal = eval(item.route);
-                        if (newVal != item.oldValue) {
-                            item.node.setAttribute(item.make, newVal)
-                            item.oldValue = newVal;
-                        }
-                    } else {
-                        var value = data;
-                        var arr = item.route.split('.');
-                        for (var key = 0; key < arr.length; key++) {
-                            value = value[arr[key]];
-                        }
-                        if (item.oldValue != value) {
-                            if (item.type == "textContent") {
-                                item.node[item.type] = item.initValue.replace(/\{\{(.*?)\}\}/g, value).trim();
-                            } else {
-                                item.node[item.type] = value;
-                            }
-                            item.oldValue = value;
-                        }
+                    } else if (data[key] != newData[key]) {
+                        oldData[key] = newData[key];
+                        render(newData[key], jsonPath, arrPath,"");
                     }
                 }
             }
-            this.setData = function (options) {
-                for (var key in options) { //遍历json对象的每个key/value对,p为key
-                    data[key] = options[key];
+            function render(res, jsonPath, arrPath,type) {
+                // console.log(res, jsonPath, arrPath);
+                jsonPath = "data." + jsonPath;
+                arrPath = "data." + arrPath;
+                var len = domList.length;
+                for (var index = 0; index < len; index++) {
+                    var item = domList[index];
+                    console.log(item.initValue);
+                    if(type == "array"){
+                        if(item.initValue == jsonPath || item.initValue == arrPath){
+
+                        }
+                    }
                 }
-                render(options);
+                // var len = domList.length;
+                // for (var index = 0; index < len; index++) {
+                //     var item = domList[index];
+                //     if (options && item.make == "v-for") {
+                //         var showValue = jsMatch(item.initValue, options);
+                //         if (showValue) {
+                //             waitWithList = [];
+                //             var forDomList = [];
+                //             var listLen = showValue.length;
+                //             var childData = {};
+                //             for (var dataKey in data) {
+                //                 childData[dataKey] = data[dataKey];
+                //             }
+                //             for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
+                //                 childData[item.forConfig.item] = showValue[itemIndex];
+                //                 childData[item.forConfig.index] = itemIndex;
+                //                 var dom = domReplace(item.node.cloneNode(true), childData, false);
+                //                 forDomList.push(dom);
+                //                 if (item.getNextSibling) {
+                //                     item.parent.insertBefore(dom, item.getNextSibling);
+                //                 } else {
+                //                     item.parent.insertBefore(dom, item.getNextSibling);
+                //                 }
+                //             }
+                //             for (var r = 0; r < item.removeList.length; r++) {
+                //                 item.parent.removeChild(item.removeList[r]);
+                //             }
+                //             item.removeList = forDomList;
+                //             //处理元素
+                //             if (waitWithList.length > 0) {
+                //                 for (var a = 0; a < waitWithList.length; a++) {
+                //                     var item = waitWithList[a];
+                //                     if (item.value1) {
+                //                         item.aims[item.type](item.value, item.value1);
+                //                     } else {
+                //                         item.aims[item.type](item.value);
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     } else if (item.make == "v-show") {
+                //         var showValue = jsMatch(item.initValue, data);
+                //         if (item.oldValue !== showValue) {
+                //             if (showValue) {
+                //                 item.node.style.display = "inherit";
+                //             } else {
+                //                 item.node.style.display = "none";
+                //             }
+                //             item.oldValue = showValue;
+                //         }
+                //     } else {
+                //         var showValue = jsMatch(item.initValue, data);
+                //         if (showValue && item.oldValue != showValue) {
+                //             if (item.type == "setAttribute") {
+                //                 item.node.setAttribute(item.make, showValue);
+                //                 item.oldValue = showValue;
+                //             } else if (attrValue && item.node.nodeName == "INPUT") {
+
+                //             } else {
+                //                 item.node[item.type] = showValue;
+                //                 item.oldValue = showValue;
+                //             }
+                //         }
+                //     }
+                // }
+            }
+            this.setData = function (options) {
+                // for (var key in options) { //遍历json对象的每个key/value对,p为key
+                //     data[key] = options[key];
+                // }
+                dataDiff(options, data, "", "");
+                // render(options);
             };
             domReplace($el, data, true);
             //处理元素
             if (waitWithList.length > 0) {
-                console.log(waitWithList);
                 for (var a = 0; a < waitWithList.length; a++) {
                     var item = waitWithList[a];
                     if (item.value1) {
@@ -201,226 +278,170 @@
                     }
                 }
             }
+
             function domReplace(frag, data, store) {
                 var childNodes = frag.childNodes;
                 var childlen = childNodes.length;
                 for (var i = 0; i < childlen; i++) {
                     var node = childNodes[i];
-                    var txt = node.textContent;
+                    var txt = node.nodeValue;
                     var isChildlen = true;
                     var reg = /\{\{(.*?)\}\}/g; // 正则匹配{{}}
-
-                    if (node.nodeType === 3) { // 即是文本节点又有大括号的情况{{}}
-                        var txtList = txt.match(reg);
-                        if (txtList) {
-                            var txtLen = txtList.length
-                            for (var t = 0; t < txtLen; t++) {
-                                var arrtext = txtList[t].substring(2, txtList[t].length - 2);
-                                var arr = arrtext.split('.')
-                                var val = data;
-                                for (var key = 0; key < arr.length; key++) {
-                                    val = val[arr[key]];
-                                }
-                                // 用trim方法去除一下首尾空格
-                                node.textContent = node.textContent.replace(txtList[t], val).trim();
-                                if (store) {
-                                    domList.push({
-                                        node: node,
-                                        make: "",
-                                        type: "textContent",
-                                        oldValue: val,
-                                        initValue: txt,
-                                        route: arrtext
-                                    });
-                                }
+                    if (node.nodeName == "SCRIPT" || node.nodeName == "STYLE") {
+                        isChildlen = false;
+                        return;
+                    }
+                    if (node.nodeType === 3) {
+                        var showValue = jsMatch(txt, data);
+                        if (showValue) {
+                            node.nodeValue = showValue;
+                            if (store) {
+                                domList.push({
+                                    node: node,
+                                    make: "",
+                                    type: "nodeValue",
+                                    oldValue: showValue,
+                                    initValue: txt
+                                });
                             }
                         }
-                    }
-                    if (node.nodeType === 1) { // 元素节点
-                        var nodeAttr = node.attributes; // 获取dom上的所有属性,是个类数组
+                    } else if (node.nodeType === 1) {
+                        var nodeAttr = node.attributes;
                         var attrLen = nodeAttr.length;
-
                         for (var j = 0; j < attrLen; j++) {
                             var attr = nodeAttr[j];
                             var name = attr.name;
-                            var arr = attr.value.split('.');
-                            var value = data;
-                            if (name == 'v-model') {
-                                for (var key = 0; key < arr.length; key++) {
-                                    value = value[arr[key]];
-                                }
-                                node.value = value;
-                                if (store) {
-                                    domList.push({
-                                        node: node,
-                                        make: name,
-                                        type: "value",
-                                        oldValue: value,
-                                        route: attr.value
-                                    });
-                                }
-                                node.addEventListener('input', e => {
-                                    var newVal = e.target.value;
-                                    var arr = e.target.getAttribute("v-model").split('.');
-                                    var val = data;
-                                    for (var key = 0; key < arr.length; key++) {
-                                        if (key === arr.length - 1) {
-                                            val[arr[key]] = newVal;
-                                            render();
-                                            return
-                                        }
-                                        val = val[arr[key]];
+                            var forConfig = {
+                                item: "item",
+                                index: "index",
+                            };
+                            var attrValue = attr.value;
+                            if (name == "v-for") {
+                                attrValue = attrValue.replace(/\:\((.*?)\,(.*?)\)/g, "");
+                                forConfig.item = RegExp.$1;
+                                forConfig.index = RegExp.$2;
+                            }
+                            if (name == ":style") {
+                                name = "style";
+                            }
+                            jsMatch(attrValue, data, function (text, conditionList, jsList) {
+                                var domConfig = {
+                                    node: node,
+                                    make: name,
+                                    initValue: attrValue,
+                                    oldValue: text
+                                };
+                                var waitWithState = false;
+                                if (name == 'v-show') {
+                                    if (text) {
+                                        node.style.display = "inherit";
+                                    } else {
+                                        node.style.display = "none";
                                     }
-                                });
-                            } else if (name == 'v-text') {
-                                for (var key = 0; key < arr.length; key++) {
-                                    value = value[arr[key]];
-                                }
-                                if (store) {
-                                    domList.push({
-                                        node: node,
-                                        make: name,
-                                        type: "innerText",
-                                        oldValue: value,
-                                        route: attr.value
-                                    });
-                                } else {
-                                    waitWithList.push({
-                                        aims: node,
-                                        type: "removeAttribute",
-                                        value: name,
-                                    });
-                                }
-                                node.innerText = value;
-                            } else if (name == 'v-html') {
-                                for (var key = 0; key < arr.length; key++) {
-                                    value = value[arr[key]];
-                                }
-                                if (store) {
-                                    domList.push({
-                                        node: node,
-                                        make: name,
-                                        type: "innerHTML",
-                                        oldValue: value,
-                                        route: attr.value
-                                    });
-                                } else {
-                                    waitWithList.push({
-                                        aims: node,
-                                        type: "removeAttribute",
-                                        value: name,
-                                    });
-                                }
-                                node.innerHTML = value;
-                            } else if (name == 'v-show') {
-                                var showValue = jsMatch(attr.value, data);
-                                var booleanVal = eval(showValue);
-                                if (booleanVal) {
-                                    node.style.display = "inherit";
-                                } else {
-                                    node.style.display = "none";
-                                }
-                                if (store) {
-                                    domList.push({
-                                        node: node,
-                                        make: name,
-                                        type: "style",
-                                        oldValue: booleanVal,
-                                        route: showValue
-                                    });
-                                } else {
-                                    waitWithList.push({
-                                        aims: node,
-                                        type: "removeAttribute",
-                                        value: name,
-                                    });
-                                }
-                            } else if (name == 'v-for') {
-                                isChildlen = false;
-                                for (var key = 0; key < arr.length; key++) {
-                                    value = value[arr[key]];
-                                }
-                                waitWithList.push({
-                                    aims: node,
-                                    type: "removeAttribute",
-                                    value: "v-for",
-                                });
-                                var getNextSibling = null;
-                                findSibling(node);
-                                function findSibling(dom) {
-                                    var sibling = dom.nextSibling;
-                                    if (sibling) {
-                                        if (sibling.nodeName == "#text") {
-                                            findSibling(sibling);
-                                        } else {
-                                            getNextSibling = sibling;
+                                    domConfig.type = "style";
+                                    waitWithState = true;
+                                } else if (name == "v-if") {
+
+                                } else if (text) {
+                                    if (node.nodeName == "INPUT") {
+                                        node.value = text;
+                                        domConfig.type = "value";
+                                        getinput(node, jsList[0]);
+
+                                        function getinput(node, jsNode, attrValue) {
+                                            if (node.addEventListener) {
+                                                node.addEventListener('input', function (e) {
+                                                    var newVal = e.target.value;
+                                                    eval(jsNode + "='" + newVal + "'");
+                                                    render();
+                                                });
+                                            } else {
+                                                node.onpropertychange = function (e) {
+                                                    // render({}, attrValue);
+                                                    var newVal = node.value;
+                                                    eval(jsNode + "='" + newVal + "'");
+                                                    render({}, attrValue);
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                                var getParentNode = node.parentNode;
-                                var listLen = value.length;
-                                var forDomList = new Array;
-                                for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
-                                    var dom = domReplace(node.cloneNode(true), { item: value[itemIndex], index: itemIndex }, false);
-                                    forDomList.push(dom);
-                                    if (getNextSibling) {
+
+                                    } else if (name == 'v-text') {
+                                        domConfig.type = "innerText";
+                                        node.innerText = text;
+                                        waitWithState = true;
+                                    } else if (name == 'v-html') {
+                                        domConfig.type = "innerHTML";
+                                        node.innerHTML = text;
+                                        waitWithState = true;
+                                    } else if (name == 'v-for') {
+                                        isChildlen = false;
+                                        waitWithState = true;
+                                        var getNextSibling = null;
+                                        findSibling(node);
+
+                                        function findSibling(dom) {
+                                            var sibling = dom.nextSibling;
+                                            if (sibling) {
+                                                if (sibling.nodeName == "#text") {
+                                                    findSibling(sibling);
+                                                } else {
+                                                    getNextSibling = sibling;
+                                                }
+                                            }
+                                        }
+                                        var getParentNode = node.parentNode;
+                                        var listLen = text.length;
+                                        var childData = {};
+                                        var forDomList = new Array;
+                                        for (var dataKey in data) {
+                                            childData[dataKey] = data[dataKey];
+                                        }
+                                        for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
+                                            childData[forConfig.item] = text[itemIndex];
+                                            childData[forConfig.index] = itemIndex;
+                                            var dom = domReplace(node.cloneNode(true), childData, false);
+                                            forDomList.push(dom);
+                                            if (getNextSibling) {
+                                                waitWithList.push({
+                                                    aims: getParentNode,
+                                                    type: "insertBefore",
+                                                    value: dom,
+                                                    value1: getNextSibling,
+                                                });
+                                            } else {
+                                                waitWithList.push({
+                                                    aims: getParentNode,
+                                                    type: "appendChild",
+                                                    value: dom,
+                                                });
+                                            }
+                                        }
+                                        domConfig.removeList = forDomList;
+                                        domConfig.getNextSibling = getNextSibling;
+                                        domConfig.type = "v-for";
+                                        domConfig.parent = getParentNode;
+                                        domConfig.parent = getParentNode;
+                                        domConfig.forConfig = forConfig;
                                         waitWithList.push({
                                             aims: getParentNode,
-                                            type: "insertBefore",
-                                            value: dom,
-                                            value1: getNextSibling,
+                                            type: "removeChild",
+                                            value: node
                                         });
                                     } else {
-                                        waitWithList.push({
-                                            aims: getParentNode,
-                                            type: "appendChild",
-                                            value: dom,
-                                        });
+                                        node.setAttribute(name, text);
+                                        domConfig.type = "setAttribute";
                                     }
                                 }
                                 if (store) {
-                                    domList.push({
-                                        node: node,
-                                        getNextSibling: getNextSibling,
-                                        make: name,
-                                        type: "for",
-                                        parent: getParentNode,
-                                        route: attr.value,
-                                        removeList: forDomList
+                                    domList.push(domConfig);
+                                } else if (waitWithState) {
+                                    waitWithList.push({
+                                        aims: node,
+                                        type: "removeAttribute",
+                                        value: name,
                                     });
                                 }
-                                waitWithList.push({
-                                    aims: getParentNode,
-                                    type: "removeChild",
-                                    value: node,
-                                    value1: node,
-                                });
-                            } else if (/^:/.test(name)) {
-                                var showValue = jsMatch(attr.value, data);
-                                var stringValue = eval(showValue);
-                                waitWithList.push({
-                                    aims: node,
-                                    type: "setAttribute",
-                                    value: name.substring(1),
-                                    value1: stringValue
-                                });
-                                waitWithList.push({
-                                    aims: node,
-                                    type: "removeAttribute",
-                                    value: name,
-                                });
-                                if (store) {
-                                    domList.push({
-                                        node: node,
-                                        make: name.substring(1),
-                                        type: "attr",
-                                        oldValue: stringValue,
-                                        route: showValue
-                                    });
-                                }
-                            } else if (name == 'v-if') {
-
-                            }
+                            });
                         }
                     }
                     // 如果还有子节点，继续递归replace
