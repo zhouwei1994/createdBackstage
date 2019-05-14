@@ -21,33 +21,30 @@
                     </li>
                 </ul>
                 <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right" style="margin-right:30px;">
-
+                    <% customizeBut.forEach(function(item,index){ %>
+                    <% if(item.openPage){ %>
                     <li class="layui-nav-item" lay-unselect>
-                        <a lay-href="app/message/index.html" layadmin-event="message" lay-text="消息中心">
-                            <i class="layui-icon layui-icon-notice"></i>
-
+                        <a lay-href="<%= item.openPage.href %>" layadmin-event="<%= item.type %>"
+                            lay-text="<%= item.openPage.title %>">
+                            <i class="layui-icon <%= item.icon %>"></i>
+                            <% if(item.openPage.redDot){ %>
                             <!-- 如果有新消息，则显示小圆点 -->
-                            <span class="layui-badge-dot" v-show="data.data == 2"></span>
+                            <span red-dot="<%= item.openPage.redDot %>" v-show="{{<%= item.openPage.redDot %>}}"
+                                class="layui-badge-dot"></span>
+                            <% } %>
                         </a>
                     </li>
+                    <% } else { %>
                     <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                        <a href="javascript:;" layadmin-event="theme">
-                            <i class="layui-icon layui-icon-theme"></i>
+                        <a href="javascript:;" layadmin-event="<%= item.type %>">
+                            <i class="layui-icon <%= item.icon %>"></i>
                         </a>
                     </li>
-                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                        <a href="javascript:;" layadmin-event="note">
-                            <i class="layui-icon layui-icon-note"></i>
-                        </a>
-                    </li>
-                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                        <a href="javascript:;" layadmin-event="fullscreen">
-                            <i class="layui-icon layui-icon-screen-full"></i>
-                        </a>
-                    </li>
+                    <% } %>
+                    <% }); %>
                     <li class="layui-nav-item" lay-unselect>
                         <a href="javascript:;">
-                            <cite v-text="userInfo.username"></cite>
+                            <cite v-text="{{<%= nickname %>}}"></cite>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a lay-href="set/user/info.html">基本资料</a></dd>
@@ -76,12 +73,6 @@
                             <dl class="layui-nav-child">
                                 <dd data-name="console" class="layui-this">
                                     <a lay-href="home/console.html">控制台</a>
-                                </dd>
-                                <dd data-name="console">
-                                    <a lay-href="home/homepage1.html">主页一</a>
-                                </dd>
-                                <dd data-name="console" v-for="data.list">
-                                    <a :lay-href="'home/homepage'+item.a+'.html'" v-text="item.a"></a>
                                 </dd>
                                 <dd data-name="console">
                                     <a lay-href="home/homepage1.html">主页一</a>
@@ -142,33 +133,6 @@
     }
 </script>
 <script name="templateScript">
-    if ($http.data.userInfo) {
-        pageData.userInfo = $http.data.userInfo;
-    }
-    pageData.data = {};
-    pageData.data.data = 1;
-    pageData.data.list = [
-        {
-            a: 2,
-            b: 2
-        }, {
-            a: 3,
-            b: 2
-        },
-    ];
-    insert = dataInsert("LAY_app", pageData);
-    setTimeout(function () {
-        console.log($http.data.userInfo);
-        insert.setData({
-            data: {
-                data: 2,
-                list: [{
-                    a: 4
-                }, {
-                    a: 5
-                }]
-            }
-        });
-    }, 2000)
+    insert = dataDom("LAY_app", pageData);
     //&&scriptchildren&&
 </script>

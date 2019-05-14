@@ -11,7 +11,23 @@
             e.off("keypress").on("keypress", function (a) { if (this.value.replace(/\s/g, "") && 13 === a.keyCode) { var i = e.attr("lay-action"), t = e.attr("lay-text") || "搜索"; i += this.value, t = t + ' <span style="color: #FF5722;">' + P.escape(this.value) + "</span>", layui.index.openTabsPage(i, t), F.serach.keys || (F.serach.keys = {}), F.serach.keys[P.tabsPage.index] = this.value, this.value === F.serach.keys[P.tabsPage.index] && F.refresh(e), this.value = "" } })
         },
         message: function (e) {
-            e.find(".layui-badge-dot").remove()
+            var redDot = e.find(".layui-badge-dot").attr("red-dot");
+            e.find(".layui-badge-dot").hide();
+            if (redDot) {
+                var redDotList = redDot.split('.');
+                var httpData = layui.$http.data;
+                var redDotLen = redDotList.length -1;
+                console.log(httpData);
+                for (var i in redDotList) {
+                    console.log(httpData[redDotList[i]]);
+                    if (i == redDotLen) {
+                         httpData[redDotList[i]] = 0;
+                    } else {
+                        httpData = httpData[redDotList[i]];
+                    }
+                }
+                layui.$http.setData(layui.$http.data);
+            }
         },
         theme: function () {
             P.popupRight({ id: "LAY_adminPopupTheme", success: function () { l(this.id).render("system/theme") } })

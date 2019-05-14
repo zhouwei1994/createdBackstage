@@ -34,6 +34,7 @@ module.exports = function (router, check) {
                         template: "loginInput",
                         title: "密码",
                         name: "password",
+                        inputType:"password",
                         placeholder:"密码",
                         icon: "layui-icon-password",
                         verify: "required|password",
@@ -334,6 +335,36 @@ module.exports = function (router, check) {
             template: "main",
             pageType: "page",
             projectName: "后台管理",
+            //右上角昵称
+            nickname: "userInfo.nickname",
+            //自定义右上角按钮
+            customizeBut: [
+                {
+                    openPage: {
+                        redDot: "userInfo.redDot",
+                        href: "message.html",
+                        title:"消息中心",
+                    },
+                    // openPage: false,
+                    icon: "layui-icon-notice",
+                    type:"message"
+                },
+                {
+                    openPage: false,
+                    icon: "layui-icon-theme",
+                    type:"theme"
+                },
+                {
+                    openPage: false,
+                    icon: "layui-icon-note",
+                    type:"note"
+                },
+                {
+                    openPage: false,
+                    icon: "layui-icon-screen-full",
+                    type:"fullscreen"
+                },
+            ],
         };
         viewRend(login, function (state, html) {
             if (state) {

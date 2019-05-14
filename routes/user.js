@@ -31,7 +31,8 @@ module.exports = function (router, check) {
                             maxAge: 900000,
                             path: '/'
                         });
-                        res.setHeader("token",data[0].id);
+                        res.setHeader("token", data[0].id);
+                        data[0].redDot = 5;
                         res.result(data[0]);
                     }
                 }
