@@ -75,7 +75,7 @@ function dataDom(el, data) {
         for (var index = 0; index < len; index++) {
             var domItem = domList[index];
             if (options && domItem.make == "v-for") {
-                jsMatch(domItem.initValue, options, function (showValue) {
+                jsMatch(domItem.initValue, options, function (showValue){
                     if (showValue) {
                         waitWithList = [];
                         var forDomList = [];
@@ -83,8 +83,8 @@ function dataDom(el, data) {
                         var childData = {};
                         for (var dataKey in data) {
                             childData[dataKey] = data[dataKey];
-                        }
-                        for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
+                        };
+                        for (var itemIndex = 0; itemIndex < listLen; itemIndex++){
                             childData[domItem.forConfig.item] = showValue[itemIndex];
                             childData[domItem.forConfig.index] = itemIndex;
                             var dom = domReplace(domItem.node.cloneNode(true), childData, false);
@@ -92,7 +92,7 @@ function dataDom(el, data) {
                             if (domItem.getNextSibling) {
                                 domItem.parent.insertBefore(dom, domItem.getNextSibling);
                             } else {
-                                domItem.parent.insertBefore(dom, domItem.getNextSibling);
+                                domItem.parent.appendChild(dom);
                             }
                         }
                         for (var r = 0; r < domItem.removeList.length; r++) {
@@ -123,6 +123,31 @@ function dataDom(el, data) {
                         domItem.oldValue = showValue;
                     }
                 });
+            } else if (domItem.make == "v-if") {
+                var newTrueNode = "";
+                if (domItem.trueNode) {
+                    domItem.parent.removeChild(domItem.trueNode);
+                }
+                ifRecursive(0);
+                function ifRecursive(index) {
+                    var ifNode = domItem.ifNodeList[index];
+                    jsMatch(ifNode.ifInst, data, function (showValue) {
+                        if (showValue) {
+                            newTrueNode = ifNode.node;
+                            attrData(ifNode.node, data, false, function (newNode, newIsChildlen) { 
+                                if (domItem.getNextSibling) {
+                                    domItem.parent.insertBefore(newNode, domItem.getNextSibling);
+                                } else {
+                                    domItem.parent.appendChild(newNode);
+                                }
+                            });
+                        } else {
+                            ifRecursive(index + 1);
+                        }
+                    });
+                }
+                console.log(newTrueNode);
+                domItem.trueNode = newTrueNode;
             } else {
                 jsMatch(domItem.initValue, data, function (showValue) {
                     if (showValue && domItem.oldValue != showValue) {
@@ -139,6 +164,250 @@ function dataDom(el, data) {
                 });
             }
         }
+    }
+    function attrData(node, data, store, callback, type) {
+        var isChildlen = true;
+        if (node.hasAttribute("v-for")) {
+            var forConfig = {
+                item: "item",
+                index: "index",
+            };
+            var attrValue = node.getAttribute("v-for");
+            //获取for循环的数据名称和索引名称
+            attrValue = attrValue.replace(/\:\((.*?)\,(.*?)\)/g, "");
+            forConfig.item = RegExp.$1;
+            forConfig.index = RegExp.$2;
+            jsMatch(attrValue, data, function (text, conditionList, jsList) {
+                if (text) {
+                    isChildlen = false;
+                    var getNextSibling = node.nextElementSibling;
+                    var getParentNode = node.parentNode;
+                    var listLen = text.length;
+                    var childData = {};
+                    var forDomList = new Array;
+                    for (var dataKey in data) {
+                        childData[dataKey] = data[dataKey];
+                    }
+                    for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
+                        childData[forConfig.item] = text[itemIndex];
+                        childData[forConfig.index] = itemIndex;
+                        var newNode = node.cloneNode(true);
+                        newNode.removeAttribute("v-for");
+                        attrData(newNode, childData, false, function (newNode, newIsChildlen) {
+                            if (newIsChildlen) {
+                                var dom = domReplace(newNode, childData, false);
+                                forDomList.push(dom);
+                                if (getNextSibling) {
+                                    waitWithList.push({
+                                        aims: getParentNode,
+                                        type: "insertBefore",
+                                        value: dom,
+                                        value1: getNextSibling,
+                                    });
+                                } else {
+                                    waitWithList.push({
+                                        aims: getParentNode,
+                                        type: "appendChild",
+                                        value: dom,
+                                    });
+                                }
+                            }
+                        });
+
+                    }
+                    domList.push({
+                        node: node,
+                        make: "v-for",
+                        initValue: attrValue,
+                        oldValue: text,
+                        removeList: forDomList,
+                        getNextSibling: getNextSibling,
+                        type: "v-for",
+                        parent: getParentNode,
+                        forConfig: forConfig,
+                    });
+                    waitWithList.push({
+                        aims: getParentNode,
+                        type: "removeChild",
+                        value: node
+                    });
+                }
+            });
+        } else if (node.hasAttribute("v-else") || node.hasAttribute("v-else-if")) {
+            isChildlen = false;
+        } else if (node.hasAttribute("v-if")) {
+            var attrValue = node.getAttribute("v-if");
+            node.removeAttribute("v-if");
+            var ifNodeList = new Array;
+            var getParentNode = node.parentNode;
+            var lastNewIsChildlen = "";
+            var trueNode = "";
+            recursive(attrValue, node, false);
+            function recursive(val, node, result) {
+                ifNodeList.push({
+                    node: node,
+                    ifInst: val
+                });
+                if (val == "v-else") {
+                    if (result) {
+                        if (store) {
+                            waitWithList.push({
+                                aims: getParentNode,
+                                type: "removeChild",
+                                value: node
+                            });
+                        }
+                    } else {
+                        trueNode = node;
+                        attrData(node, data, store, function (newNode, newIsChildlen) {
+                            isChildlen = newIsChildlen;
+                        });
+                    }
+                } else {
+                    var nextSibling = node.nextElementSibling;
+                    var nextValue = false;
+                    if (nextSibling) {
+                        if (nextSibling.hasAttribute("v-else-if")) {
+                            nextValue = nextSibling.getAttribute("v-else-if");
+                            node.removeAttribute("v-else-if");
+                        } else if (nextSibling.hasAttribute("v-else")) {
+                            node.removeAttribute("v-else");
+                            nextValue = "v-else";
+                        } else {
+                            lastNewIsChildlen = node.nextElementSibling ? node.nextElementSibling : "";
+                        }
+                    }
+                    if (result) {
+                        if (store) {
+                            waitWithList.push({
+                                aims: getParentNode,
+                                type: "removeChild",
+                                value: node
+                            });
+                        }
+                        if (nextValue) {
+                            recursive(nextValue, nextSibling, true);
+                        }
+                    } else {
+                        jsMatch(val, data, function (text, conditionList, jsList) {
+                            if (text) {
+                                attrData(node, data, store, function (newNode, newIsChildlen) {
+                                    isChildlen = newIsChildlen;
+                                });
+                                trueNode = node;
+                                if (nextValue) {
+                                    recursive(nextValue, nextSibling, true);
+                                }
+                            } else {
+                                if (store) {
+                                    waitWithList.push({
+                                        aims: getParentNode,
+                                        type: "removeChild",
+                                        value: node
+                                    });
+                                }
+                                if (nextValue) {
+                                    recursive(nextValue, nextSibling, false);
+                                }
+                            }
+                        });
+                    }
+                }
+            };
+            if (!trueNode) {
+                isChildlen = false;
+            }
+            if (getParentNode && store) {
+                var domConfig = {
+                    node: node,
+                    make: "v-if",
+                    getNextSibling: lastNewIsChildlen,
+                    parent: getParentNode,
+                    ifNodeList: ifNodeList,
+                    trueNode: trueNode
+                }
+                domList.push(domConfig);
+            }
+        } else {
+            //标签节点数据处理
+            var nodeAttr = node.attributes;
+            var attrLen = nodeAttr.length;
+            //循环单一标签所有属性
+            for (var j = 0; j < attrLen; j++) {
+                var attr = nodeAttr[j];
+                var name = attr.name;
+                var attrValue = attr.value;
+                //ie8不支持style="{{}}"会识别为语法错误，ie8需要用:style
+                if (name == ":style") {
+                    name = "style";
+                }
+                //判断属性值是否有{{}}，如果有并返回值
+                jsMatch(attrValue, data, function (text, conditionList, jsList) {
+                    var domConfig = {
+                        node: node,
+                        make: name,
+                        initValue: attrValue,
+                        oldValue: text
+                    };
+                    var isRemove = false;
+                    if (name == 'v-show') {
+                        if (text) {
+                            node.style.display = "inherit";
+                        } else {
+                            node.style.display = "none";
+                        };
+                        domConfig.type = "style";
+                        isRemove = true;
+                    } else if (text) { //返回的值是true才执行下面代码
+                        if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA") {
+                            node.value = text;
+                            domConfig.type = "value";
+                            getinput(node, jsList[0]);
+                            //input输入框数据绑定
+                            function getinput(node, jsNode, attrValue) {
+                                //判断浏览器是否支持addEventListener
+                                if (node.addEventListener) {
+                                    node.addEventListener('input', function (e) {
+                                        var newVal = e.target.value;
+                                        eval(jsNode + "='" + newVal + "'");
+                                        _this.render();
+                                    });
+                                } else {
+                                    node.onpropertychange = function (e) {
+                                        var newVal = node.value;
+                                        eval(jsNode + "='" + newVal + "'");
+                                        _this.render({}, attrValue);
+                                    }
+                                }
+                            }
+                            isRemove = true;
+                        } else if (name == 'v-text') {
+                            domConfig.type = "innerText";
+                            node.innerText = text;
+                            isRemove = true;
+                        } else if (name == 'v-html') {
+                            domConfig.type = "innerHTML";
+                            node.innerHTML = text;
+                            isRemove = true;
+                        } else {
+                            node.setAttribute(name, text);
+                            domConfig.type = "setAttribute";
+                        }
+                    }
+                    if (store) {
+                        domList.push(domConfig);
+                    }
+                    if (isRemove) {
+                        waitWithList.push({
+                            aims: node,
+                            type: "removeAttribute",
+                            value: attr.name,
+                        });
+                    }
+                });
+            };
+        }
+        callback && callback(node, isChildlen);
     }
     //数据赋值并更新页面数据
     this.setData = function (options) {
@@ -166,6 +435,7 @@ function dataDom(el, data) {
         var childlen = childNodes.length;
         for (var i = 0; i < childlen; i++) {
             var node = childNodes[i];
+            
             var txt = node.nodeValue;
             var isChildlen = true;
             var reg = /\{\{(.*?)\}\}/g; // 正则匹配{{}}
@@ -191,135 +461,10 @@ function dataDom(el, data) {
                     }
                 });
             } else if (node.nodeType === 1) {
-                //标签节点数据处理
-                var nodeAttr = node.attributes;
-                var attrLen = nodeAttr.length;
-                //循环单一标签所有属性
-                for (var j = 0; j < attrLen; j++) {
-                    var attr = nodeAttr[j];
-                    var name = attr.name;
-                    var forConfig = {
-                        item: "item",
-                        index: "index",
-                    };
-                    var attrValue = attr.value;
-                    //获取for循环的数据名称和索引名称
-                    if (name == "v-for") {
-                        attrValue = attrValue.replace(/\:\((.*?)\,(.*?)\)/g, "");
-                        forConfig.item = RegExp.$1;
-                        forConfig.index = RegExp.$2;
-                    }
-                    //ie8不支持style="{{}}"会识别为语法错误，ie8需要用:style
-                    if (name == ":style") {
-                        name = "style";
-                    }
-                    //判断属性值是否有{{}}，如果有并返回值
-                    jsMatch(attrValue, data, function (text, conditionList, jsList) {
-                        
-                        var domConfig = {
-                            node: node,
-                            make: name,
-                            initValue: attrValue,
-                            oldValue: text
-                        };
-                        var isRemove = false;
-                        if (name == 'v-show') {
-                            if (text) {
-                                node.style.display = "inherit";
-                            } else {
-                                node.style.display = "none";
-                            }
-                            domConfig.type = "style";
-                            isRemove = true;
-                        } else if (text) { //返回的值是true才执行下面代码
-                            if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA") {
-                                node.value = text;
-                                domConfig.type = "value";
-                                getinput(node, jsList[0]);
-                                //input输入框数据绑定
-                                function getinput(node, jsNode, attrValue) {
-                                    //判断浏览器是否支持addEventListener
-                                    if (node.addEventListener) {
-                                        node.addEventListener('input', function (e) {
-                                            var newVal = e.target.value;
-                                            eval(jsNode + "='" + newVal + "'");
-                                            _this.render();
-                                        });
-                                    } else {
-                                        node.onpropertychange = function (e) {
-                                            var newVal = node.value;
-                                            eval(jsNode + "='" + newVal + "'");
-                                            _this.render({}, attrValue);
-                                        }
-                                    }
-                                }
-                                isRemove = true;
-                            } else if (name == 'v-text') {
-                                domConfig.type = "innerText";
-                                node.innerText = text;
-                                isRemove = true;
-                            } else if (name == 'v-html') {
-                                domConfig.type = "innerHTML";
-                                node.innerHTML = text;
-                                isRemove = true;
-                            } else if (name == 'v-for') {
-                                isChildlen = false;
-                                var getNextSibling = node.nextElementSibling;
-                                var getParentNode = node.parentNode;
-                                var listLen = text.length;
-                                var childData = {};
-                                var forDomList = new Array;
-                                for (var dataKey in data) {
-                                    childData[dataKey] = data[dataKey];
-                                }
-                                for (var itemIndex = 0; itemIndex < listLen; itemIndex++) {
-                                    childData[forConfig.item] = text[itemIndex];
-                                    childData[forConfig.index] = itemIndex;
-                                    var dom = domReplace(node.cloneNode(true), childData, false);
-                                    forDomList.push(dom);
-                                    if (getNextSibling) {
-                                        waitWithList.push({
-                                            aims: getParentNode,
-                                            type: "insertBefore",
-                                            value: dom,
-                                            value1: getNextSibling,
-                                        });
-                                    } else {
-                                        waitWithList.push({
-                                            aims: getParentNode,
-                                            type: "appendChild",
-                                            value: dom,
-                                        });
-                                    }
-                                }
-                                domConfig.removeList = forDomList;
-                                domConfig.getNextSibling = getNextSibling;
-                                domConfig.type = "v-for";
-                                domConfig.parent = getParentNode;
-                                domConfig.forConfig = forConfig;
-                                waitWithList.push({
-                                    aims: getParentNode,
-                                    type: "removeChild",
-                                    value: node
-                                });
-                            } else {
-                                node.setAttribute(name, text);
-                                domConfig.type = "setAttribute";
-                            }
-                        }
-                        if (store) {
-                            domList.push(domConfig);
-                        }
-                        if (isRemove) {
-                            waitWithList.push({
-                                aims: node,
-                                type: "removeAttribute",
-                                value: attr.name,
-                            });
-                        }
-                    });
-                }
-            }
+                attrData(node, data, store, function (newNode, newIsChildlen) {
+                    isChildlen = newIsChildlen;
+                });
+            };
             // 如果还有子节点，继续递归replace
             if (isChildlen && node.childNodes && node.childNodes.length) {
                 domReplace(node, data, store);

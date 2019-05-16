@@ -1,32 +1,32 @@
 var viewRend = require('./../app/module/viewRend');
-module.exports = function (router, check) { 
+module.exports = function (router, check) {
     //登录页面
     router.get('/login.html', check([], function (req, res) {
         //设置html请求头
-        res.set('Content-Type','text/html');
+        res.set('Content-Type', 'text/html');
         var login = {
             //模板名称
             template: "login",
-            pageType:"page",
+            pageType: "page",
             forget: {
                 title: "忘记密码？",
-                path:"forget.html"
+                path: "forget.html"
             },
-            projectName:"一个后台管理",
+            projectName: "一个后台管理",
             registered: {
                 title: "去注册",
-                path:"registered.html"
+                path: "registered.html"
             },
             supplier: false,
             children: {
                 title: "",
                 name: "表单模块",
-                content:[
+                content: [
                     {
                         template: "loginInput",
                         title: "用户名",
                         name: "username",
-                        placeholder:"用户名",
+                        placeholder: "用户名",
                         icon: "layui-icon-username",
                         verify: "required",
                     },
@@ -34,15 +34,15 @@ module.exports = function (router, check) {
                         template: "loginInput",
                         title: "密码",
                         name: "password",
-                        inputType:"password",
-                        placeholder:"密码",
+                        inputType: "password",
+                        placeholder: "密码",
                         icon: "layui-icon-password",
                         verify: "required|password",
                     },
                     {
                         template: "imgLoginInput",
                         title: "验证码",
-                        placeholder:"验证码",
+                        placeholder: "验证码",
                         name: "code",
                         icon: "layui-icon-vercode",
                         codeUrl: "/user/setCode",
@@ -61,7 +61,7 @@ module.exports = function (router, check) {
                         data: "data",
                         method: "post",
                         resultName: "login",
-                        storeData:"{userInfo:res}",
+                        storeData: "{userInfo:res}",
                         children: {
                             title: "",
                             name: "请求结果模块",
@@ -76,7 +76,7 @@ module.exports = function (router, check) {
                                             {
                                                 template: "router",
                                                 routerType: "page",
-                                                routerUrl:"main.html"
+                                                routerUrl: "main.html"
                                             }
                                         ]
                                     }
@@ -91,7 +91,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},2001,html);
+                res.result({}, 2001, html);
                 console.error(html);
             }
         });
@@ -99,42 +99,42 @@ module.exports = function (router, check) {
     //忘记密码页面
     router.get('/forget.html', check([], function (req, res) {
         //设置html请求头
-        res.set('Content-Type','text/html');
+        res.set('Content-Type', 'text/html');
         var login = {
             //模板名称
             template: "login",
-            pageType:"page",
-            submitText:"找回密码",
-            projectName:"忘记密码",
+            pageType: "page",
+            submitText: "找回密码",
+            projectName: "忘记密码",
             registered: false,
             forget: {
                 title: "已有账号？去登录",
-                path:"login.html"
+                path: "login.html"
             },
             supplier: false,
             children: {
                 title: "",
                 name: "表单模块",
-                content:[
+                content: [
                     {
                         template: "loginInput",
                         title: "手机号",
                         name: "phone",
-                        placeholder:"手机号",
+                        placeholder: "手机号",
                         icon: "layui-icon-cellphone",
                         verify: "required|phone",
                     },
                     {
                         template: "phoneLoginInput",
                         title: "短信验证码",
-                        placeholder:"短信验证码",
+                        placeholder: "短信验证码",
                         name: "code",
                         icon: "layui-icon-vercode",
                         verify: "required",
                         requestUrl: "/searchFriend",
-                        phoneInputName:"phone",
+                        phoneInputName: "phone",
                         method: "get",
-                        phoneVerify:[
+                        phoneVerify: [
                             {
                                 rule: "!/^1\\d{10}$/",
                                 prompt: "手机号格式不正确"
@@ -144,9 +144,9 @@ module.exports = function (router, check) {
                     {
                         template: "loginInput",
                         title: "新密码",
-                        inputType:"password",
+                        inputType: "password",
                         name: "password",
-                        placeholder:"新密码",
+                        placeholder: "新密码",
                         icon: "layui-icon-password",
                         verify: "required|password",
                     },
@@ -154,20 +154,20 @@ module.exports = function (router, check) {
                         template: "loginInput",
                         title: "确认密码",
                         name: "confirmPassword",
-                        inputType:"password",
-                        placeholder:"确认密码",
+                        inputType: "password",
+                        placeholder: "确认密码",
                         icon: "layui-icon-password",
                         verify: "required|password",
                         comparedList: [
                             {
                                 name: "password",
-                                prompt:"两次密码不一致"
+                                prompt: "两次密码不一致"
                             }
                         ]
                     },
                 ]
             },
-            md5: ["password","confirmPassword"],
+            md5: ["password", "confirmPassword"],
             children1: {
                 title: "",
                 name: "提交按钮模块",
@@ -175,8 +175,8 @@ module.exports = function (router, check) {
                     {
                         template: "request",
                         requestUrl: "/user/login",
-                        data:"data",
-                        method:"post",
+                        data: "data",
+                        method: "post",
                         children: {
                             title: "",
                             name: "请求结果模块",
@@ -191,7 +191,7 @@ module.exports = function (router, check) {
                                             {
                                                 template: "router",
                                                 routerType: "page",
-                                                routerUrl:"login.html"
+                                                routerUrl: "login.html"
                                             }
                                         ]
                                     }
@@ -206,7 +206,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},2001,html);
+                res.result({}, 2001, html);
                 console.error(html);
             }
         });
@@ -214,42 +214,42 @@ module.exports = function (router, check) {
     //注册页面
     router.get('/registered.html', check([], function (req, res) {
         //设置html请求头
-        res.set('Content-Type','text/html');
+        res.set('Content-Type', 'text/html');
         var login = {
             //模板名称
             template: "login",
-            pageType:"page",
-            submitText:"立即注册",
-            projectName:"注册",
+            pageType: "page",
+            submitText: "立即注册",
+            projectName: "注册",
             registered: false,
             forget: {
                 title: "已有账号？去登录",
-                path:"login.html"
+                path: "login.html"
             },
             supplier: false,
             children: {
                 title: "",
                 name: "表单模块",
-                content:[
+                content: [
                     {
                         template: "loginInput",
                         title: "手机号",
                         name: "phone",
-                        placeholder:"手机号",
+                        placeholder: "手机号",
                         icon: "layui-icon-cellphone",
                         verify: "required|phone",
                     },
                     {
                         template: "phoneLoginInput",
                         title: "短信验证码",
-                        placeholder:"短信验证码",
+                        placeholder: "短信验证码",
                         name: "code",
                         icon: "layui-icon-vercode",
                         verify: "required",
                         requestUrl: "/searchFriend",
-                        phoneInputName:"phone",
+                        phoneInputName: "phone",
                         method: "get",
-                        phoneVerify:[
+                        phoneVerify: [
                             {
                                 rule: "!/^1\\d{10}$/",
                                 prompt: "手机号格式不正确"
@@ -259,9 +259,9 @@ module.exports = function (router, check) {
                     {
                         template: "loginInput",
                         title: "密码",
-                        inputType:"password",
+                        inputType: "password",
                         name: "password",
-                        placeholder:"密码",
+                        placeholder: "密码",
                         icon: "layui-icon-password",
                         verify: "required|password",
                     },
@@ -269,20 +269,20 @@ module.exports = function (router, check) {
                         template: "loginInput",
                         title: "确认密码",
                         name: "confirmPassword",
-                        inputType:"password",
-                        placeholder:"确认密码",
+                        inputType: "password",
+                        placeholder: "确认密码",
                         icon: "layui-icon-password",
                         verify: "required|password",
                         comparedList: [
                             {
                                 name: "password",
-                                prompt:"两次密码不一致"
+                                prompt: "两次密码不一致"
                             }
                         ]
                     },
                 ]
             },
-            md5: ["password","confirmPassword"],
+            md5: ["password", "confirmPassword"],
             children1: {
                 title: "",
                 name: "提交按钮模块",
@@ -290,8 +290,8 @@ module.exports = function (router, check) {
                     {
                         template: "request",
                         requestUrl: "/user/login",
-                        data:"data",
-                        method:"post",
+                        data: "data",
+                        method: "post",
                         children: {
                             title: "",
                             name: "请求结果模块",
@@ -306,7 +306,7 @@ module.exports = function (router, check) {
                                             {
                                                 template: "router",
                                                 routerType: "page",
-                                                routerUrl:"main.html"
+                                                routerUrl: "main.html"
                                             }
                                         ]
                                     }
@@ -321,7 +321,7 @@ module.exports = function (router, check) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},2003,html);
+                res.result({}, 2003, html);
                 console.error(html);
             }
         });
@@ -329,7 +329,7 @@ module.exports = function (router, check) {
     //主页面
     router.get('/main.html', check([], function (req, res) {
         //设置html请求头
-        res.set('Content-Type','text/html');
+        res.set('Content-Type', 'text/html');
         var login = {
             //模板名称
             template: "main",
@@ -343,34 +343,63 @@ module.exports = function (router, check) {
                     openPage: {
                         redDot: "userInfo.redDot",
                         href: "message.html",
-                        title:"消息中心",
+                        title: "消息中心",
                     },
-                    // openPage: false,
                     icon: "layui-icon-notice",
-                    type:"message"
+                    type: "message"
                 },
                 {
                     openPage: false,
                     icon: "layui-icon-theme",
-                    type:"theme"
+                    type: "theme"
                 },
                 {
                     openPage: false,
                     icon: "layui-icon-note",
-                    type:"note"
+                    type: "note"
                 },
                 {
                     openPage: false,
                     icon: "layui-icon-screen-full",
-                    type:"fullscreen"
+                    type: "fullscreen"
                 },
             ],
+            defaultPage: {
+                icon: "layui-icon-home",
+                href: "home.html"
+            },
+            //导航配置
+            leftNav: [
+                {
+                    title: "统计",
+                    icon: "layui-icon-home",
+                    href: "home.html",
+                    name:"a"
+                },
+                {
+                    title: "表格",
+                    icon: "layui-icon-home",
+                    name: "b",
+                    list: [
+                        {
+                            title: "表格",
+                            href: "home1.html",
+                            name: "b1",
+                        },
+                        {
+                            title: "表格1",
+                            href: "home2.html",
+                            name: "b2",
+                        },
+                    ]
+                }
+            ]
         };
         viewRend(login, function (state, html) {
             if (state) {
                 res.end(html.templateHtml);
             } else {
-                res.result({},2004,html);
+                res.result({}, 2004, html);
                 console.error(html);
             }
         });

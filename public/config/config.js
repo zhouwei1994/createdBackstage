@@ -24,9 +24,9 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function (exports) {
     request: {
       tokenName: "token", //自动携带 token 的字段名（如：access_token）。可设置 false 不携带。
       //请求地址
-      requestUrl: "http://localhost:8000",
+      requestUrl: "http://localhost:8080",
       //文件上传
-      fileUrl: "http://localhost:8000",
+      fileUrl: "http://localhost:8080",
       //默认请求头
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"

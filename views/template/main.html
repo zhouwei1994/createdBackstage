@@ -65,17 +65,18 @@
 
                     <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
                         lay-filter="layadmin-system-side-menu">
-                        <li data-name="home" class="layui-nav-item layui-nav-itemed">
-                            <a href="javascript:;" lay-tips="主页" lay-direction="2">
+                        <li data-name="{{item.name}}" v-for="{{leftNav:(item,index)}}" class="layui-nav-item layui-nav-itemed {{item.href == defaultPage ? 'layui-this':''}}">
+                            <a href="javascript:;" v-if="{{item.href}}" lay-href="{{item.href}}" lay-tips="{{item.title}}" lay-direction="2">
                                 <i class="layui-icon layui-icon-home"></i>
-                                <cite>主页</cite>
+                                <cite>{{item.title}}</cite>
                             </a>
-                            <dl class="layui-nav-child">
-                                <dd data-name="console" class="layui-this">
-                                    <a lay-href="home/console.html">控制台</a>
-                                </dd>
-                                <dd data-name="console">
-                                    <a lay-href="home/homepage1.html">主页一</a>
+                            <a href="javascript:;" v-else lay-tips="{{item.title}}" lay-direction="2">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>{{item.title}}</cite>
+                            </a>
+                            <dl class="layui-nav-child" v-if="{{item.list}}">
+                                <dd v-for="{{item.list:(childItem,childIndex)}}" data-name="{{childItem.name}}">
+                                    <a lay-href="{{childItem.href}}">{{childItem.title}}</a>
                                 </dd>
                             </dl>
                         </li>
@@ -101,8 +102,8 @@
                 </div>
                 <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
                     <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                        <li lay-id="home/console.html" lay-attr="home/console.html" class="layui-this"><i
-                                class="layui-icon layui-icon-home"></i></li>
+                        <li lay-id="<%= defaultPage.href %>" lay-attr="<%= defaultPage.href %>" class="layui-this"><i
+                                class="layui-icon <%= defaultPage.icon %>"></i></li>
                     </ul>
                 </div>
             </div>
@@ -111,7 +112,7 @@
             <!-- 主体内容 -->
             <div class="layui-body" id="LAY_app_body">
                 <div class="layadmin-tabsbody-item layui-show">
-                    <iframe src="home/console.html" frameborder="0" class="layadmin-iframe"></iframe>
+                    <iframe src="<%= defaultPage.href %>" frameborder="0" class="layadmin-iframe"></iframe>
                 </div>
             </div>
 
@@ -123,16 +124,50 @@
 <script name="compile">
     function templateCompile(data) {
         var defaultData = {
-
+            customizeBut: [],
+            projectName: "后台管理"
         };
+        var newData = Object.assign(defaultData, data);
         var callback = {
             success: true,
-            result: Object.assign(defaultData, data)
+            result: newData
         };
+        if (!newData.nickname) {
+            callback.success = false;
+            callback.result = "请输入右上角用户昵称";
+        }
+        if (!newData.customizeBut instanceof Array) {
+            callback.success = false;
+            callback.result = "参数customizeBut必须为数组";
+        }
+        if (!newData.defaultPage) {
+            callback.success = false;
+            callback.result = "请输入默认打开页面信息";
+        }
+        if (!newData.leftNav) {
+            callback.success = false;
+            callback.result = "请输入左边导航信息";
+        }
+        if (!newData.leftNav instanceof Array) {
+            callback.success = false;
+            callback.result = "参数leftNav必须为数组";
+        }
+        try {
+            newData.leftNav = JSON.stringify(newData.leftNav);
+        } catch (error) {
+            callback.success = false;
+            callback.result = "leftNav数组转换为字符串失败";
+        }
+        callback.success = true;
+        callback.result = newData;
+        console.log(newData);
         return callback;
     }
 </script>
 <script name="templateScript">
+    pageData.leftNav = <%- leftNav %>;
+    pageData.defaultPage = '<%- defaultPage.href %>';
     insert = dataDom("LAY_app", pageData);
+    layui.router();
     //&&scriptchildren&&
 </script>

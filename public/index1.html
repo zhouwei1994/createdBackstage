@@ -26,8 +26,7 @@
         <div>4.v-html指令</div>
         <div v-html="{{html}}"></div>
         <div>4.列表循环</div>
-        <div v-for="{{list:(item,index)}}">{{index}}{{item.a}} <span
-                v-for="{{item.list:(childItem,childIndex)}}">{{childItem + item.a}}</span></div>
+        <div v-for="{{list:(item,index)}}" v-if="{{item.a == 2}}">{{index}}{{item.a}}</div>
         <br />
         <div>5.v-show指令</div>
         <div v-show="{{aaa.b}}">可以看见我了{{aaa.b}}</div>
@@ -37,6 +36,10 @@
         <div :style="{{'color:'+color}}">我是红色的</div>
         <div>7. 加减乘除</div>
         <div>{{1 + (2 / 5)}}</div>
+        <div>8. v-if指令</div>
+        <div v-if="{{aaa.b == 2222}}" :style="{{'color:'+color}}">可以看见我了{{aaa.b}}</div>
+        <div v-else-if="{{aaa.a == 'aaa'}}">可以看见我了</div>
+        <div v-else>我是最后的</div>
     </div>
     <script src="./dataDom.js"></script>
     <script>
@@ -50,43 +53,43 @@
             },
             list: [{
                 a: 1,
-                list: [1, 2, 3, 4]
+                // list: [1, 2, 3, 4]
             }, {
                 a: 2,
-                list: [1, 2, 3, 4]
+                // list: [1, 2, 3, 4]
             }],
             html: "<a href='http://www.baidu.com'>百度</a>",
             color: "#F00"
         });
-        setTimeout(function () {
-            insert.setData({
-                aaa: {
-                    a: "aaa",
-                    aa: {
-                        a: "a11a1"
-                    },
-                },
-            });
-        }, 2000);
-        setTimeout(function () {
-            insert.setData({
-                aaa: {
-                    a: "啊啊啊",
-                    b: 2222,
-                    aa: {
-                        a: "啊啊啊"
-                    },
-                },
-                list: [{
-                    a: "啊",
-                    list: [1, 2, 3, 4]
-                }, {
-                    a: "哦",
-                    list: [1, 2, 3, 4]
-                }],
-                color: "#0f0"
-            });
-        }, 6000);
+        // setTimeout(function () {
+        //     insert.setData({
+        //         aaa: {
+        //             a: "aaa",
+        //             aa: {
+        //                 a: "a11a1"
+        //             },
+        //         },
+        //     });
+        // }, 2000);
+        // setTimeout(function () {
+        //     insert.setData({
+        //         aaa: {
+        //             a: "啊啊啊",
+        //             b: 2222,
+        //             aa: {
+        //                 a: "啊啊啊"
+        //             }
+        //         },
+        //         list: [{
+        //             a: "啊",
+        //             list: [1, 2, 3, 4]
+        //         }, {
+        //             a: "哦",
+        //             list: [1, 2, 3, 4]
+        //         }],
+        //         color: "#0f0"
+        //     });
+        // }, 6000);
     </script>
 </body>
 
