@@ -26,7 +26,10 @@
         <div>4.v-html指令</div>
         <div v-html="{{html}}"></div>
         <div>4.列表循环</div>
-        <div v-for="{{list:(item,index)}}" v-if="{{item.a == 2}}">{{index}}{{item.a}}</div>
+        <div v-for="{{list:(item,index)}}" class="list" v-if="{{index == 0}}">
+            <div style="color:#f00">{{item.a}}吼吼吼{{index}}</div>
+            
+        </div>
         <br />
         <div>5.v-show指令</div>
         <div v-show="{{aaa.b}}">可以看见我了{{aaa.b}}</div>
@@ -61,35 +64,35 @@
             html: "<a href='http://www.baidu.com'>百度</a>",
             color: "#F00"
         });
-        // setTimeout(function () {
-        //     insert.setData({
-        //         aaa: {
-        //             a: "aaa",
-        //             aa: {
-        //                 a: "a11a1"
-        //             },
-        //         },
-        //     });
-        // }, 2000);
-        // setTimeout(function () {
-        //     insert.setData({
-        //         aaa: {
-        //             a: "啊啊啊",
-        //             b: 2222,
-        //             aa: {
-        //                 a: "啊啊啊"
-        //             }
-        //         },
-        //         list: [{
-        //             a: "啊",
-        //             list: [1, 2, 3, 4]
-        //         }, {
-        //             a: "哦",
-        //             list: [1, 2, 3, 4]
-        //         }],
-        //         color: "#0f0"
-        //     });
-        // }, 6000);
+        setTimeout(function () {
+            insert.setData({
+                aaa: {
+                    a: "aaa",
+                    aa: {
+                        a: "a11a1"
+                    },
+                },
+            });
+        }, 2000);
+        setTimeout(function () {
+            insert.setData({
+                aaa: {
+                    a: "啊啊啊",
+                    b: 2222,
+                    aa: {
+                        a: "啊啊啊"
+                    }
+                },
+                list: [{
+                    a: "啊",
+                    list: [1, 2, 3, 4]
+                }, {
+                    a: "哦",
+                    list: [1, 2, 3, 4]
+                }],
+                color: "#0f0"
+            });
+        }, 6000);
     </script>
 </body>
 

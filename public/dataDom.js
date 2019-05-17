@@ -87,13 +87,19 @@ function dataDom(el, data) {
                         for (var itemIndex = 0; itemIndex < listLen; itemIndex++){
                             childData[domItem.forConfig.item] = showValue[itemIndex];
                             childData[domItem.forConfig.index] = itemIndex;
-                            var dom = domReplace(domItem.node.cloneNode(true), childData, false);
-                            forDomList.push(dom);
-                            if (domItem.getNextSibling) {
-                                domItem.parent.insertBefore(dom, domItem.getNextSibling);
-                            } else {
-                                domItem.parent.appendChild(dom);
-                            }
+                            var newNode = domItem.node.cloneNode(true);
+                            newNode.removeAttribute("v-for");
+                            attrData(newNode, childData, false, function (newNode, newIsChildlen) {
+                                if (newIsChildlen) {
+                                    var dom = domReplace(newNode, childData, false);
+                                    forDomList.push(dom);
+                                    if (domItem.getNextSibling) {
+                                        domItem.parent.insertBefore(dom, domItem.getNextSibling);
+                                    } else {
+                                        domItem.parent.appendChild(dom);
+                                    }
+                                }
+                            });
                         }
                         for (var r = 0; r < domItem.removeList.length; r++) {
                             domItem.parent.removeChild(domItem.removeList[r]);
@@ -126,27 +132,43 @@ function dataDom(el, data) {
             } else if (domItem.make == "v-if") {
                 var newTrueNode = "";
                 if (domItem.trueNode) {
-                    domItem.parent.removeChild(domItem.trueNode);
+                    try {
+                        domItem.parent.removeChild(domItem.trueNode);
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
+                var ifListLen = domItem.ifNodeList.length;
                 ifRecursive(0);
                 function ifRecursive(index) {
                     var ifNode = domItem.ifNodeList[index];
-                    jsMatch(ifNode.ifInst, data, function (showValue) {
-                        if (showValue) {
-                            newTrueNode = ifNode.node;
-                            attrData(ifNode.node, data, false, function (newNode, newIsChildlen) { 
-                                if (domItem.getNextSibling) {
-                                    domItem.parent.insertBefore(newNode, domItem.getNextSibling);
-                                } else {
-                                    domItem.parent.appendChild(newNode);
-                                }
-                            });
-                        } else {
-                            ifRecursive(index + 1);
-                        }
-                    });
+                    // console.log(ifNode);
+                    if (ifNode.ifInst == "v-else") {
+                        attrData(ifNode.node, data, false, function (newNode, newIsChildlen) {
+                            newTrueNode = newNode;
+                            if (domItem.getNextSibling) {
+                                domItem.parent.insertBefore(newNode, domItem.getNextSibling);
+                            } else {
+                                domItem.parent.appendChild(newNode);
+                            }
+                        });
+                    } else {
+                        jsMatch(ifNode.ifInst, data, function (showValue) {
+                            if (showValue) {
+                                attrData(ifNode.node, data, false, function (newNode, newIsChildlen) {
+                                    newTrueNode = newNode;
+                                    if (domItem.getNextSibling) {
+                                        domItem.parent.insertBefore(newNode, domItem.getNextSibling);
+                                    } else {
+                                        domItem.parent.appendChild(newNode);
+                                    }
+                                });
+                            } else if (index < ifListLen - 1){
+                                ifRecursive(index + 1);
+                            }
+                        });
+                    }
                 }
-                console.log(newTrueNode);
                 domItem.trueNode = newTrueNode;
             } else {
                 jsMatch(domItem.initValue, data, function (showValue) {
@@ -246,11 +268,12 @@ function dataDom(el, data) {
             function recursive(val, node, result) {
                 ifNodeList.push({
                     node: node,
-                    ifInst: val
+                    ifInst: val,
+                    value: result
                 });
                 if (val == "v-else") {
                     if (result) {
-                        if (store) {
+                        if (getParentNode) {
                             waitWithList.push({
                                 aims: getParentNode,
                                 type: "removeChild",
@@ -258,8 +281,8 @@ function dataDom(el, data) {
                             });
                         }
                     } else {
-                        trueNode = node;
                         attrData(node, data, store, function (newNode, newIsChildlen) {
+                            trueNode = newNode;
                             isChildlen = newIsChildlen;
                         });
                     }
@@ -269,16 +292,16 @@ function dataDom(el, data) {
                     if (nextSibling) {
                         if (nextSibling.hasAttribute("v-else-if")) {
                             nextValue = nextSibling.getAttribute("v-else-if");
-                            node.removeAttribute("v-else-if");
+                            nextSibling.removeAttribute("v-else-if");
                         } else if (nextSibling.hasAttribute("v-else")) {
-                            node.removeAttribute("v-else");
+                            nextSibling.removeAttribute("v-else");
                             nextValue = "v-else";
                         } else {
                             lastNewIsChildlen = node.nextElementSibling ? node.nextElementSibling : "";
                         }
                     }
                     if (result) {
-                        if (store) {
+                        if (getParentNode) {
                             waitWithList.push({
                                 aims: getParentNode,
                                 type: "removeChild",
@@ -292,14 +315,14 @@ function dataDom(el, data) {
                         jsMatch(val, data, function (text, conditionList, jsList) {
                             if (text) {
                                 attrData(node, data, store, function (newNode, newIsChildlen) {
+                                    trueNode = newNode;
                                     isChildlen = newIsChildlen;
                                 });
-                                trueNode = node;
                                 if (nextValue) {
                                     recursive(nextValue, nextSibling, true);
                                 }
                             } else {
-                                if (store) {
+                                if (getParentNode) {
                                     waitWithList.push({
                                         aims: getParentNode,
                                         type: "removeChild",
@@ -376,7 +399,7 @@ function dataDom(el, data) {
                                     node.onpropertychange = function (e) {
                                         var newVal = node.value;
                                         eval(jsNode + "='" + newVal + "'");
-                                        _this.render({}, attrValue);
+                                        _this.render("", attrValue);
                                     }
                                 }
                             }
