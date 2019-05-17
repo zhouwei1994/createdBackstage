@@ -2,6 +2,20 @@
 function trim(str) {
     return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');
 }
+function getNextElement(node) {
+    var value = null;
+    siblingRecursive(node);
+    function siblingRecursive(node) {
+        var NextElementNode = node.nextSibling;
+        if (NextElementNode && NextElementNode.nodeType == 3) {
+            siblingRecursive(NextElementNode);
+        } else {
+            value = NextElementNode;
+        }
+    }
+    return value;
+}
+var syncProcessSign = false;
 //{{}}里方法获取数据值
 function jsMatch(text, data, callback) {
     if (text && trim(text)) {
@@ -202,7 +216,7 @@ function dataDom(el, data) {
             jsMatch(attrValue, data, function (text, conditionList, jsList) {
                 if (text) {
                     isChildlen = false;
-                    var getNextSibling = node.nextElementSibling;
+                    var getNextSibling = getNextElement(node);
                     var getParentNode = node.parentNode;
                     var listLen = text.length;
                     var childData = {};
@@ -287,7 +301,7 @@ function dataDom(el, data) {
                         });
                     }
                 } else {
-                    var nextSibling = node.nextElementSibling;
+                    var nextSibling = getNextElement(node);
                     var nextValue = false;
                     if (nextSibling) {
                         if (nextSibling.hasAttribute("v-else-if")) {
@@ -297,7 +311,8 @@ function dataDom(el, data) {
                             nextSibling.removeAttribute("v-else");
                             nextValue = "v-else";
                         } else {
-                            lastNewIsChildlen = node.nextElementSibling ? node.nextElementSibling : "";
+                            var lastChildlen = getNextElement(nextSibling);
+                            lastNewIsChildlen = lastChildlen ? lastChildlen : "";
                         }
                     }
                     if (result) {
@@ -397,9 +412,14 @@ function dataDom(el, data) {
                                     });
                                 } else {
                                     node.onpropertychange = function (e) {
+                                        if (syncProcessSign) {
+                                            return;
+                                        }
+                                        syncProcessSign = true;
                                         var newVal = node.value;
                                         eval(jsNode + "='" + newVal + "'");
                                         _this.render("", attrValue);
+                                        syncProcessSign = false;
                                     }
                                 }
                             }

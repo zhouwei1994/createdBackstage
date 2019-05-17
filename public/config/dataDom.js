@@ -6,6 +6,20 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
     function trim(str) {
         return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');
     }
+    function getNextElement(node) {
+        var value = null;
+        siblingRecursive(node);
+        function siblingRecursive(node) {
+            var NextElementNode = node.nextSibling;
+            if (NextElementNode && NextElementNode.nodeType == 3) {
+                siblingRecursive(NextElementNode);
+            } else {
+                value = NextElementNode;
+            }
+        }
+        return value;
+    }
+    var syncProcessSign = false;
     //{{}}里方法获取数据值
     function jsMatch(text, data, callback) {
         if (text && trim(text)) {
@@ -206,7 +220,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                 jsMatch(attrValue, data, function (text, conditionList, jsList) {
                     if (text) {
                         isChildlen = false;
-                        var getNextSibling = node.nextElementSibling;
+                        var getNextSibling = getNextElement(node);
                         var getParentNode = node.parentNode;
                         var listLen = text.length;
                         var childData = {};
@@ -291,7 +305,7 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                             });
                         }
                     } else {
-                        var nextSibling = node.nextElementSibling;
+                        var nextSibling = getNextElement(node);
                         var nextValue = false;
                         if (nextSibling) {
                             if (nextSibling.hasAttribute("v-else-if")) {
@@ -301,7 +315,8 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                                 nextSibling.removeAttribute("v-else");
                                 nextValue = "v-else";
                             } else {
-                                lastNewIsChildlen = node.nextElementSibling ? node.nextElementSibling : "";
+                                var lastChildlen = getNextElement(nextSibling);
+                                lastNewIsChildlen = lastChildlen ? lastChildlen : "";
                             }
                         }
                         if (result) {
@@ -401,9 +416,14 @@ layui.define(['layer'], function (exports) { //提示：模块也可以依赖其
                                         });
                                     } else {
                                         node.onpropertychange = function (e) {
+                                            if (syncProcessSign) {
+                                                return;
+                                            }
+                                            syncProcessSign = true;
                                             var newVal = node.value;
                                             eval(jsNode + "='" + newVal + "'");
                                             _this.render("", attrValue);
+                                            syncProcessSign = false;
                                         }
                                     }
                                 }
