@@ -404,4 +404,34 @@ module.exports = function (router, check) {
             }
         });
     }));
+    router.get('/home.html', check([], function (req, res) {
+        //设置html请求头
+        res.set('Content-Type', 'text/html');
+        var login = {
+            //模板名称
+            pageType: "childPage",
+            children: {
+                title: "",
+                name: "表单模块",
+                content: [
+                    {
+                        template: "loginInput",
+                        title: "手机号",
+                        name: "phone",
+                        placeholder: "手机号",
+                        icon: "layui-icon-cellphone",
+                        verify: "required|phone",
+                    },
+                ]
+            }
+        };
+        viewRend(login, function (state, html) {
+            if (state) {
+                res.end(html.templateHtml);
+            } else {
+                res.result({}, 2004, html);
+                console.error(html);
+            }
+        });
+    }));
 };

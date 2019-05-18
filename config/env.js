@@ -7,7 +7,7 @@ module.exports = {
         host: 'localhost',
         user: 'root',
         password: '123456',
-        database: 'text1',
+        database: 'test1',
         dateStrings: true //将时间转换为字符串
     }
 }

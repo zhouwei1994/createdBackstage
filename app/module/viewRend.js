@@ -74,10 +74,19 @@ var defaultData = {
 };
 
 module.exports = function (page, callback) {
-    var pageContent = getFile(page, "", "");
+    var pageContent = "";
+    if(page.pageType == "childPage" && page.children){
+        pageContent = getFile(page.children, "", "",0,"children");
+    } else {
+        pageContent = getFile(page, "", "");
+    }
     if (page.pageType == "page" || page.pageType == "childPage") {
+        var template = "pageHtml";
+        if (page.pageType == "childPage") {
+            template = "childPage";
+        }
         var pageHtmlContent = getFile({
-            template: "pageHtml",
+            template: template,
             ...defaultData.baseSetting,
             verifyList: defaultData.verifyList
         }, "", "");
@@ -100,9 +109,12 @@ module.exports = function (page, callback) {
         if (i >= 0 && name) {
             len = options.content.length;
             pageOptions = options.content[i];
+        }
+        if (config[pageOptions.template]) {
             url = config[pageOptions.template].path;
         } else {
-            url = config[pageOptions.template].path;
+            callback(false, "未找到模板，名称为：" + config[pageOptions.template]);
+            return false;
         }
         let data = fs.readFileSync(path.join(__dirname, './../..', url));
         // 读取文件失败/错误

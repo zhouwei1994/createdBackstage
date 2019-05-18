@@ -4,6 +4,10 @@ module.exports = {
         type: "page",
         path: "/views/template/pageHtml.html"
     },
+    childPage: {
+        type: "page",
+        path: "/views/template/childPage.html"
+    },
     //普通登录输入框
     loginInput: {
         path: "/views/template/loginInput.html"
