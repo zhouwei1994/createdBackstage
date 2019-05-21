@@ -1,0 +1,86 @@
+<template>
+    <div class="layui-row layui-col-space15">
+        <% list.forEach(item => { %>
+        <div class="layui-col-sm<%= smNum %> layui-col-md<%= mdNum %>">
+            <div class="layui-card">
+            <div class="layui-card-header">
+                <%= item.name %>
+                <% if(item.label){ %>
+                <span class="layui-badge layui-bg-blue layuiadmin-badge"><%= item.label %></span>
+                <% } %>
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <p class="layuiadmin-big-font"><%= item.value %></p>
+                <% if(item.bottomValue && item.bottomText){ %>
+                    <p>
+                        <%= item.bottomText %>
+                        <span class="layuiadmin-span-color"><%= item.bottomValue %> 
+                            <% if(item.bottomIcon){ %>
+                            <i class="layui-inline layui-icon <%= item.bottomIcon %>"></i>
+                            <% } %>
+                        </span>
+                    </p>
+                <% } %>
+            </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            mdNum: 4,
+            smNum: 2
+        };
+        var newData = Object.assign(defaultData, data);
+        if(!(newData.list && newData.list.length > 0)){
+            callback.success = false;
+            callback.result = "显示块最少一个，参数：list";
+        }
+        for(let i in newData.list){
+            var item = newData.list[i];
+            if(!item.name){
+                callback.success = false;
+                callback.result = "第"+(i + 1)+"显示块缺少参数：name";
+                break;
+            }
+            if(!item.label){
+                item.label = false;
+            }
+            if (!item.value) {
+                callback.success = false;
+                callback.result = "第" + (i + 1) + "显示块缺少参数：value";
+                break;
+            } 
+            if (!item.bottomText) {
+                item.label = false;
+            } 
+            if (!item.bottomValue) {
+                item.label = false;
+            }
+            if (!item.bottomIcon) {
+                item.label = false;
+            }
+        }
+        if(!newData.mdNum){
+            callback.success = false;
+            callback.result = "缺少参数：mdNum";
+        }
+        if (!newData.smNum) {
+            callback.success = false;
+            callback.result = "缺少参数：smNum";
+        }
+        newData.mdNum = parseInt(12 / newData.mdNum);
+        newData.smNum = parseInt(12 / newData.smNum);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        return callback;
+    }
+</script>
+<script name="templateScript">
+   
+</script>

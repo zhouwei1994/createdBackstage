@@ -40,4 +40,8 @@ module.exports = {
     main: {
         path: "/views/template/main.html"
     },
+    //统计模板
+    statistics: {
+        path: "/views/template/statistics.html"
+    },
 }

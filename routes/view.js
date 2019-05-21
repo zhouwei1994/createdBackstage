@@ -412,15 +412,85 @@ module.exports = function (router, check) {
             pageType: "childPage",
             children: {
                 title: "",
-                name: "表单模块",
+                name: "页面模块",
                 content: [
                     {
-                        template: "loginInput",
-                        title: "手机号",
-                        name: "phone",
-                        placeholder: "手机号",
-                        icon: "layui-icon-cellphone",
-                        verify: "required|phone",
+                        template: "statistics",
+                        mdNum: 4,
+                        smNum: 2,
+                        list: [
+                            {
+                                name: "访问量",
+                                label: "周",
+                                value: "9,999,666",
+                                bottomText: "总计访问量",
+                                bottomValue: "88万",
+                                bottomIcon:"layui-icon-flag"
+                            },
+                            {
+                                name: "下载",
+                                label: "月",
+                                value: "33,555",
+                                bottomText: "新下载",
+                                bottomValue: "10%",
+                                bottomIcon: "layui-icon-face-smile-b"
+                            },
+                            {
+                                name: "收入",
+                                label: "年",
+                                value: "999,666",
+                                bottomText: "总收入",
+                                bottomValue: "***",
+                                bottomIcon: "layui-icon-dollar"
+                            },
+                            {
+                                name: "活跃用户",
+                                label: "月",
+                                value: "66,666",
+                                bottomText: "最近一个月",
+                                bottomValue: "15%",
+                                bottomIcon: "layui-icon-user"
+                            },
+                        ]
+                    },
+                    {
+                        template: "statistics",
+                        mdNum: 4,
+                        smNum: 2,
+                        list: [
+                            {
+                                name: "访问量",
+                                label: "周",
+                                value: "9,999,666",
+                                bottomText: "总计访问量",
+                                bottomValue: "88万",
+                                bottomIcon: "layui-icon-flag"
+                            },
+                            {
+                                name: "下载",
+                                label: "月",
+                                value: "33,555",
+                                bottomText: "新下载",
+                                bottomValue: "10%",
+                                bottomIcon: "layui-icon-face-smile-b"
+                            },
+                            {
+                                name: "收入",
+                                label: "年",
+                                value: "999,666",
+                                bottomText: "总收入",
+                                bottomValue: "***",
+                                bottomIcon: "layui-icon-dollar"
+                            },
+                            {
+                                name: "活跃用户",
+                                label: "月",
+                                value: "66,666",
+                                bottomText: "最近一个月",
+                                bottomValue: "15%",
+                                bottomIcon: "layui-icon-user"
+                            },
+                        ]
                     },
                 ]
             }
