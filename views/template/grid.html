@@ -1,0 +1,36 @@
+
+<template>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6 layui-col-sm6">
+
+        </div>
+        <div class="layui-col-md6 layui-col-sm6">
+
+        </div>
+        <div class="layui-col-md6 layui-col-sm6">
+
+        </div>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        let gridList = [];
+        Object.keys(newData).forEach(function(key){
+            if(/children/.test(newData[key])){
+                gridList.push({
+                    mdNum: newData[key].mdNum,
+                    smNum: newData[key].smNum,
+                });
+            }
+        });
+        return callback;
+    }
+</script>

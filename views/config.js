@@ -44,4 +44,12 @@ module.exports = {
     statistics: {
         path: "/views/template/statistics.html"
     },
+    //统计图模板
+    chart: {
+        path: "/views/template/chart.html"
+    },
+    //栅格模板
+    grid: {
+        path: "/views/template/grid.html"
+    },
 }

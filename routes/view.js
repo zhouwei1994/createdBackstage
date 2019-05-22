@@ -444,7 +444,7 @@ module.exports = function (router, check) {
                                 bottomIcon: "layui-icon-dollar"
                             },
                             {
-                                name: "活跃用户",
+                                name: "{{userInfo.nickname}}",
                                 label: "月",
                                 value: "66,666",
                                 bottomText: "最近一个月",
@@ -454,44 +454,47 @@ module.exports = function (router, check) {
                         ]
                     },
                     {
-                        template: "statistics",
-                        mdNum: 4,
-                        smNum: 2,
-                        list: [
-                            {
-                                name: "访问量",
-                                label: "周",
-                                value: "9,999,666",
-                                bottomText: "总计访问量",
-                                bottomValue: "88万",
-                                bottomIcon: "layui-icon-flag"
-                            },
-                            {
-                                name: "下载",
-                                label: "月",
-                                value: "33,555",
-                                bottomText: "新下载",
-                                bottomValue: "10%",
-                                bottomIcon: "layui-icon-face-smile-b"
-                            },
-                            {
-                                name: "收入",
-                                label: "年",
-                                value: "999,666",
-                                bottomText: "总收入",
-                                bottomValue: "***",
-                                bottomIcon: "layui-icon-dollar"
-                            },
-                            {
-                                name: "活跃用户",
-                                label: "月",
-                                value: "66,666",
-                                bottomText: "最近一个月",
-                                bottomValue: "15%",
-                                bottomIcon: "layui-icon-user"
-                            },
-                        ]
-                    },
+                        template: "request",
+                        requestUrl: "/casual",
+                        data: "{}",
+                        method: "get",
+                        children: {
+                            title: "",
+                            name: "请求结果模块",
+                            content: [
+                                {
+                                    template: "grid",
+                                    children: {
+                                        title: "",
+                                        lgNum: 5,
+                                        mdNum: 5,
+                                        smNum: 5,
+                                        xsNum:5,
+                                        name: "请求结果模块",
+                                        content: []
+                                    },
+                                    children1: {
+                                        lgNum: 5,
+                                        mdNum: 5,
+                                        smNum: 5,
+                                        xsNum: 5,
+                                        title: "",
+                                        name: "请求结果模块",
+                                        content: []
+                                    },
+                                    children3: {
+                                        lgNum: 5,
+                                        mdNum: 5,
+                                        smNum: 5,
+                                        xsNum: 5,
+                                        title: "",
+                                        name: "请求结果模块",
+                                        content: []
+                                    },
+                                }
+                            ]
+                        },
+                    }
                 ]
             }
         };

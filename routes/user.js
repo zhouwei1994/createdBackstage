@@ -63,10 +63,14 @@ module.exports = function (router, check) {
         res.write(String(captcha.data));
         res.end();
     }));
-    //根据用户名搜索用户
-    router.get('/searchFriend',  check([], function (req, res) {
-        console.log(111111111);
-        res.result({});
+
+    //随便返回数据
+    router.get('/casual',  check([], function (req, res) {
+        res.result({
+            a: 1,
+            b: 2,
+            c:3
+        });
     }));
     //根据用户ID搜索用户
     router.get('/set_user_info', function (req, res) {

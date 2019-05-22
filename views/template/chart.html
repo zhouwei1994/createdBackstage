@@ -1,0 +1,28 @@
+<template>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">数据概览</div>
+                <div class="layui-card-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            mdNum: 4,
+            smNum: 2
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+
+        return callback;
+    }
+</script>

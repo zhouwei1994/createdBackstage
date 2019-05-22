@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="/layui/css/admin.css">
     </head>
     <body>
-        <div class="layui-fluid">
+        <div class="layui-fluid" id="LAY_app">
             <!--&&htmlchildren&&-->
         </div>
         <script src="/layui/layui.js"></script>
@@ -46,6 +46,7 @@
                             },
                         <% }); %>
                     });
+                    insert = dataDom("LAY_app", pageData);
                     //&&scriptchildren&&
             });
         </script>
