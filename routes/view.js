@@ -383,7 +383,7 @@ module.exports = function (router, check) {
                     list: [
                         {
                             title: "表格",
-                            href: "home1.html",
+                            href: "table.html",
                             name: "b1",
                         },
                         {
@@ -466,35 +466,192 @@ module.exports = function (router, check) {
                                     template: "grid",
                                     children: {
                                         title: "",
-                                        lgNum: 5,
-                                        mdNum: 5,
-                                        smNum: 5,
-                                        xsNum:5,
+                                        lgNum: 6,
+                                        mdNum: 6,
                                         name: "请求结果模块",
-                                        content: []
+                                        content: [
+                                            {
+                                                template: "chart",
+                                                chartId: "chart_1",
+                                                chartOption: `var chart_1 = {
+                                                            title: {
+                                                                text: "今日流量趋势",
+                                                                x: "center",
+                                                                textStyle: {
+                                                                    fontSize: 14
+                                                                }
+                                                            }, tooltip: {
+                                                                trigger: "axis"
+                                                            }, legend: {
+                                                                data: ["", ""]
+                                                            }, xAxis: [{ type: "category", boundaryGap: !1, data: ["06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"] }], yAxis: [{ type: "value" }], series: [{ name: "PV", type: "line", smooth: !0, itemStyle: { normal: { areaStyle: { type: "default" } } }, data: [111, 222, 333, 444, 555, 666, 3333, 33333, 55555, 66666, 33333, 3333, 6666, 11888, 26666, 38888, 56666, 42222, 39999, 28888, 17777, 9666, 6555, 5555, 3333, 2222, 3111, 6999, 5888, 2777, 1666, 999, 888, 777] }, { name: "UV", type: "line", smooth: !0, itemStyle: { normal: { areaStyle: { type: "default" } } }, data: [11, 22, 33, 44, 55, 66, 333, 3333, 5555, 12666, 3333, 333, 666, 1188, 2666, 3888, 6666, 4222, 3999, 2888, 1777, 966, 655, 555, 333, 222, 311, 699, 588, 277, 166, 99, 88, 77] }]
+                                                        }`
+                                            },
+                                            
+                                        ]
                                     },
                                     children1: {
-                                        lgNum: 5,
-                                        mdNum: 5,
-                                        smNum: 5,
-                                        xsNum: 5,
+                                        lgNum: 6,
+                                        mdNum: 6,
                                         title: "",
                                         name: "请求结果模块",
-                                        content: []
-                                    },
-                                    children3: {
-                                        lgNum: 5,
-                                        mdNum: 5,
-                                        smNum: 5,
-                                        xsNum: 5,
-                                        title: "",
-                                        name: "请求结果模块",
-                                        content: []
+                                        content: [
+                                            {
+                                                template: "chart",
+                                                chartId: "chart_2",
+                                                chartOption: `var base = +new Date(1968, 9, 3);
+                                                                var oneDay = 24 * 3600 * 1000;
+                                                                var date = [];
+
+                                                                var data = [Math.random() * 300];
+
+                                                                for (var i = 1; i < 20000; i++) {
+                                                                    var now = new Date(base += oneDay);
+                                                                    date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+                                                                    data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+                                                                }
+
+                                                                var chart_2 = {
+                                                                    tooltip: {
+                                                                        trigger: 'axis',
+                                                                        position: function (pt) {
+                                                                            return [pt[0], '10%'];
+                                                                        }
+                                                                    },
+                                                                    title: {
+                                                                        left: 'center',
+                                                                        text: '大数据量面积图',
+                                                                    },
+                                                                    toolbox: {
+                                                                        feature: {
+                                                                            dataZoom: {
+                                                                                yAxisIndex: 'none'
+                                                                            },
+                                                                            restore: {},
+                                                                            saveAsImage: {}
+                                                                        }
+                                                                    },
+                                                                    xAxis: {
+                                                                        type: 'category',
+                                                                        boundaryGap: false,
+                                                                        data: date
+                                                                    },
+                                                                    yAxis: {
+                                                                        type: 'value',
+                                                                        boundaryGap: [0, '100%']
+                                                                    },
+                                                                    dataZoom: [{
+                                                                        type: 'inside',
+                                                                        start: 0,
+                                                                        end: 10
+                                                                    }, {
+                                                                        start: 0,
+                                                                        end: 10,
+                                                                        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                                                                        handleSize: '80%',
+                                                                        handleStyle: {
+                                                                            color: '#fff',
+                                                                            shadowBlur: 3,
+                                                                            shadowColor: 'rgba(0, 0, 0, 0.6)',
+                                                                            shadowOffsetX: 2,
+                                                                            shadowOffsetY: 2
+                                                                        }
+                                                                    }],
+                                                                    series: [
+                                                                        {
+                                                                            name:'模拟数据',
+                                                                            type:'line',
+                                                                            smooth:true,
+                                                                            symbol: 'none',
+                                                                            sampling: 'average',
+                                                                            itemStyle: {
+                                                                                color: 'rgb(255, 70, 131)'
+                                                                            },
+                                                                            areaStyle: {
+                                                                                type: 'linear',
+                                                                                x: 0,
+                                                                                y: 0,
+                                                                                x2: 0,
+                                                                                y2: 1,
+                                                                                colorStops: [{
+                                                                                    offset: 0, color: 'red' // 0% 处的颜色
+                                                                                }, {
+                                                                                    offset: 1, color: 'blue' // 100% 处的颜色
+                                                                                }],
+                                                                                global: false // 缺省为 false
+                                                                            },
+                                                                            data: data
+                                                                        }
+                                                                    ]
+                                                                };`
+                                            }
+                                        ]
                                     },
                                 }
                             ]
                         },
                     }
+                ]
+            }
+        };
+        viewRend(login, function (state, html) {
+            if (state) {
+                res.end(html.templateHtml);
+            } else {
+                res.result({}, 2004, html);
+                console.error(html);
+            }
+        });
+    }));
+    router.get('/table.html', check([], function (req, res) {
+        //设置html请求头
+        res.set('Content-Type', 'text/html');
+        var login = {
+            //模板名称
+            pageType: "childPage",
+            children: {
+                title: "",
+                name: "页面模块",
+                content: [
+                    {
+                        template: "statistics",
+                        mdNum: 4,
+                        smNum: 2,
+                        list: [
+                            {
+                                name: "访问量",
+                                label: "周",
+                                value: "9,999,666",
+                                bottomText: "总计访问量",
+                                bottomValue: "88万",
+                                bottomIcon: "layui-icon-flag"
+                            },
+                            {
+                                name: "下载",
+                                label: "月",
+                                value: "33,555",
+                                bottomText: "新下载",
+                                bottomValue: "10%",
+                                bottomIcon: "layui-icon-face-smile-b"
+                            },
+                            {
+                                name: "收入",
+                                label: "年",
+                                value: "999,666",
+                                bottomText: "总收入",
+                                bottomValue: "***",
+                                bottomIcon: "layui-icon-dollar"
+                            },
+                            {
+                                name: "{{userInfo.nickname}}",
+                                label: "月",
+                                value: "66,666",
+                                bottomText: "最近一个月",
+                                bottomValue: "15%",
+                                bottomIcon: "layui-icon-user"
+                            },
+                        ]
+                    },
                 ]
             }
         };

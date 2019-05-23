@@ -110,12 +110,18 @@ module.exports = function (page, callback) {
             len = options.content.length;
             pageOptions = options.content[i];
         }
-        if (config[pageOptions.template]) {
-            url = config[pageOptions.template].path;
+        if (pageOptions.template) {
+            if (config[pageOptions.template]) {
+                url = config[pageOptions.template].path;
+            } else {
+                callback(false, "未找到模板，名称为：" + config[pageOptions.template]);
+                return false;
+            }
         } else {
-            callback(false, "未找到模板，名称为：" + config[pageOptions.template]);
+            callback(false, "未找到模板名称，" + JSON.stringify(pageOptions));
             return false;
         }
+        
         let data = fs.readFileSync(path.join(__dirname, './../..', url));
         // 读取文件失败/错误
         if (data) {
@@ -196,13 +202,13 @@ module.exports = function (page, callback) {
         let childrenNameList = [];
         for (let index = 0; index < 100; index++) {
             if (index == 0) {
-                if (pageOptions["children"]) {
+                if (pageOptions["children"] && pageOptions["children"].content && pageOptions["children"].content.length > 0) {
                     childrenNameList.push("children");
                 } else {
                     break;
                 }
             } else {
-                if (pageOptions["children" + index]) {
+                if (pageOptions["children" + index] && pageOptions["children" + index].content && pageOptions["children" + index].content.length > 0) {
                     childrenNameList.push("children" + index);
                 } else {
                     break;

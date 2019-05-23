@@ -31,7 +31,8 @@
                     popup = parent.window.layer,
                     dataDom = layui.dataDom,
                     insert,
-                    pageData = {};
+                    pageData = {},
+                    echarts = layui.echarts;
                     for(var httpData in $http.data){
                         pageData[httpData] = $http.data[httpData];
                     }
