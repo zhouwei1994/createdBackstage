@@ -1,0 +1,71 @@
+<template>
+    <div class="layui-card">
+        <div class="layui-card-header">开启合计行</div>
+        <div class="layui-card-body">
+            <table class="layui-hide" id="test-table-totalRow" lay-filter="test-table-totalRow"></table>
+            <script type="text/html" id="test-table-totalRow-toolbarDemo">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                </div>
+            </script>
+        </div>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            mdNum: 4,
+            smNum: 2
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    table.render({
+        elem: '#test-table-totalRow',
+        url: '/casual1',
+        toolbar: '#test-table-totalRow-toolbarDemo',
+        title: '用户数据表',
+        totalRow: true,
+        height:"",
+        where:{},
+        cellMinWidth:100,
+        cols: [[
+            { type: 'checkbox', fixed: 'left' },
+            { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计' },
+            { field: 'username', title: '用户名', width: 120, edit: 'text' },
+            { field: 'experience', title: '积分', width: 120, sort: true, totalRow: true },
+            { field: 'sex', title: '性别', width: 80, edit: 'text', sort: true },
+            { field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true },
+            { field: 'sign', title: '签名' }
+        ]],
+        page: true
+    });
+
+    //头工具栏事件
+    table.on('toolbar(test-table-totalRow)', function (obj) {
+        var checkStatus = table.checkStatus(obj.config.id);
+        switch (obj.event) {
+            case 'getCheckData':
+                var data = checkStatus.data;
+                popup.alert(JSON.stringify(data));
+                break;
+            case 'getCheckLength':
+                var data = checkStatus.data;
+                popup.msg('选中了：' + data.length + ' 个');
+                break;
+            case 'isAll':
+                popup.msg(checkStatus.isAll ? '全选' : '未全选');
+                break;
+        };
+    });
+</script>

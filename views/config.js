@@ -52,4 +52,8 @@ module.exports = {
     grid: {
         path: "/views/template/grid.html"
     },
+    //表格模板
+    table: {
+        path: "/views/template/table.html"
+    },
 }
