@@ -17,15 +17,84 @@
     function templateCompile(data) {
         var defaultData = {
             type: "module",
-            mdNum: 4,
-            smNum: 2
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
             success: true,
             result: newData
         };
-
+        function getLastChild(index,callback){
+            if(index == 0){
+                if(newData["children"]){
+                  return getLastChild(index + 1);
+                }else{
+                    return "children";
+                }
+            }else if(newData["children" + index]){
+               return getLastChild(index + 1);
+            }else{
+                return "children" + index;
+            }
+        }
+        if (!newData.tableId) {
+            callback.success = false;
+            callback.result = "表格缺少参数：tableId";
+        }
+        if (newData.toolbar && newData.toolbar instanceof Array) {
+            for(let item of newData.toolbar){
+                if(!item.title){
+                    callback.success = false;
+                    callback.result = "表格参数toolbar数组缺少参数：title";
+                    break;
+                } else if (!item.name) {
+                    callback.success = false;
+                    callback.result = "表格参数toolbar数组缺少参数：name";
+                    break;
+                }
+                if(item.children){
+                    let childrenName = getLastChild(0);
+                    newData[childrenName] = item.children;
+                    item.childrenName = childrenName;
+                }
+            };
+        }
+        if (!newData.requestUrl) {
+            callback.success = false;
+            callback.result = "表格缺少参数：requestUrl";
+        }
+        if (!newData.cols) {
+            callback.success = false;
+            callback.result = "表格缺少参数：cols";
+        }
+        if (!newData.cols instanceof Array) {
+            callback.success = false;
+            callback.result = "表格参数'cols'必须为数组";
+        }
+        for (let item of newData.cols) {
+            if (item instanceof Array) {
+                for (let childItem of item) {
+                    if (!item.field) {
+                        callback.success = false;
+                        callback.result = "表格参数cols数组缺少参数：field";
+                        break;
+                    } else if (!item.title) {
+                        callback.success = false;
+                        callback.result = "表格参数cols数组缺少参数：title";
+                        break;
+                    }
+                    if (item.children) {
+                        let childrenName = getLastChild(0);
+                        newData[childrenName] = item.children;
+                        item.childrenName = childrenName;
+                    }
+                };
+            }else{
+                callback.success = false;
+                callback.result = "表格参数'cols'必须为二维数组";
+                break;
+            }
+        };
+        
         return callback;
     }
 </script>
@@ -53,7 +122,9 @@
 
     //头工具栏事件
     table.on('toolbar(test-table-totalRow)', function (obj) {
+        console.log(obj);
         var checkStatus = table.checkStatus(obj.config.id);
+        console.log(checkStatus);
         switch (obj.event) {
             case 'getCheckData':
                 var data = checkStatus.data;

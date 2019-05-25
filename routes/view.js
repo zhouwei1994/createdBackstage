@@ -615,6 +615,50 @@ module.exports = function (router, check) {
                 content: [
                     {
                         template: "table",
+                        //表格id
+                        tableId: "56465464",
+                        //表头信息
+                        toolbar: [
+                            {
+                                title: "获取选中行数据",
+                                name: "getCheckData",
+                                //自定义js语法模板
+                                templet:"",
+                                children: {
+                                    title: "",
+                                    name: "表头信息",
+                                    content: [
+                                        {
+                                            template: "alert",
+                                            content: "'登录成功！'",
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        defaultToolbar: ['filter', 'print', 'exports'],
+                        //请求地址
+                        requestUrl: "/casual1",
+                        //表名称
+                        title: "表名称",
+                        //表高度
+                        height: "",
+                        //表格每一栏最小宽度
+                        cellMinWidth: 100,
+                        //表格参数设置
+                        cols:[
+                            [
+                                { type: 'checkbox', fixed: 'left' },
+                                { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计' },
+                                { field: 'username', title: '用户名', width: 120, edit: 'text' },
+                                { field: 'experience', title: '积分', width: 120, sort: true, totalRow: true },
+                                { field: 'sex', title: '性别', width: 80, edit: 'text', sort: true },
+                                { field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true },
+                                { field: 'sign', title: '签名' }
+                            ]
+                        ],
+                        //是否分页
+                        page:true
                     },
                 ]
             }
