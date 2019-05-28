@@ -2,12 +2,14 @@
     <div class="layui-card">
         <div class="layui-card-header">开启合计行</div>
         <div class="layui-card-body">
-            <table class="layui-hide" id="test-table-totalRow" lay-filter="test-table-totalRow"></table>
-            <script type="text/html" id="test-table-totalRow-toolbarDemo">
+            <table class="layui-hide" id="table-elem-<%= tableId %>" lay-filter="table-elem-<%= tableId %>"></table>
+            <script type="text/html" id="table-toolbarDemo-<%= tableId %>">
                 <div class="layui-btn-container">
-                    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-                    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-                    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                    <% if(toolbar && toolbar instanceof Array){ %>
+                        <% toolbar.forEach(item => { %>
+                            <button class="layui-btn layui-btn-sm" lay-event="<%= item.name %>"><%= item.title %></button>
+                        <% }); %>
+                    <% } %>
                 </div>
             </script>
         </div>
@@ -73,19 +75,18 @@
         for (let item of newData.cols) {
             if (item instanceof Array) {
                 for (let childItem of item) {
-                    if (!item.field) {
-                        callback.success = false;
-                        callback.result = "表格参数cols数组缺少参数：field";
-                        break;
-                    } else if (!item.title) {
-                        callback.success = false;
-                        callback.result = "表格参数cols数组缺少参数：title";
-                        break;
-                    }
-                    if (item.children) {
-                        let childrenName = getLastChild(0);
-                        newData[childrenName] = item.children;
-                        item.childrenName = childrenName;
+                    if(childItem.templet){
+                        childItem.templet = "&&start&&" + childItem.templet + "&&end&&"
+                    }else if(!childItem.type || childItem.type && childItem.type == "normal" || childItem.templet){
+                        if (!childItem.field) {
+                            callback.success = false;
+                            callback.result = "表格参数cols数组缺少参数：field";
+                            break;
+                        } else if (!childItem.title) {
+                            callback.success = false;
+                            callback.result = "表格参数cols数组缺少参数：title";
+                            break;
+                        }
                     }
                 };
             }else{
@@ -94,49 +95,106 @@
                 break;
             }
         };
-        
+        let tableData = {
+            elem: "#table-elem-"+newData.tableId,
+            url: newData.requestUrl,
+            cols: newData.cols,
+            id: "#table-id-" + newData.tableId
+        };
+        if(newData.toolbar){
+            tableData.toolbar = "#table-toolbarDemo-"+ newData.tableId;
+        }
+        if (newData.defaultToolbar) {
+            tableData.defaultToolbar = newData.defaultToolbar;
+        }
+        if (newData.title) {
+            tableData.title = newData.title;
+        }
+        if (newData.width) {
+            tableData.width = newData.width;
+        }
+        if (newData.height) {
+            tableData.height = newData.height;
+        }
+        if (newData.cellMinWidth) {
+            tableData.cellMinWidth = newData.cellMinWidth;
+        }
+        if (newData.done) {
+            tableData.done = newData.done;
+        }
+        if (newData.totalRow) {
+            tableData.totalRow = newData.totalRow;
+        }
+        if (newData.page) {
+            tableData.page = newData.page;
+        }
+        if (newData.limit) {
+            tableData.limit = newData.limit;
+        }
+        if (newData.limits) {
+            tableData.limits = newData.limits;
+        }
+        if (newData.loading) {
+            tableData.loading = newData.loading;
+        }
+        if (newData.text) {
+            tableData.text = newData.text;
+        }
+        if (newData.autoSort) {
+            tableData.autoSort = newData.autoSort;
+        }
+        if (newData.initSort) {
+            tableData.initSort = newData.initSort;
+        }
+        if (newData.skin) {
+            tableData.skin = newData.skin;
+        }
+        if (newData.where) {
+            tableData.where = newData.where;
+        }
+        if (newData.method) {
+            tableData.method = newData.method;
+        }
+        if (newData.contentType) {
+            tableData.contentType = newData.contentType;
+        }
+        if (newData.headers) {
+            tableData.headers = newData.headers;
+        }
+        if (newData.request) {
+            tableData.request = newData.request;
+        }
+        if (newData.parseData) {
+            tableData.parseData = newData.parseData;
+        }
+        let tableDataSrt = JSON.stringify(tableData);
+        callback.result.tableData = tableDataSrt.replace(/\"&&start&&/g, "function (b){").replace(/&&end&&\"/g, "}");
         return callback;
     }
 </script>
 <script name="templateScript">
-    table.render({
-        elem: '#test-table-totalRow',
-        url: '/casual1',
-        toolbar: '#test-table-totalRow-toolbarDemo',
-        title: '用户数据表',
-        totalRow: true,
-        height:"",
-        where:{},
-        cellMinWidth:100,
-        cols: [[
-            { type: 'checkbox', fixed: 'left' },
-            { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计' },
-            { field: 'username', title: '用户名', width: 120, edit: 'text' },
-            { field: 'experience', title: '积分', width: 120, sort: true, totalRow: true },
-            { field: 'sex', title: '性别', width: 80, edit: 'text', sort: true },
-            { field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true },
-            { field: 'sign', title: '签名' }
-        ]],
-        page: true
-    });
-
-    //头工具栏事件
-    table.on('toolbar(test-table-totalRow)', function (obj) {
-        console.log(obj);
+    table.render(<%- tableData %>);
+    <% if(toolbar && toolbar instanceof Array){ %>
+    table.on('toolbar(<%= tableData.toolbar %>)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
-        console.log(checkStatus);
         switch (obj.event) {
-            case 'getCheckData':
+            <% toolbar.forEach(item => { %>
+                case '<%= item.name %>':
                 var data = checkStatus.data;
-                popup.alert(JSON.stringify(data));
+                <% if (item.templet) { %>
+                    <%- item.templet %>
+                <% } %>
+                //&&script<%= item.childrenName %>&&
                 break;
-            case 'getCheckLength':
-                var data = checkStatus.data;
-                popup.msg('选中了：' + data.length + ' 个');
-                break;
-            case 'isAll':
-                popup.msg(checkStatus.isAll ? '全选' : '未全选');
-                break;
+            <% }); %>
         };
     });
+    <% } %>
+    //监听行工具事件
+    table.on('tool(<%= tableData.toolbar %>)', function (obj) {
+        var data = obj.data;
+        console.log(data);
+    });
+
+
 </script>

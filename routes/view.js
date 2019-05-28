@@ -630,7 +630,7 @@ module.exports = function (router, check) {
                                     content: [
                                         {
                                             template: "alert",
-                                            content: "'登录成功！'",
+                                            content: "'点击按钮！'",
                                         }
                                     ]
                                 }
@@ -654,7 +654,19 @@ module.exports = function (router, check) {
                                 { field: 'experience', title: '积分', width: 120, sort: true, totalRow: true },
                                 { field: 'sex', title: '性别', width: 80, edit: 'text', sort: true },
                                 { field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true },
-                                { field: 'sign', title: '签名' }
+                                { field: 'sign', title: '签名' },
+                                {
+                                    width: 200,
+                                    title: '操作',
+                                    templet: "var text = '';\
+                                                if(1) {\
+                                                    text += '<button class=\"layui-btn layui-btn-xs\" lay-event=\"edit\">编辑\
+                                                            </button >';\
+                                                    text += '<button class=\"layui-btn layui-btn-xs  layui-btn-danger\">删除\
+                                                            </button >';\
+                                                }\
+                                            return text;"
+                                },
                             ]
                         ],
                         //是否分页

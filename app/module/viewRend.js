@@ -121,7 +121,6 @@ module.exports = function (page, callback) {
             callback(false, "未找到模板名称，" + JSON.stringify(pageOptions));
             return false;
         }
-        
         let data = fs.readFileSync(path.join(__dirname, './../..', url));
         // 读取文件失败/错误
         if (data) {
@@ -139,6 +138,7 @@ module.exports = function (page, callback) {
                 if (compileData.success) {
                     let templateHtml;
                     let scriptText;
+                    pageOptions = compileData.result;
                     if (template) {
                         template = template[0].replace(/<template>|<\/template>/g, "");
                         templateHtml = ejs.render(template, compileData.result);

@@ -41,6 +41,10 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function (exports) {
       },
       msgName: 'msg', //状态信息的字段名称
       dataName: 'data', //数据详情的字段名称
+      listLotalName: "data.total", //表格最大数量参数
+      listDataName: "data.data", //表格数据参数
+      listPageSizeName: "pageSize",
+      listPageName:"page"
     },
     //扩展的第三方模块
     extend: [
