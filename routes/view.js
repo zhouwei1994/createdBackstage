@@ -471,9 +471,16 @@ module.exports = function (router, check) {
                                         name: "请求结果模块",
                                         content: [
                                             {
-                                                template: "chart",
-                                                chartId: "chart_1",
-                                                chartOption: `var chart_1 = {
+                                                template: "card",
+                                                cardName: "今日流量趋势",
+                                                children: {
+                                                    title: "",
+                                                    name: "卡片模块",
+                                                    content: [
+                                                        {
+                                                            template: "chart",
+                                                            chartId: "chart_1",
+                                                            chartOption: `var chart_1 = {
                                                             title: {
                                                                 text: "今日流量趋势",
                                                                 x: "center",
@@ -486,7 +493,11 @@ module.exports = function (router, check) {
                                                                 data: ["", ""]
                                                             }, xAxis: [{ type: "category", boundaryGap: !1, data: ["06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"] }], yAxis: [{ type: "value" }], series: [{ name: "PV", type: "line", smooth: !0, itemStyle: { normal: { areaStyle: { type: "default" } } }, data: [111, 222, 333, 444, 555, 666, 3333, 33333, 55555, 66666, 33333, 3333, 6666, 11888, 26666, 38888, 56666, 42222, 39999, 28888, 17777, 9666, 6555, 5555, 3333, 2222, 3111, 6999, 5888, 2777, 1666, 999, 888, 777] }, { name: "UV", type: "line", smooth: !0, itemStyle: { normal: { areaStyle: { type: "default" } } }, data: [11, 22, 33, 44, 55, 66, 333, 3333, 5555, 12666, 3333, 333, 666, 1188, 2666, 3888, 6666, 4222, 3999, 2888, 1777, 966, 655, 555, 333, 222, 311, 699, 588, 277, 166, 99, 88, 77] }]
                                                         }`
+                                                        },
+                                                    ]
+                                                }
                                             },
+                                            
                                             
                                         ]
                                     },
@@ -497,9 +508,16 @@ module.exports = function (router, check) {
                                         name: "请求结果模块",
                                         content: [
                                             {
-                                                template: "chart",
-                                                chartId: "chart_2",
-                                                chartOption: `var base = +new Date(1968, 9, 3);
+                                                template: "card",
+                                                cardName: "大数据量面积图",
+                                                children: {
+                                                    title: "",
+                                                    name: "卡片模块",
+                                                    content: [
+                                                        {
+                                                            template: "chart",
+                                                            chartId: "chart_2",
+                                                            chartOption: `var base = +new Date(1968, 9, 3);
                                                                 var oneDay = 24 * 3600 * 1000;
                                                                 var date = [];
 
@@ -584,7 +602,11 @@ module.exports = function (router, check) {
                                                                         }
                                                                     ]
                                                                 };`
-                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            
                                         ]
                                     },
                                 }
@@ -614,64 +636,144 @@ module.exports = function (router, check) {
                 name: "页面模块",
                 content: [
                     {
-                        template: "table",
-                        //表格id
-                        tableId: "56465464",
-                        //表头信息
-                        toolbar: [
-                            {
-                                title: "获取选中行数据",
-                                name: "getCheckData",
-                                //自定义js语法模板
-                                templet:"",
-                                children: {
-                                    title: "",
-                                    name: "表头信息",
-                                    content: [
-                                        {
-                                            template: "alert",
-                                            content: "'点击按钮！'",
-                                        }
-                                    ]
-                                }
-                            }
-                        ],
-                        defaultToolbar: ['filter', 'print', 'exports'],
-                        //请求地址
-                        requestUrl: "/casual1",
-                        //表名称
-                        title: "表名称",
-                        //表高度
-                        height: "",
-                        //表格每一栏最小宽度
-                        cellMinWidth: 100,
-                        //表格参数设置
-                        cols:[
-                            [
-                                { type: 'checkbox', fixed: 'left' },
-                                { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计' },
-                                { field: 'username', title: '用户名', width: 120, edit: 'text' },
-                                { field: 'experience', title: '积分', width: 120, sort: true, totalRow: true },
-                                { field: 'sex', title: '性别', width: 80, edit: 'text', sort: true },
-                                { field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true },
-                                { field: 'sign', title: '签名' },
+                        template: "form_box",
+                        children: {
+                            title: "",
+                            name: "表单form框模板",
+                            content: [
                                 {
-                                    width: 200,
-                                    title: '操作',
-                                    templet: "var text = '';\
-                                                if(1) {\
-                                                    text += '<button class=\"layui-btn layui-btn-xs\" lay-event=\"edit\">编辑\
-                                                            </button >';\
-                                                    text += '<button class=\"layui-btn layui-btn-xs  layui-btn-danger\">删除\
-                                                            </button >';\
-                                                }\
-                                            return text;"
+                                    template: "form_item",
+                                    children: {
+                                        title: "",
+                                        name: "表单form列表模板",
+                                        content: [
+                                            {
+                                                template: "form_input",
+                                            },
+                                            {
+                                                template: "form_input",
+                                            },
+                                            {
+                                                template: "form_input",
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        template: "card",
+                        cardName:"表格模板",
+                        children: {
+                            title: "",
+                            name: "表单form列表模板",
+                            content: [
+                                {
+                                    template: "table",
+                                    //表格id
+                                    tableId: "56465464",
+                                    //表头信息
+                                    toolbar: [
+                                        {
+                                            title: "获取选中行数据",
+                                            name: "getCheckData",
+                                            //自定义js语法模板
+                                            templet: "",
+                                            children: {
+                                                title: "",
+                                                name: "表头信息",
+                                                content: [
+                                                    {
+                                                        template: "alert",
+                                                        content: "'点击按钮！'",
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    defaultToolbar: ['filter', 'print', 'exports'],
+                                    //请求地址
+                                    requestUrl: "/casual1",
+                                    //表名称
+                                    title: "表名称",
+                                    //表高度
+                                    height: "",
+                                    //表格每一栏最小宽度
+                                    cellMinWidth: 100,
+                                    //表格点击
+                                    tableClick: {
+                                        //自定义js语法模板
+                                        templet: "",
+                                        children: {
+                                            title: "",
+                                            name: "表格按钮信息",
+                                            content: [
+                                                {
+                                                    template: "alert",
+                                                    content: "'点击成功！'+data.username",
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    //表格参数设置
+                                    cols: [
+                                        [
+                                            { type: 'checkbox', fixed: 'left' },
+                                            { field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计' },
+                                            { field: 'username', title: '用户名', width: 120, edit: 'text' },
+                                            { field: 'experience', title: '积分', width: 120, sort: true, totalRow: true },
+                                            { field: 'sex', title: '性别', width: 80, edit: 'text', sort: true },
+                                            { field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true },
+                                            { field: 'sign', title: '签名' },
+                                            {
+                                                width: 200,
+                                                title: '操作',
+                                                templet: "<div style='color:#f00'>{{d.username}}\
+                                                <button class=\"layui-btn layui-btn-xs\" lay-event=\"edit\">编辑</button >\
+                                                <button class=\"layui-btn layui-btn-xs layui-btn-danger\" lay-event=\"delete\">删除</button >\
+                                            </div>",
+                                                templetBut: [
+                                                    {
+                                                        layEvent: "edit",
+                                                        //自定义js语法模板
+                                                        templet: "",
+                                                        children: {
+                                                            title: "",
+                                                            name: "表格按钮信息",
+                                                            content: [
+                                                                {
+                                                                    template: "alert",
+                                                                    content: "'编辑成功！'+data.username",
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        layEvent: "delete",
+                                                        //自定义js语法模板
+                                                        templet: "var a = 1;",
+                                                        children: {
+                                                            title: "",
+                                                            name: "表头按钮信息",
+                                                            content: [
+                                                                {
+                                                                    template: "alert",
+                                                                    content: "'删除成功！'+data.username+a",
+                                                                }
+                                                            ]
+                                                        }
+                                                    },
+                                                ]
+                                            },
+                                        ]
+                                    ],
+                                    //是否分页
+                                    page: true
                                 },
                             ]
-                        ],
-                        //是否分页
-                        page:true
-                    },
+                        }
+                    }
                 ]
             }
         };

@@ -1,0 +1,33 @@
+<template>
+    <form class="layui-form" action="" lay-filter="component-form-group">
+        <!--&&htmlchildren&&-->
+    </form>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        let gridList = [];
+        Object.keys(newData).forEach(function (key) {
+            if (/^children+/.test(key)) {
+                gridList.push({
+                    lgNum: newData[key].lgNum || 12,
+                    mdNum: newData[key].mdNum || 12,
+                    smNum: newData[key].smNum || 12,
+                    xsNum: newData[key].xsNum || 12,
+                });
+            }
+        });
+        callback.result.gridList = gridList;
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    //&&scriptchildren&&
+</script>

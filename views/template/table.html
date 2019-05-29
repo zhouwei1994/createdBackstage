@@ -1,24 +1,20 @@
 <template>
-    <div class="layui-card">
-        <div class="layui-card-header">开启合计行</div>
-        <div class="layui-card-body">
-            <table class="layui-hide" id="table-elem-<%= tableId %>" lay-filter="table-elem-<%= tableId %>"></table>
-            <script type="text/html" id="table-toolbarDemo-<%= tableId %>">
-                <div class="layui-btn-container">
-                    <% if(toolbar && toolbar instanceof Array){ %>
-                        <% toolbar.forEach(item => { %>
-                            <button class="layui-btn layui-btn-sm" lay-event="<%= item.name %>"><%= item.title %></button>
-                        <% }); %>
-                    <% } %>
-                </div>
-            </script>
+    <table class="layui-hide" id="table-elem-<%= tableId %>" lay-filter="table-elem-<%= tableId %>"></table>
+    <script type="text/html" id="table-toolbarDemo-<%= tableId %>">
+        <div class="layui-btn-container">
+            <% if(toolbar && toolbar instanceof Array){ %>
+                <% toolbar.forEach(item => { %>
+                    <button class="layui-btn layui-btn-sm" lay-event="<%= item.name %>"><%= item.title %></button>
+                <% }); %>
+            <% } %>
         </div>
-    </div>
+    </script>
 </template>
 <script name="compile">
     function templateCompile(data) {
         var defaultData = {
             type: "module",
+            tableClick:false
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
@@ -72,11 +68,23 @@
             callback.success = false;
             callback.result = "表格参数'cols'必须为数组";
         }
+        if (newData.tableClick && newData.tableClick instanceof Object) {
+            if(newData.tableClick.children){
+                let childrenName = getLastChild(0);
+                newData[childrenName] = newData.tableClick.children;
+                newData.tableClick.childrenName = childrenName;
+            }else if(newData.tableClick.templet){
+                
+            }else{
+                callback.success = false;
+                callback.result = "表格参数'tableClick'里必须有参数templet和children其中一种";
+            }
+        }
+        let colsButList = [];
         for (let item of newData.cols) {
             if (item instanceof Array) {
                 for (let childItem of item) {
                     if(childItem.templet){
-                        childItem.templet = "&&start&&" + childItem.templet + "&&end&&"
                     }else if(!childItem.type || childItem.type && childItem.type == "normal" || childItem.templet){
                         if (!childItem.field) {
                             callback.success = false;
@@ -88,6 +96,29 @@
                             break;
                         }
                     }
+                    if(childItem.templetBut && childItem.templetBut instanceof Array){
+                        let templetButState = true;
+                        for (let tempItem of childItem.templetBut) {
+                            if (!tempItem.layEvent) {
+                                callback.success = false;
+                                callback.result = "表格参数cols数组缺少参数：field";
+                                templetButState = false;
+                                break;
+                            }
+                            if (tempItem.children) {
+                                let childrenName = getLastChild(0);
+                                newData[childrenName] = tempItem.children;
+                                colsButList.push({
+                                    layEvent:tempItem.layEvent,
+                                    templet:tempItem.templet || "",
+                                    childrenName: childrenName
+                                });
+                            }
+                        }
+                        if(!templetButState){
+                            break;
+                        }
+                    }
                 };
             }else{
                 callback.success = false;
@@ -95,6 +126,7 @@
                 break;
             }
         };
+        callback.result.colsButList = colsButList;
         let tableData = {
             elem: "#table-elem-"+newData.tableId,
             url: newData.requestUrl,
@@ -168,7 +200,7 @@
             tableData.parseData = newData.parseData;
         }
         let tableDataSrt = JSON.stringify(tableData);
-        callback.result.tableData = tableDataSrt.replace(/\"&&start&&/g, "function (b){").replace(/&&end&&\"/g, "}");
+        callback.result.tableData = tableDataSrt;
         return callback;
     }
 </script>
@@ -184,17 +216,45 @@
                 <% if (item.templet) { %>
                     <%- item.templet %>
                 <% } %>
-                //&&script<%= item.childrenName %>&&
+                <% if (item.childrenName) { %>
+                    //&&script<%= item.childrenName %>&&
+                <% } %>
                 break;
             <% }); %>
         };
     });
     <% } %>
+
+    <% if (colsButList instanceof Array) { %>
     //监听行工具事件
     table.on('tool(<%= tableData.toolbar %>)', function (obj) {
         var data = obj.data;
-        console.log(data);
+        <% colsButList.forEach((item,index) => { %>
+            <% if (index !== 0) { %>
+                else
+            <% } %>
+            if (obj.event === '<%= item.layEvent %>'){
+                <% if (item.templet) { %>
+                    <%- item.templet %>
+                <% } %>
+                <% if (item.childrenName) { %>
+                    //&&script<%= item.childrenName %>&&
+                <% } %>
+            } 
+        <% }); %>
+            
     });
-
-
+    <% } %>
+    <% if (tableClick && tableClick instanceof Object ) { %>
+    //监听行单击事件（单击事件为：rowDouble）
+        table.on('row(<%= tableData.toolbar %>)', function (obj) {
+            var data = obj.data;
+            <% if (tableClick.templet) { %>
+                <% - tableClick.templet %>
+            <% } %>
+            <% if (tableClick.childrenName) { %>
+                //&&script<%= tableClick.childrenName %>&&
+            <% } %>
+        });
+    <% } %>
 </script>

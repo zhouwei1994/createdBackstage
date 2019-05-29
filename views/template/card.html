@@ -1,0 +1,30 @@
+<template>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header"><%= cardName %></div>
+            <div class="layui-card-body" style="padding: 15px;">
+                <!--&&htmlchildren&&-->
+            </div>
+        </div>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        if (!data.cardName) {
+            callback.success = false;
+            callback.result = "card模板缺少参数：cardName";
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    //&&scriptchildren&&
+</script>

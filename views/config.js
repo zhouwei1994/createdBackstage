@@ -56,4 +56,24 @@ module.exports = {
     table: {
         path: "/views/template/table.html"
     },
+    //卡片模板
+    card: {
+        path: "/views/template/card.html"
+    },
+    //表单form框模板
+    form_box: {
+        path: "/views/template/form_box.html"
+    },
+    //表单form列表模板
+    form_item: {
+        path: "/views/template/form_item.html"
+    },
+    //表单form按钮模板
+    form_button: {
+        path: "/views/template/form_button.html"
+    },
+    //表单form普通输入框按钮模板
+    form_input: {
+        path: "/views/template/form_input.html"
+    },
 }
