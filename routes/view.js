@@ -637,6 +637,7 @@ module.exports = function (router, check) {
                 content: [
                     {
                         template: "form_box",
+                        buttonType: "none", //fixed,inline,block
                         children: {
                             title: "",
                             name: "表单form框模板",
@@ -648,19 +649,70 @@ module.exports = function (router, check) {
                                         name: "表单form列表模板",
                                         content: [
                                             {
-                                                template: "form_input",
+                                                template: "form_button",
+                                                icon: "layui-icon-add-1",
+                                                butId:"123",
+                                                buttonText: "添加",
+                                                children: {
+                                                    title: "",
+                                                    name: "按钮下子模板",
+                                                    content: [{
+                                                        template: "alert",
+                                                        content: "'点击按钮！'",
+                                                    }]
+                                                }
                                             },
                                             {
                                                 template: "form_input",
+                                                title: "用户名",
+                                                name: "username",
+                                                // verify:"required"
                                             },
                                             {
                                                 template: "form_input",
+                                                title: "用户ID",
+                                                name: "id",
+                                                inputType:"number"
+                                            },
+                                            {
+                                                template: "form_input",
+                                                title: "用户ID",
+                                                name: "id",
+                                                inputType: "number"
+                                            },
+                                            {
+                                                template: "form_input",
+                                                title: "用户ID",
+                                                name: "id",
+                                                inputType: "number"
+                                            },
+                                            {
+                                                template: "form_input",
+                                                title: "用户ID",
+                                                name: "id",
+                                                inputType: "number"
+                                            },
+                                            {
+                                                template: "form_button",
+                                                formId: "fsdf5365",
+                                                icon: "layui-icon-search",
+                                                buttonType: "submit",
+                                                buttonText: "搜索",
+                                                templet: "var a = 1;",
+                                                children: {
+                                                    title: "",
+                                                    name: "按钮下子模板",
+                                                    content: [{
+                                                        template: "alert",
+                                                        content: "'点击按钮！'",
+                                                    }]
+                                                }
                                             }
                                         ]
                                     }
                                 }
                             ]
-                        }
+                        },
                     },
                     {
                         template: "card",
@@ -701,6 +753,7 @@ module.exports = function (router, check) {
                                     height: "",
                                     //表格每一栏最小宽度
                                     cellMinWidth: 100,
+                                    where:{a:1},
                                     //表格点击
                                     tableClick: {
                                         //自定义js语法模板
@@ -729,7 +782,7 @@ module.exports = function (router, check) {
                                             {
                                                 width: 200,
                                                 title: '操作',
-                                                templet: "<div style='color:#f00'>{{d.username}}\
+                                                templet: "<div>\
                                                 <button class=\"layui-btn layui-btn-xs\" lay-event=\"edit\">编辑</button >\
                                                 <button class=\"layui-btn layui-btn-xs layui-btn-danger\" lay-event=\"delete\">删除</button >\
                                             </div>",

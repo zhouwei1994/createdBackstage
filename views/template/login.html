@@ -66,6 +66,17 @@
     }
 </script>
 <script name="templateScript">
+    form.verify({
+        <% verifyList.forEach(function (key) { %>
+            <%- key.value %>: function (value, item) { //value：表单的值、item：表单的DOM对象
+                <% key.verify.forEach(function (item) { %>
+                    if (<%- item.rule %>.test(value)) {
+                        return "<%- item.prompt %>";
+                    }
+                <% }); %>
+            },
+        <% }); %>
+    });
     form.render();
     
     //&&scriptchildren&&

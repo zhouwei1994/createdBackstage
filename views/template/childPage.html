@@ -31,23 +31,13 @@
                     popup = parent.window.layer,
                     table = layui.table,
                     dataDom = layui.dataDom,
+                    element = layui.element,
                     insert,
                     pageData = {},
                     echarts = layui.echarts;
                     for(var httpData in $http.data){
                         pageData[httpData] = $http.data[httpData];
                     }
-                    form.verify({
-                        <% verifyList.forEach(function(key){ %>
-                            <%- key.value %>: function (value, item) { //value：表单的值、item：表单的DOM对象
-                                <% key.verify.forEach(function(item){ %>
-                                    if (<%- item.rule %>.test(value)) {
-                                        return "<%- item.prompt %>";
-                                    }
-                                <% }); %>
-                            },
-                        <% }); %>
-                    });
                     insert = dataDom("LAY_app", pageData);
                     //&&scriptchildren&&
             });

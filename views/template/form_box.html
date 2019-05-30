@@ -1,33 +1,57 @@
 <template>
-    <form class="layui-form" action="" lay-filter="component-form-group">
+    <div class="layui-form" action="">
         <!--&&htmlchildren&&-->
-    </form>
+        <% if( buttonType == "block"){ %>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <!--&&htmlchildren1&&-->
+            </div>
+        </div>
+        <% } else if(buttonType == "fixed"){ %>
+        <div class="layui-form-item layui-layout-admin">
+            <div class="layui-input-block">
+                <div class="layui-footer" style="left: 0;">
+                    <!--&&htmlchildren1&&-->
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
 </template>
 <script name="compile">
     function templateCompile(data) {
         var defaultData = {
             type: "module",
+            buttonType: "block", //fixed,none,block
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
             success: true,
             result: newData
         };
-        let gridList = [];
-        Object.keys(newData).forEach(function (key) {
-            if (/^children+/.test(key)) {
-                gridList.push({
-                    lgNum: newData[key].lgNum || 12,
-                    mdNum: newData[key].mdNum || 12,
-                    smNum: newData[key].smNum || 12,
-                    xsNum: newData[key].xsNum || 12,
-                });
+        if (newData.buttonType == "fixed" || newData.buttonType == "block") {
+            if(!newData.children1){
+                callback.success = false;
+                callback.result = "表单类型参数：buttonType为fixed或block时，必须要有提交按钮子模块，参数名：children1";
             }
-        });
-        callback.result.gridList = gridList;
+        }
         return callback;
     }
 </script>
 <script name="templateScript">
+    form.verify({
+        <% verifyList.forEach(function (key) { %>
+            <%- key.value %>: function (value, item) { //value：表单的值、item：表单的DOM对象
+                <% key.verify.forEach(function (item) { %>
+                    if (<%- item.rule %>.test(value)) {
+                        return "<%- item.prompt %>";
+                    }
+                <% }); %>
+            },
+        <% }); %>
+    });
     //&&scriptchildren&&
+    <% if(buttonType == "fixed" || buttonType == "block"){ %>
+    //&&scriptchildren1&&
+    <% } %>
 </script>

@@ -13,18 +13,14 @@
             success: true,
             result: newData
         };
-        let gridList = [];
-        Object.keys(newData).forEach(function (key) {
-            if (/^children+/.test(key)) {
-                gridList.push({
-                    lgNum: newData[key].lgNum || 12,
-                    mdNum: newData[key].mdNum || 12,
-                    smNum: newData[key].smNum || 12,
-                    xsNum: newData[key].xsNum || 12,
+        if(newData.children && newData.children.content && newData.children.content instanceof Array){
+            if(newData.children.content.length > 1 ){
+                newData.children.content.map(item => {
+                    item.multiple = true;
+                    return item;
                 });
             }
-        });
-        callback.result.gridList = gridList;
+        }
         return callback;
     }
 </script>

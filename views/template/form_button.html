@@ -1,38 +1,67 @@
 <template>
-    <div class="layui-form-item layui-layout-admin">
-        <div class="layui-input-block">
-            <div class="layui-footer" style="left: 0;">
-                <button class="layui-btn" lay-submit="" lay-filter="component-form-demo1">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-        </div>
-    </div>
+    <button 
+    class="layui-btn <% if(size){ %> layui-btn-<%= size %> <% } %><% if(color){ %> layui-btn-<%= color %> <% } %>"
+    <% if(formId && buttonType == "submit"){ %> lay-submit lay-filter="form_submit_<%= formId %>" <% } else 
+    if(butId){ %> id="button_id_<%= butId %>" <% } %>
+    <% if(formId && buttonType == "reset"){ %> type="reset" <% } %>
+    > <% if(icon){ %> <i class="layui-icon <%= icon %>"></i> <% } %> <%= buttonText %></button>
 </template>
 <script name="compile">
     function templateCompile(data) {
         var defaultData = {
             type: "module",
+            size: false,
+            color: false,
+            icon: false,
+            templet: false,
+            children: false,
+            formId:false
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
             success: true,
             result: newData
         };
-        let gridList = [];
-        Object.keys(newData).forEach(function (key) {
-            if (/^children+/.test(key)) {
-                gridList.push({
-                    lgNum: newData[key].lgNum || 12,
-                    mdNum: newData[key].mdNum || 12,
-                    smNum: newData[key].smNum || 12,
-                    xsNum: newData[key].xsNum || 12,
-                });
+        if (newData.formId || newData.butId) {
+            if (newData.formId && !newData.buttonType) {
+                callback.success = false;
+                callback.result = "表单按钮模块有参数formId参数下，必须传按钮类型参数：buttonType";
             }
-        });
-        callback.result.gridList = gridList;
+        }else{
+            callback.success = false;
+            callback.result = "按钮模块必须传参数：formId或butId";
+        }
+        if (!newData.buttonText) {
+            callback.success = false;
+            callback.result = "表单按钮模块缺少参数：buttonText";
+        }
+        if (!(newData.children || newData.templet)) {
+            callback.success = false;
+            callback.result = "表单参数：buttonList数组缺少参数：children或templet";
+        }
         return callback;
     }
 </script>
 <script name="templateScript">
-    //&&scriptchildren&&
+    <% if(formId){ %>
+    //监听提交
+    form.on('submit(form_submit_<%= formId %>)', function (data) {
+        <% if (templet) { %>
+            <%- templet %>
+        <% } %>
+        <% if (children) { %>
+            //&&scriptchildren&&
+        <% } %>
+        return false;
+    });
+    <% }else if(butId){ %>
+        $("#button_id_<%= butId %>").on("click",function(){
+            <% if (templet) { %>
+                <%- templet %>
+            <% } %>
+            <% if (children) { %>
+                //&&scriptchildren&&
+            <% } %>
+        })
+    <% } %>
 </script>

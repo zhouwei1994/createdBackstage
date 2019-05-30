@@ -21,7 +21,7 @@
             success: true,
             result: newData
         };
-        function getLastChild(index,callback){
+        function getLastChild(index){
             if(index == 0){
                 if(newData["children"]){
                   return getLastChild(index + 1);
@@ -60,14 +60,71 @@
             callback.success = false;
             callback.result = "表格缺少参数：requestUrl";
         }
-        if (!newData.cols) {
-            callback.success = false;
-            callback.result = "表格缺少参数：cols";
+        if (newData.cols || newData.data) {
+            if (newData.cols) {
+                if(newData.cols instanceof Array){
+                    let colsButList = [];
+                    for (let item of newData.cols) {
+                        if (item instanceof Array) {
+                            for (let childItem of item) {
+                                if (childItem.templet) {
+                                } else if (!childItem.type || childItem.type && childItem.type == "normal" || childItem.templet) {
+                                    if (!childItem.field) {
+                                        callback.success = false;
+                                        callback.result = "表格参数cols数组缺少参数：field";
+                                        break;
+                                    } else if (!childItem.title) {
+                                        callback.success = false;
+                                        callback.result = "表格参数cols数组缺少参数：title";
+                                        break;
+                                    }
+                                }
+                                if (childItem.templetBut && childItem.templetBut instanceof Array) {
+                                    let templetButState = true;
+                                    for (let tempItem of childItem.templetBut) {
+                                        if (!tempItem.layEvent) {
+                                            callback.success = false;
+                                            callback.result = "表格参数cols数组缺少参数：field";
+                                            templetButState = false;
+                                            break;
+                                        }
+                                        if (tempItem.children) {
+                                            let childrenName = getLastChild(0);
+                                            newData[childrenName] = tempItem.children;
+                                            colsButList.push({
+                                                layEvent: tempItem.layEvent,
+                                                templet: tempItem.templet || "",
+                                                childrenName: childrenName
+                                            });
+                                        }
+                                    }
+                                    if (!templetButState) {
+                                        break;
+                                    }
+                                }
+                            };
+                        } else {
+                            callback.success = false;
+                            callback.result = "表格参数'cols'必须为二维数组";
+                            break;
+                        }
+                    };
+                    callback.result.colsButList = colsButList;
+                }else{
+                    callback.success = false;
+                    callback.result = "表格参数'cols'必须为数组";
+                }
+            }else if(newData.data){
+                if (!newData.data instanceof Array) {
+                    callback.success = false;
+                    callback.result = "表格参数'data'必须为数组";
+                }
+            }else{
+                callback.success = false;
+                callback.result = "表格缺少参数：cols或data";
+            }
         }
-        if (!newData.cols instanceof Array) {
-            callback.success = false;
-            callback.result = "表格参数'cols'必须为数组";
-        }
+        
         if (newData.tableClick && newData.tableClick instanceof Object) {
             if(newData.tableClick.children){
                 let childrenName = getLastChild(0);
@@ -80,53 +137,6 @@
                 callback.result = "表格参数'tableClick'里必须有参数templet和children其中一种";
             }
         }
-        let colsButList = [];
-        for (let item of newData.cols) {
-            if (item instanceof Array) {
-                for (let childItem of item) {
-                    if(childItem.templet){
-                    }else if(!childItem.type || childItem.type && childItem.type == "normal" || childItem.templet){
-                        if (!childItem.field) {
-                            callback.success = false;
-                            callback.result = "表格参数cols数组缺少参数：field";
-                            break;
-                        } else if (!childItem.title) {
-                            callback.success = false;
-                            callback.result = "表格参数cols数组缺少参数：title";
-                            break;
-                        }
-                    }
-                    if(childItem.templetBut && childItem.templetBut instanceof Array){
-                        let templetButState = true;
-                        for (let tempItem of childItem.templetBut) {
-                            if (!tempItem.layEvent) {
-                                callback.success = false;
-                                callback.result = "表格参数cols数组缺少参数：field";
-                                templetButState = false;
-                                break;
-                            }
-                            if (tempItem.children) {
-                                let childrenName = getLastChild(0);
-                                newData[childrenName] = tempItem.children;
-                                colsButList.push({
-                                    layEvent:tempItem.layEvent,
-                                    templet:tempItem.templet || "",
-                                    childrenName: childrenName
-                                });
-                            }
-                        }
-                        if(!templetButState){
-                            break;
-                        }
-                    }
-                };
-            }else{
-                callback.success = false;
-                callback.result = "表格参数'cols'必须为二维数组";
-                break;
-            }
-        };
-        callback.result.colsButList = colsButList;
         let tableData = {
             elem: "#table-elem-"+newData.tableId,
             url: newData.requestUrl,
@@ -181,9 +191,7 @@
         if (newData.skin) {
             tableData.skin = newData.skin;
         }
-        if (newData.where) {
-            tableData.where = newData.where;
-        }
+        
         if (newData.method) {
             tableData.method = newData.method;
         }
@@ -200,12 +208,21 @@
             tableData.parseData = newData.parseData;
         }
         let tableDataSrt = JSON.stringify(tableData);
+        if (newData.where) {
+            tableDataSrt = tableDataSrt.replace(/}$/,",'where':whereData}");
+        }
         callback.result.tableData = tableDataSrt;
         return callback;
     }
 </script>
 <script name="templateScript">
-    table.render(<%- tableData %>);
+    loadTable();
+    function loadTable(){
+        var whereData = {
+            
+        };
+        table.render(<%- tableData %>);
+    }
     <% if(toolbar && toolbar instanceof Array){ %>
     table.on('toolbar(<%= tableData.toolbar %>)', function (obj) {
         var checkStatus = table.checkStatus(obj.config.id);
@@ -242,7 +259,6 @@
                 <% } %>
             } 
         <% }); %>
-            
     });
     <% } %>
     <% if (tableClick && tableClick instanceof Object ) { %>
@@ -250,7 +266,7 @@
         table.on('row(<%= tableData.toolbar %>)', function (obj) {
             var data = obj.data;
             <% if (tableClick.templet) { %>
-                <% - tableClick.templet %>
+                <%- tableClick.templet %>
             <% } %>
             <% if (tableClick.childrenName) { %>
                 //&&script<%= tableClick.childrenName %>&&

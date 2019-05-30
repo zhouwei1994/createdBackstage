@@ -139,6 +139,8 @@ module.exports = function (page, callback) {
                     let templateHtml;
                     let scriptText;
                     pageOptions = compileData.result;
+                    compileData.result.verifyList = defaultData.verifyList;
+                    compileData.result.baseSetting = defaultData.baseSetting;
                     if (template) {
                         template = template[0].replace(/<template>|<\/template>/g, "");
                         templateHtml = ejs.render(template, compileData.result);
@@ -163,9 +165,11 @@ module.exports = function (page, callback) {
                                 scriptText: scriptText
                             });
                             if (forChildData.templateHtml) {
+                                forChildData.templateHtml = forChildData.templateHtml.replace(/<!--&&html(.*?)&&--/g, "");
                                 forChildData.templateHtml = forChildData.templateHtml + "<!--&&html" + childName + "&&-->";
                             }
                             if (forChildData.scriptText) {
+                                forChildData.scriptText = forChildData.scriptText.replace(/\/\/&&script(.*?)&&/g, "");
                                 forChildData.scriptText = forChildData.scriptText + "//&&script" + childName + "&&";
                             }
                             var aaa = getFile(options, forChildData.templateHtml, forChildData.scriptText, i + 1, childName);
@@ -265,6 +269,7 @@ module.exports = function (page, callback) {
                 } else {
                     callbackData.scriptText = pageTemplateScript.replace(reg, content.scriptText);
                 }
+                
             } else {
                 callbackData.scriptText = content.scriptText;
             }
