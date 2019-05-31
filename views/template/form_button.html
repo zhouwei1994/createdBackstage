@@ -3,7 +3,6 @@
     class="layui-btn <% if(size){ %> layui-btn-<%= size %> <% } %><% if(color){ %> layui-btn-<%= color %> <% } %>"
     <% if(formId && buttonType == "submit"){ %> lay-submit lay-filter="form_submit_<%= formId %>" <% } else 
     if(butId){ %> id="button_id_<%= butId %>" <% } %>
-    <% if(formId && buttonType == "reset"){ %> type="reset" <% } %>
     > <% if(icon){ %> <i class="layui-icon <%= icon %>"></i> <% } %> <%= buttonText %></button>
 </template>
 <script name="compile">
@@ -15,7 +14,8 @@
             icon: false,
             templet: false,
             children: false,
-            formId:false
+            formId:false,
+            butId:false
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
@@ -39,13 +39,16 @@
             callback.success = false;
             callback.result = "表单参数：buttonList数组缺少参数：children或templet";
         }
+        
         return callback;
     }
 </script>
 <script name="templateScript">
     <% if(formId){ %>
     //监听提交
-    form.on('submit(form_submit_<%= formId %>)', function (data) {
+    form.on('submit(form_submit_<%= formId %>)', function (obj) {
+        console.log(obj);
+        var data = obj.field;
         <% if (templet) { %>
             <%- templet %>
         <% } %>

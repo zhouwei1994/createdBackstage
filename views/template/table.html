@@ -137,6 +137,10 @@
                 callback.result = "表格参数'tableClick'里必须有参数templet和children其中一种";
             }
         }
+        if (newData.where && !newData.where instanceof Array) {
+            callback.success = false;
+            callback.result = "表格参数'where'必须为数组";
+        }
         let tableData = {
             elem: "#table-elem-"+newData.tableId,
             url: newData.requestUrl,
@@ -208,19 +212,34 @@
             tableData.parseData = newData.parseData;
         }
         let tableDataSrt = JSON.stringify(tableData);
+        tableDataSrt = tableDataSrt.replace(/}$/, ",'where':whereData}");
+        let whereList = [];
         if (newData.where) {
-            tableDataSrt = tableDataSrt.replace(/}$/,",'where':whereData}");
+            Object.keys(newData.where).forEach(key => {
+                whereList.push({
+                    key: key,
+                    value: newData.where[key]
+                });
+            });
         }
+        callback.result.whereList = whereList;
         callback.result.tableData = tableDataSrt;
         return callback;
     }
 </script>
 <script name="templateScript">
     loadTable();
-    function loadTable(){
+    function loadTable(formData){
         var whereData = {
-            
+            <% whereList.forEach(item => { %>
+                <%= item.key %>:<%= item.value %>
+            <% }); %>
         };
+        if(formData){
+            for(var key in formData){
+                whereData[key] = formData[key];
+            }
+        }
         table.render(<%- tableData %>);
     }
     <% if(toolbar && toolbar instanceof Array){ %>

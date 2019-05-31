@@ -70,6 +70,16 @@ var defaultData = {
                 }
             ]
         },
+        {
+            name: "标题验证",
+            value: "title",
+            verify: [
+                {
+                    rule: "!/.{5,}/",
+                    prompt: "标题至少得5个字符啊"
+                }
+            ]
+        },
     ]
 };
 

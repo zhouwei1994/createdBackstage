@@ -386,10 +386,17 @@ module.exports = function (router, check) {
                             href: "table.html",
                             name: "b1",
                         },
+                    ]
+                },
+                {
+                    title: "表单",
+                    icon: "layui-icon-home",
+                    name: "c",
+                    list: [
                         {
-                            title: "表格1",
-                            href: "home2.html",
-                            name: "b2",
+                            title: "表单",
+                            href: "form.html",
+                            name: "b1",
                         },
                     ]
                 }
@@ -675,38 +682,12 @@ module.exports = function (router, check) {
                                                 inputType:"number"
                                             },
                                             {
-                                                template: "form_input",
-                                                title: "用户ID",
-                                                name: "id",
-                                                inputType: "number"
-                                            },
-                                            {
-                                                template: "form_input",
-                                                title: "用户ID",
-                                                name: "id",
-                                                inputType: "number"
-                                            },
-                                            {
-                                                template: "form_input",
-                                                title: "用户ID",
-                                                name: "id",
-                                                inputType: "number"
-                                            },
-                                            {
                                                 template: "form_button",
                                                 formId: "fsdf5365",
                                                 icon: "layui-icon-search",
                                                 buttonType: "submit",
                                                 buttonText: "搜索",
-                                                templet: "var a = 1;",
-                                                children: {
-                                                    title: "",
-                                                    name: "按钮下子模板",
-                                                    content: [{
-                                                        template: "alert",
-                                                        content: "'点击按钮！'",
-                                                    }]
-                                                }
+                                                templet: "loadTable(data);",
                                             }
                                         ]
                                     }
@@ -827,6 +808,179 @@ module.exports = function (router, check) {
                             ]
                         }
                     }
+                ]
+            }
+        };
+        viewRend(login, function (state, html) {
+            if (state) {
+                res.end(html.templateHtml);
+            } else {
+                res.result({}, 2004, html);
+                console.error(html);
+            }
+        });
+    }));
+    router.get('/form.html', check([], function (req, res) {
+        //设置html请求头
+        res.set('Content-Type', 'text/html');
+        var login = {
+            //模板名称
+            pageType: "childPage",
+            children: {
+                title: "",
+                name: "页面模块",
+                content: [
+                    {
+                        template: "form_box",
+                        buttonType: "fixed", //fixed,inline,block
+                        children: {
+                            title: "",
+                            name: "表单form框模板",
+                            content: [
+                                {
+                                    template: "card",
+                                    cardName: "表格模板",
+                                    children: {
+                                        title: "",
+                                        name: "卡片下的子模板",
+                                        content: [
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_button",
+                                                            icon: "layui-icon-add-1",
+                                                            butId: "123",
+                                                            buttonText: "添加",
+                                                            children: {
+                                                                title: "",
+                                                                name: "按钮下子模板",
+                                                                content: [{
+                                                                    template: "alert",
+                                                                    content: "'点击按钮！'",
+                                                                }]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_input",
+                                                            title: "标题",
+                                                            name: "title",
+                                                            viewType:"block",
+                                                            verify:"title"
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_input",
+                                                            title: "验证必填项",
+                                                            name: "username",
+                                                            viewType: "block",
+                                                            verify: "required"
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_input",
+                                                            title: "验证手机",
+                                                            name: "phone",
+                                                            inputType: "tel",
+                                                            verify:"required|phone"
+                                                        },
+                                                        {
+                                                            template: "form_input",
+                                                            title: "验证邮箱",
+                                                            name: "email",
+                                                            inputType: "email"
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_input",
+                                                            title: "多规则验证",
+                                                            name: "number",
+                                                            verify: "required|number"
+                                                        },
+                                                        {
+                                                            template: "form_input",
+                                                            title: "验证邮箱",
+                                                            name: "email",
+                                                            inputType: "email"
+                                                        },
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        children1: {
+                            title: "",
+                            name: "表单form列表模板",
+                            content: [
+                                {
+                                    template: "form_button",
+                                    formId: "fsdf3443",
+                                    buttonType: "submit",
+                                    buttonText: "立即提交",
+                                    children: {
+                                        title: "",
+                                        name: "按钮下子模板",
+                                        content: [{
+                                            template: "alert",
+                                            content: "'点击按钮！'",
+                                        }]
+                                    }
+                                },
+                                {
+                                    template: "form_button",
+                                    buttonText: "返回",
+                                    butId:"fanhui",
+                                    children: {
+                                        title: "",
+                                        name: "按钮下子模板",
+                                        content: [{
+                                            template: "alert",
+                                            content: "'点击按钮！'",
+                                        }]
+                                    }
+                                },
+                            ]
+                        }
+                    },
                 ]
             }
         };

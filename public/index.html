@@ -36,7 +36,7 @@
         //     });
         // }, 1000)
         
-        
+        console.log(/^'|"(.*?)'|"$/.test("'1111'"));
 
         function onCreated() {
             request("/project/create", config, function (res) {

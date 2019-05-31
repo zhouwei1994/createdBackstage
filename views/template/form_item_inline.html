@@ -1,0 +1,34 @@
+<template>
+    <% if(multiple){ %>
+    <div class="layui-inline">
+    <% } %>
+        <label class="layui-form-label"><%= title %></label>
+        <!--&&htmlchildren&&-->
+    <% if(multiple){ %>
+    </div>
+    <% } %>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        if(newData.children && newData.children.content && newData.children.content instanceof Array){
+            if(newData.children.content.length > 1 ){
+                newData.children.content.map(item => {
+                    item.multiple = true;
+                    return item;
+                });
+            }
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    //&&scriptchildren&&
+</script>

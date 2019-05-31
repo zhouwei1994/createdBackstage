@@ -76,4 +76,16 @@ module.exports = {
     form_input: {
         path: "/views/template/form_input.html"
     },
+    //表单form列表内样式模板
+    form_item_inline: {
+        path: "/views/template/form_item_inline.html"
+    },
+    //表单时间选择器模板
+    form_input_date: {
+        path: "/views/template/form_input_date.html"
+    },
+    //表单选择器模板
+    form_input_select: {
+        path: "/views/template/form_input_select.html"
+    }
 }
