@@ -670,16 +670,34 @@ module.exports = function (router, check) {
                                                 }
                                             },
                                             {
-                                                template: "form_input",
+                                                template: "form_item_inline",
                                                 title: "用户名",
-                                                name: "username",
-                                                // verify:"required"
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_input",
+                                                            name: "username",
+                                                            // verify:"required"
+                                                        }
+                                                    ]
+                                                }
                                             },
                                             {
-                                                template: "form_input",
+                                                template: "form_item_inline",
                                                 title: "用户ID",
-                                                name: "id",
-                                                inputType:"number"
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_input",
+                                                            name: "id",
+                                                            inputType: "number"
+                                                        }
+                                                    ]
+                                                }
                                             },
                                             {
                                                 template: "form_button",
@@ -874,11 +892,20 @@ module.exports = function (router, check) {
                                                     name: "表单form列表模板",
                                                     content: [
                                                         {
-                                                            template: "form_input",
+                                                            template: "form_item_inline",
                                                             title: "标题",
-                                                            name: "title",
-                                                            viewType:"block",
-                                                            verify:"title"
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "title",
+                                                                        viewType: "block",
+                                                                        verify: "title"
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                     ]
                                                 }
@@ -890,11 +917,20 @@ module.exports = function (router, check) {
                                                     name: "表单form列表模板",
                                                     content: [
                                                         {
-                                                            template: "form_input",
+                                                            template: "form_item_inline",
                                                             title: "验证必填项",
-                                                            name: "username",
-                                                            viewType: "block",
-                                                            verify: "required"
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "username",
+                                                                        viewType: "block",
+                                                                        verify: "required"
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                     ]
                                                 }
@@ -906,17 +942,35 @@ module.exports = function (router, check) {
                                                     name: "表单form列表模板",
                                                     content: [
                                                         {
-                                                            template: "form_input",
+                                                            template: "form_item_inline",
                                                             title: "验证手机",
-                                                            name: "phone",
-                                                            inputType: "tel",
-                                                            verify:"required|phone"
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "phone",
+                                                                        inputType: "tel",
+                                                                        verify: "required|phone"
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                         {
-                                                            template: "form_input",
+                                                            template: "form_item_inline",
                                                             title: "验证邮箱",
-                                                            name: "email",
-                                                            inputType: "email"
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "email",
+                                                                        inputType: "email"
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                     ]
                                                 }
@@ -928,16 +982,34 @@ module.exports = function (router, check) {
                                                     name: "表单form列表模板",
                                                     content: [
                                                         {
-                                                            template: "form_input",
+                                                            template: "form_item_inline",
                                                             title: "多规则验证",
-                                                            name: "number",
-                                                            verify: "required|number"
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "number",
+                                                                        verify: "required|number"
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                         {
-                                                            template: "form_input",
+                                                            template: "form_item_inline",
                                                             title: "验证邮箱",
-                                                            name: "email",
-                                                            inputType: "email"
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "email",
+                                                                        inputType: "email"
+                                                                    }
+                                                                ]
+                                                            }
                                                         },
                                                     ]
                                                 }

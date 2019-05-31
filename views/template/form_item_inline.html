@@ -12,16 +12,22 @@
     function templateCompile(data) {
         var defaultData = {
             type: "module",
+            //是否多个兄弟元素
+            multiple: false,
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
             success: true,
             result: newData
         };
+        if (!newData.title) {
+            callback.success = false;
+            callback.result = "请输入表单名称，参数名：title";
+        }
         if(newData.children && newData.children.content && newData.children.content instanceof Array){
-            if(newData.children.content.length > 1 ){
+            if(newData.children.content.length == 1 && !newData.multiple){
                 newData.children.content.map(item => {
-                    item.multiple = true;
+                    item.viewType = "block";
                     return item;
                 });
             }

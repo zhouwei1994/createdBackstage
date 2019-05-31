@@ -1,17 +1,10 @@
 <template>
-    <% if(multiple){ %>
-    <div class="layui-inline">
-    <% } %>
-    <label class="layui-form-label"><%= title %></label>
     <div class="layui-input-<%= viewType %>">
         <input type="<%= inputType %>" name="<%= name %>" id="<%= 'input-' + inputType +'-'+ name %>" 
             <% if ( verify ) { %> lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>" 
             autocomplete="off"
             class="layui-input">
     </div>
-    <% if(multiple){ %>
-    </div>
-    <% } %>
 </template>
 <script name="compile">
     function templateCompile(data) {
@@ -20,20 +13,14 @@
             placeholder: "请输入",
             inputType: "text",
             verify: false,
-            //是否多个兄弟元素
-            multiple:false,
+            viewType:"inline",
             comparedList: false,
-            viewType:"inline"
         };
         var newData = Object.assign(defaultData, data);
         var callback = {
             success: true,
             result: newData
         };
-        if (!newData.title) {
-            callback.success = false;
-            callback.result = "请输入表单名称，参数名：title";
-        }
         if (!newData.name) {
             callback.success = false;
             callback.result = "请输入参数名称，参数名：name";
