@@ -133,30 +133,42 @@
             result: newData
         };
         if (!newData.nickname) {
-            callback.success = false;
-            callback.result = "请输入右上角用户昵称";
+            return {
+                success: false,
+                result: "请输入右上角用户昵称"
+            };
         }
         if (!newData.customizeBut instanceof Array) {
-            callback.success = false;
-            callback.result = "参数customizeBut必须为数组";
+            return {
+                success: false,
+                result: "参数customizeBut必须为数组"
+            };
         }
         if (!newData.defaultPage) {
-            callback.success = false;
-            callback.result = "请输入默认打开页面信息";
+            return {
+                success: false,
+                result: "请输入默认打开页面信息"
+            };
         }
         if (!newData.leftNav) {
-            callback.success = false;
-            callback.result = "请输入左边导航信息";
+            return {
+                success: false,
+                result: "请输入左边导航信息"
+            };
         }
         if (!newData.leftNav instanceof Array) {
-            callback.success = false;
-            callback.result = "参数leftNav必须为数组";
+            return {
+                success: false,
+                result: "参数leftNav必须为数组"
+            };
         }
         try {
             newData.leftNav = JSON.stringify(newData.leftNav);
         } catch (error) {
-            callback.success = false;
-            callback.result = "leftNav数组转换为字符串失败";
+            return {
+                success: false,
+                result: "leftNav数组转换为字符串失败"
+            };
         }
         callback.success = true;
         callback.result = newData;

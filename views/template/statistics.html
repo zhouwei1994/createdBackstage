@@ -40,22 +40,28 @@
             result: newData
         };
         if(!(newData.list && newData.list.length > 0)){
-            callback.success = false;
-            callback.result = "显示块最少一个，参数：list";
+            return {
+                success: false,
+                result: "显示块最少一个，参数：list"
+            };
         }
         for(let i in newData.list){
             var item = newData.list[i];
             if(!item.name){
-                callback.success = false;
-                callback.result = "第"+(i + 1)+"显示块缺少参数：name";
+                return {
+                    success: false,
+                    result: "第" + (i + 1) + "显示块缺少参数：name"
+                };
                 break;
             }
             if(!item.label){
                 item.label = false;
             }
             if (!item.value) {
-                callback.success = false;
-                callback.result = "第" + (i + 1) + "显示块缺少参数：value";
+                return {
+                    success: false,
+                    result: "第" + (i + 1) + "显示块缺少参数：value"
+                };
                 break;
             } 
             if (!item.bottomText) {
@@ -69,12 +75,16 @@
             }
         }
         if(!newData.mdNum){
-            callback.success = false;
-            callback.result = "缺少参数：mdNum";
+            return {
+                success: false,
+                result: "缺少参数：mdNum"
+            };
         }
         if (!newData.smNum) {
-            callback.success = false;
-            callback.result = "缺少参数：smNum";
+            return {
+                success: false,
+                result: "缺少参数：smNum"
+            };
         }
         newData.mdNum = parseInt(12 / newData.mdNum);
         newData.smNum = parseInt(12 / newData.smNum);

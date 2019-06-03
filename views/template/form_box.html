@@ -31,8 +31,10 @@
         };
         if (newData.buttonType == "fixed" || newData.buttonType == "block") {
             if(!newData.children1){
-                callback.success = false;
-                callback.result = "表单类型参数：buttonType为fixed或block时，必须要有提交按钮子模块，参数名：children1";
+                return {
+                    success: false,
+                    result: "表单类型参数：buttonType为fixed或block时，必须要有提交按钮子模块，参数名：children1"
+                };
             }
         }
         return callback;

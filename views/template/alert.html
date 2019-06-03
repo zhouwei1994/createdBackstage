@@ -17,8 +17,10 @@
             result: Object.assign(defaultData, data)
         };
         if (!data.content) {
-            callback.success = false;
-            callback.result = "请输入要提示的内容";
+            return {
+                success:false,
+                result: "请输入要提示的内容"
+            };
         }
         return callback;
     }

@@ -11,13 +11,17 @@
         };
         if (newData.routerType == "newNav") {
             if (!newData.title) {
-                callback.success = false;
-                callback.result = "请输入导航标题";
+                return {
+                    success: false,
+                    result: "请输入导航标题"
+                };
             }
         }
         if (!newData.routerUrl) {
-            callback.success = false;
-            callback.result = "请输入导航url地址,参数名：routerUrl";
+            return {
+                success: false,
+                result: "请输入导航url地址,参数名：routerUrl"
+            };
         }
         return callback;
     }

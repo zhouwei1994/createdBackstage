@@ -30,28 +30,40 @@
             result: Object.assign(defaultData, data)
         };
         if (!data.title) {
-            callback.success = false;
-            callback.result = "请输入表单名称，参数名：title";
+            return {
+                success: false,
+                result: "请输入表单名称，参数名：title"
+            };
         }
         if (!data.name) {
-            callback.success = false;
-            callback.result = "请输入参数名称，参数名：name";
+            return {
+                success: false,
+                result: "请输入参数名称，参数名：name"
+            };
         }
         if (!data.icon) {
-            callback.success = false;
-            callback.result = "请选择表单图标，参数名：icon";
+            return {
+                success: false,
+                result: "请选择表单图标，参数名：icon"
+            };
         }
         if (!data.requestUrl) {
-            callback.success = false;
-            callback.result = "请输入发送短信验证码地址，参数名：requestUrl";
+            return {
+                success: false,
+                result: "请输入发送短信验证码地址，参数名：requestUrl"
+            };
         }
         if (!data.method) {
-            callback.success = false;
-            callback.result = "请输入发送短信验证码请求方式，参数名：method";
+            return {
+                success: false,
+                result: "请输入发送短信验证码请求方式，参数名：method"
+            };
         }
         if (!data.phoneInputName) {
-            callback.success = false;
-            callback.result = "请输入手机号输入框的name值，参数名：phoneInputName";
+            return {
+                success: false,
+                result: "请输入手机号输入框的name值，参数名：phoneInputName"
+            };
         }
         return callback;
     }

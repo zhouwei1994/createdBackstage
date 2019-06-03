@@ -81,11 +81,31 @@ module.exports = {
         path: "/views/template/form_item_inline.html"
     },
     //表单时间选择器模板
-    form_input_date: {
-        path: "/views/template/form_input_date.html"
+    form_date: {
+        path: "/views/template/form_date.html"
     },
     //表单选择器模板
-    form_input_select: {
-        path: "/views/template/form_input_select.html"
-    }
+    form_select: {
+        path: "/views/template/form_select.html"
+    },
+    //表单分割线模板
+    form_item_line: {
+        path: "/views/template/form_item_line.html"
+    },
+    //表单提示
+    form_item_prompt: {
+        path: "/views/template/form_item_prompt.html"
+    },
+    //表单复选框
+    form_checkbox: {
+        path: "/views/template/form_checkbox.html"
+    },
+    //表单单选框
+    form_radio: {
+        path: "/views/template/form_radio.html"
+    },
+    //表单文本域
+    form_textarea: {
+        path: "/views/template/form_textarea.html"
+    },
 }

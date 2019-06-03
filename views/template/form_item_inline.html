@@ -21,8 +21,10 @@
             result: newData
         };
         if (!newData.title) {
-            callback.success = false;
-            callback.result = "请输入表单名称，参数名：title";
+            return {
+                success: false,
+                result: "请输入表单名称，参数名：title"
+            };
         }
         if(newData.children && newData.children.content && newData.children.content instanceof Array){
             if(newData.children.content.length == 1 && !newData.multiple){

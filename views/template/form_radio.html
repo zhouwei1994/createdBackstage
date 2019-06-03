@@ -1,0 +1,106 @@
+<template>
+    <div class="layui-input-<%= viewType %>">
+        <% radioList.forEach(item => { %>
+        <input type="radio" name="<%= name %>" title="<%= item.title %>" value="<%= item.value %>"
+            <% if(checkedValue !== false && checkedValue == item.value){ %>
+            checked
+            <% } %>
+            <% if(item.disabled){ %>
+            disabled
+            <% } %>
+            <% if (eventMethod) { %>
+            lay-filter="input-radio-<%= templateId %>"
+            <% } %>
+        >
+        <% }); %>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            placeholder: "请选择",
+            verify: false,
+            viewType: "inline",
+            staticData:true,
+            eventMethod: false,
+            checkedValue: false
+            //选择列表
+            // radioList:[]
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        if (!newData.name) {
+            return {
+                success: false,
+                result: "请输入参数名称，参数名：name"
+            };
+        }
+        if (!newData.radioList) {
+            return {
+                success: false,
+                result: "选择器模块缺少参数：radioList"
+            };
+        }
+        if(newData.staticData){
+            if(newData.radioList instanceof Array) {
+                if (newData.radioList.length <= 0) {
+                    return {
+                        success: false,
+                        result: "选择器模块参数：radioList数组长度必须大于1"
+                    };
+                } else {
+                    for (let item of newData.radioList) {
+                        if (item.title === undefined || item.title === '') {
+                            return {
+                                success: false,
+                                result: "选择器模块参数：radioList数组里的值缺少参数title"
+                            };
+                        } else if (item.value === undefined || item.name === '') {
+                            return {
+                                success: false,
+                                result: "选择器模块参数：radioList数组里的值缺少参数value"
+                            };
+                        }
+                    }
+                }
+            }else{
+                return {
+                    success: false,
+                    result: "选择器模块参数staticData为true时radioList必须为数组"
+                };
+            }
+        }else {
+            if (!newData.radioList instanceof String) {
+                return {
+                    success: false,
+                    result: "选择器模块参数staticData为true时radioList必须为字符串"
+                };
+            }
+        }
+        if (newData.eventMethod) {
+            if(!newData.eventMethod instanceof String){
+                return {
+                    success: false,
+                    result: "选择器模块参数：eventMethod必须为字符串"
+                };
+            }else if(newData.templateId){
+                return {
+                    success: false,
+                    result: "多选框拥有eventMethod参数时templateId必须传"
+                };
+            }
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    <% if (eventMethod) { %>
+        form.on('radio(input-radio-<%= templateId %>)', function (data) {
+            <%- eventMethod %>
+        });
+    <% } %>
+</script>

@@ -1,0 +1,102 @@
+<template>
+    <div class="layui-input-<%= viewType %>">
+        <input type="text" name="<%= name %>" id="input-date-select<%= templateId %>" <% if ( verify ) { %>
+            lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>" autocomplete="off" class="layui-input">
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            placeholder: "请输入",
+            verify: false,
+            //是否多个兄弟元素
+            multiple:false,
+            viewType:"inline",
+            //时间选择器类型
+            dateType: "datetime",
+            //最小时间，
+            min: false,
+            //最大时间
+            max: false,
+            //范围选择
+            range: false,
+            //时间格式
+            format: false,
+            //初始值
+            value: false,
+            //自定义弹出控件的事件
+            trigger: false,
+            //默认显示
+            show: false,
+            //语言
+            lang: false,
+            //主题
+            theme: false,
+            //是否显示公历节日
+            calendar: false,
+            //标注重要日子
+            mark: false,
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        if (!newData.templateId) {
+            return {
+                success: false,
+                result: "时间选择控件缺少参数：templateId"
+            };
+        }
+        if (!newData.name) {
+            return {
+                success: false,
+                result: "时间选择控件缺少参数：name"
+            };
+        }
+        if (newData.mark && newData.mark instanceof Object) {
+            newData.mark = JSON.stringify(newData.mark);
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    laydate.render({
+        elem: '#input-date-select<%= templateId %>', 
+        type: '<%= dateType %>',
+        <% if(range){ %>
+        range: <%= range %>,
+        <% } %>
+        <% if (format ) { %>
+            format: <%= format %>,
+        <% } %>
+        <% if (value) { %>
+            value: <%= value %>,
+        <% } %>
+        <% if (min) { %>
+            min: <%= min %>,
+        <% } %>
+        <% if (max) { %>
+            max: <%= max %>,
+        <% } %>
+        <% if (trigger) { %>
+            trigger: <%= trigger %>,
+        <% } %>
+        <% if (show) { %>
+            show: <%= show %>,
+        <% } %>
+        <% if (lang) { %>
+            lang: <%= lang %>,
+        <% } %>
+        <% if (theme) { %>
+            theme: <%= theme %>,
+        <% } %>
+        <% if (calendar) { %>
+            calendar: <%= calendar %>,
+        <% } %>
+        <% if (mark) { %>
+            mark: <%= mark %>,
+        <% } %>
+    });
+</script>

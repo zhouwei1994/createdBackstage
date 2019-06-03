@@ -14,12 +14,16 @@
             result: newData
         };
         if(!newData.chartId){
-            callback.success = false;
-            callback.result = "图表模板缺少参数：chartId";
+            return {
+                success: false,
+                result: "图表模板缺少参数：chartId"
+            };
         }
         if(!newData.chartOption){
-            callback.success = false;
-            callback.result = "图表模板缺少参数：chartOption";
+            return {
+                success: false,
+                result: "图表模板缺少参数：chartOption"
+            };
         }
         return callback;
     }

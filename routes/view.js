@@ -998,22 +998,332 @@ module.exports = function (router, check) {
                                                         },
                                                         {
                                                             template: "form_item_inline",
-                                                            title: "验证邮箱",
+                                                            title: "时间选择",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_date",
+                                                                        templateId: "1645612",
+                                                                        name: "date",
+                                                                    },
+                                                                    {
+                                                                        template: "form_item_line",
+                                                                    },
+                                                                    {
+                                                                        template: "form_date",
+                                                                        templateId: "32131",
+                                                                        name: "endDate",
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "验证链接",
                                                             children: {
                                                                 title: "",
                                                                 name: "表单form列表模板",
                                                                 content: [
                                                                     {
                                                                         template: "form_input",
-                                                                        name: "email",
-                                                                        inputType: "email"
+                                                                        verify: "url",
+                                                                        name: "url",
                                                                     }
                                                                 ]
                                                             }
                                                         },
                                                     ]
                                                 }
-                                            }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "验证身份证",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "identity",
+                                                                        verify: "identity"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "密码",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "password",
+                                                                        verify: "password"
+                                                                    },
+                                                                    {
+                                                                        template: "form_item_prompt",
+                                                                        prompt: "请填写6到12位密码",
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "范围",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "price_min",
+                                                                        inputType:"number",
+                                                                        placeholder:"￥"
+                                                                    },
+                                                                    {
+                                                                        template: "form_item_line",
+                                                                    },
+                                                                    {
+                                                                        template: "form_input",
+                                                                        name: "price_max",
+                                                                        inputType: "number",
+                                                                        placeholder: "￥"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "单行选择框",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_select",
+                                                                        name: "interest",
+                                                                        selectList: [
+                                                                            {
+                                                                                name: "写作",
+                                                                                value:0
+                                                                            },
+                                                                            {
+                                                                                name: "阅读",
+                                                                                value: 1
+                                                                            },
+                                                                            {
+                                                                                name: "游戏",
+                                                                                value: 2
+                                                                            },
+                                                                            {
+                                                                                name: "音乐",
+                                                                                value: 3
+                                                                            },
+                                                                            {
+                                                                                name: "旅行",
+                                                                                value: 4
+                                                                            },
+                                                                        ]
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "多选框",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_checkbox",
+                                                                        checkboxList: [
+                                                                            {
+                                                                                title: "写作",
+                                                                                name: "写作",
+                                                                                value: 0,
+                                                                                checked:true
+                                                                            },
+                                                                            {
+                                                                                title: "阅读",
+                                                                                name: "阅读",
+                                                                                value: 1
+                                                                            },
+                                                                            {
+                                                                                title: "游戏",
+                                                                                name: "游戏",
+                                                                                value: 2
+                                                                            },
+                                                                            {
+                                                                                title: "音乐",
+                                                                                name: "音乐",
+                                                                                value: 3
+                                                                            },
+                                                                            {
+                                                                                title: "旅行",
+                                                                                name: "旅行",
+                                                                                value: 4
+                                                                            },
+                                                                        ]
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "开关",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_checkbox",
+                                                                        skin:"switch",
+                                                                        checkboxList: [
+                                                                            {
+                                                                                title: "写作",
+                                                                                name: "写作",
+                                                                                value: 0,
+                                                                                checked: true
+                                                                            },
+                                                                            {
+                                                                                title: "阅读",
+                                                                                name: "阅读",
+                                                                                value: 1,
+                                                                                text:"开启|关闭"
+                                                                            },
+                                                                        ]
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "单选框",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_radio",
+                                                                        name: "text",
+                                                                        checkedValue:1,
+                                                                        radioList: [
+                                                                            {
+                                                                                title: "写作",
+                                                                                value: 0,
+                                                                            },
+                                                                            {
+                                                                                title: "阅读",
+                                                                                value: 1
+                                                                            },
+                                                                            {
+                                                                                title: "游戏",
+                                                                                value: 2
+                                                                            },
+                                                                            {
+                                                                                title: "音乐",
+                                                                                value: 3
+                                                                            },
+                                                                            {
+                                                                                title: "旅行",
+                                                                                value: 4
+                                                                            },
+                                                                        ]
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                template: "form_item",
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_item_inline",
+                                                            title: "文本域",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_textarea",
+                                                                        name: "text",
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
                                         ]
                                     }
                                 }

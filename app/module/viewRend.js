@@ -124,7 +124,7 @@ module.exports = function (page, callback) {
             if (config[pageOptions.template]) {
                 url = config[pageOptions.template].path;
             } else {
-                callback(false, "未找到模板，名称为：" + config[pageOptions.template]);
+                callback(false, "未找到模板，名称为：" + pageOptions.template);
                 return false;
             }
         } else {

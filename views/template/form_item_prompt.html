@@ -1,10 +1,5 @@
 <template>
-    <div class="layui-card">
-        <div class="layui-card-header"><%= cardName %></div>
-        <div class="layui-card-body" style="padding: 15px;">
-            <!--&&htmlchildren&&-->
-        </div>
-    </div>
+    <div class="layui-form-mid layui-word-aux"><%= prompt %></div>
 </template>
 <script name="compile">
     function templateCompile(data) {
@@ -16,15 +11,12 @@
             success: true,
             result: newData
         };
-        if (!data.cardName) {
+        if (!newData.prompt) {
             return {
                 success: false,
-                result: "card模板缺少参数：cardName"
+                result: "输入框提示模块缺少参数：prompt"
             };
         }
         return callback;
     }
-</script>
-<script name="templateScript">
-    //&&scriptchildren&&
 </script>

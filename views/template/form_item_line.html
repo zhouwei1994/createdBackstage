@@ -1,0 +1,16 @@
+<template>
+    <div class="layui-form-mid"> - </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        return callback;
+    }
+</script>

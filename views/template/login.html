@@ -51,12 +51,16 @@
             result: Object.assign(defaultData, data)
         };
         if (!data.projectName) {
-            callback.success = false;
-            callback.result = "请输入项目名称";
+            return {
+                success: false,
+                result: "请输入项目名称"
+            };
         }
         if (!data.children) {
-            callback.success = false;
-            callback.result = "请选择表单模板";
+            return {
+                success: false,
+                result: "请选择表单模板"
+            };
         }
         // if (!data.children1) {
         //     callback.success = false;

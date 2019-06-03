@@ -17,21 +17,29 @@
             result: newData
         };
         if (!newData.requestUrl) {
-            callback.success = false;
-            callback.result = "请输入请求url地址,参数名：requestUrl";
+            return {
+                success: false,
+                result: "请输入请求url地址,参数名：requestUrl"
+            };
         }
         if (!newData.data) {
-            callback.success = false;
-            callback.result = "请输入请求url的参数,参数名：data";
+            return {
+                success: false,
+                result: "请输入请求url的参数,参数名：data"
+            };
         }
         if (!newData.method) {
-            callback.success = false;
-            callback.result = "请输入请求url请求方式,参数名：method";
+            return {
+                success: false,
+                result: "请输入请求url请求方式,参数名：method"
+            };
         }
         if (newData.storeData) {
             if(!newData.storeData instanceof String){
-                callback.success = false;
-                callback.result = "数据储存格式不正确，正确的格式为json,参数名：storeData";
+                return {
+                    success: false,
+                    result: "数据储存格式不正确，正确的格式为json,参数名：storeData"
+                };
             }
         }
         return callback;

@@ -1,0 +1,102 @@
+<template>
+    <div class="layui-input-<%= viewType %>">
+        <select name="<%= name %>" lay-verify=""
+            <% if(search){ %>
+                lay-search
+            <% } %>
+            <% if (eventMethod) { %>
+            lay-filter="input-select-<%= name %>"
+            <% } %>
+            >
+            <% if(placeholder){ %>
+            <option value=""><%= placeholder %></option>
+            <% } %>
+            <% selectList.forEach(item => { %>
+                <option value="<%= item.value %>"><%= item.name %></option>
+            <% }); %>
+        </select>
+    </div>
+</template>
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            placeholder: "请选择",
+            verify: false,
+            viewType: "inline",
+            //是否支持搜索
+            search:false,
+            staticData:true,
+            eventMethod:false
+            //选择列表
+            // selectList:[]
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        if (!newData.name) {
+            return {
+                success: false,
+                result: "请输入参数名称，参数名：name"
+            };
+        }
+        if (!newData.selectList) {
+            return {
+                success: false,
+                result: "选择器模块缺少参数：selectList"
+            };
+        }
+        if(newData.staticData){
+            if(newData.selectList instanceof Array) {
+                if (newData.selectList.length <= 0) {
+                    return {
+                        success: false,
+                        result: "选择器模块参数：selectList数组长度必须大于1"
+                    };
+                } else {
+                    for (let item of newData.selectList) {
+                        if (item.name === undefined || item.name === '') {
+                            return {
+                                success: false,
+                                result: "选择器模块参数：selectList数组里的值缺少参数name"
+                            };
+                        } else if (item.value === undefined || item.name === '') {
+                            return {
+                                success: false,
+                                result: "选择器模块参数：selectList数组里的值缺少参数value"
+                            };
+                        }
+                    }
+                }
+            }else{
+                return {
+                    success: false,
+                    result: "选择器模块参数staticData为true时selectList必须为数组"
+                };
+            }
+        }else {
+            if (!newData.selectList instanceof String) {
+                return {
+                    success: false,
+                    result: "选择器模块参数staticData为true时selectList必须为字符串"
+                };
+            }
+        }
+        if(newData.eventMethod && !newData.eventMethod instanceof String){
+            return {
+                success: false,
+                result: "选择器模块参数：eventMethod必须为字符串"
+            };
+        }
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    <% if (eventMethod) { %>
+        form.on('select(input-select-<%= name %>)', function (data) {
+            <%- eventMethod %>
+        });
+    <% } %>
+</script>

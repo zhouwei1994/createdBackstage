@@ -1,9 +1,9 @@
 <template>
     <div class="layui-input-<%= viewType %>">
-        <input type="<%= inputType %>" name="<%= name %>" id="<%= 'input-' + inputType +'-'+ name %>" 
+        <textarea name="<%= name %>" id="<%= 'input-' + inputType +'-'+ name %>" 
             <% if ( verify ) { %> lay-verify="<%= verify %>" <% } %> placeholder="<%= placeholder %>" 
             autocomplete="off"
-            class="layui-input">
+            class="layui-textarea"></textarea>
     </div>
 </template>
 <script name="compile">

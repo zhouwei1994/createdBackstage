@@ -24,20 +24,28 @@
         };
         if (newData.formId || newData.butId) {
             if (newData.formId && !newData.buttonType) {
-                callback.success = false;
-                callback.result = "表单按钮模块有参数formId参数下，必须传按钮类型参数：buttonType";
+                return {
+                    success: false,
+                    result: "表单按钮模块有参数formId参数下，必须传按钮类型参数：buttonType"
+                };
             }
         }else{
-            callback.success = false;
-            callback.result = "按钮模块必须传参数：formId或butId";
+            return {
+                success: false,
+                result: "按钮模块必须传参数：formId或butId"
+            };
         }
         if (!newData.buttonText) {
-            callback.success = false;
-            callback.result = "表单按钮模块缺少参数：buttonText";
+            return {
+                success: false,
+                result: "表单按钮模块缺少参数：buttonText"
+            };
         }
         if (!(newData.children || newData.templet)) {
-            callback.success = false;
-            callback.result = "表单参数：buttonList数组缺少参数：children或templet";
+            return {
+                success: false,
+                result: "表单参数：buttonList数组缺少参数：children或templet"
+            };
         }
         
         return callback;
@@ -65,6 +73,6 @@
             <% if (children) { %>
                 //&&scriptchildren&&
             <% } %>
-        })
+        });
     <% } %>
 </script>

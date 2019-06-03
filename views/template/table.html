@@ -35,18 +35,24 @@
             }
         }
         if (!newData.tableId) {
-            callback.success = false;
-            callback.result = "表格缺少参数：tableId";
+            return {
+                success: false,
+                result: "表格缺少参数：tableId"
+            };
         }
         if (newData.toolbar && newData.toolbar instanceof Array) {
             for(let item of newData.toolbar){
                 if(!item.title){
-                    callback.success = false;
-                    callback.result = "表格参数toolbar数组缺少参数：title";
+                    return {
+                        success: false,
+                        result: "表格参数toolbar数组缺少参数：title"
+                    };
                     break;
                 } else if (!item.name) {
-                    callback.success = false;
-                    callback.result = "表格参数toolbar数组缺少参数：name";
+                    return {
+                        success: false,
+                        result: "表格参数toolbar数组缺少参数：name"
+                    };
                     break;
                 }
                 if(item.children){
@@ -57,8 +63,10 @@
             };
         }
         if (!newData.requestUrl) {
-            callback.success = false;
-            callback.result = "表格缺少参数：requestUrl";
+            return {
+                success: false,
+                result: "表格缺少参数：requestUrl"
+            };
         }
         if (newData.cols || newData.data) {
             if (newData.cols) {
@@ -70,12 +78,16 @@
                                 if (childItem.templet) {
                                 } else if (!childItem.type || childItem.type && childItem.type == "normal" || childItem.templet) {
                                     if (!childItem.field) {
-                                        callback.success = false;
-                                        callback.result = "表格参数cols数组缺少参数：field";
+                                        return {
+                                            success: false,
+                                            result: "表格参数cols数组缺少参数：field"
+                                        };
                                         break;
                                     } else if (!childItem.title) {
-                                        callback.success = false;
-                                        callback.result = "表格参数cols数组缺少参数：title";
+                                        return {
+                                            success: false,
+                                            result: "表格参数cols数组缺少参数：title"
+                                        };
                                         break;
                                     }
                                 }
@@ -83,8 +95,10 @@
                                     let templetButState = true;
                                     for (let tempItem of childItem.templetBut) {
                                         if (!tempItem.layEvent) {
-                                            callback.success = false;
-                                            callback.result = "表格参数cols数组缺少参数：field";
+                                            return {
+                                                success: false,
+                                                result: "表格参数cols数组缺少参数：field"
+                                            };
                                             templetButState = false;
                                             break;
                                         }
@@ -104,24 +118,32 @@
                                 }
                             };
                         } else {
-                            callback.success = false;
-                            callback.result = "表格参数'cols'必须为二维数组";
+                            return {
+                                success: false,
+                                result: "表格参数'cols'必须为二维数组"
+                            };
                             break;
                         }
                     };
                     callback.result.colsButList = colsButList;
                 }else{
-                    callback.success = false;
-                    callback.result = "表格参数'cols'必须为数组";
+                    return {
+                        success: false,
+                        result: "表格参数'cols'必须为数组"
+                    };
                 }
             }else if(newData.data){
                 if (!newData.data instanceof Array) {
-                    callback.success = false;
-                    callback.result = "表格参数'data'必须为数组";
+                    return {
+                        success: false,
+                        result: "表格参数'data'必须为数组"
+                    };
                 }
             }else{
-                callback.success = false;
-                callback.result = "表格缺少参数：cols或data";
+                return {
+                    success: false,
+                    result: "表格缺少参数：cols或data"
+                };
             }
         }
         
@@ -133,13 +155,17 @@
             }else if(newData.tableClick.templet){
                 
             }else{
-                callback.success = false;
-                callback.result = "表格参数'tableClick'里必须有参数templet和children其中一种";
+                return {
+                    success: false,
+                    result: "表格参数'tableClick'里必须有参数templet和children其中一种"
+                };
             }
         }
         if (newData.where && !newData.where instanceof Array) {
-            callback.success = false;
-            callback.result = "表格参数'where'必须为数组";
+            return {
+                success: false,
+                result: "表格参数'where'必须为数组"
+            };
         }
         let tableData = {
             elem: "#table-elem-"+newData.tableId,
