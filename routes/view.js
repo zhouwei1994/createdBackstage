@@ -1,6 +1,11 @@
 var viewRend = require('./../app/module/viewRend');
 module.exports = function (router, check) {
     //登录页面
+    router.get('/create/:name', check([], function (req, res) { 
+        console.log(req);
+        res.result({});
+    }));
+    //登录页面
     router.get('/login.html', check([], function (req, res) {
         //设置html请求头
         res.set('Content-Type', 'text/html');
@@ -397,6 +402,18 @@ module.exports = function (router, check) {
                             title: "表单",
                             href: "form.html",
                             name: "b1",
+                        },
+                    ]
+                },
+                {
+                    title: "弹窗",
+                    icon: "layui-icon-home",
+                    name: "d",
+                    list: [
+                        {
+                            title: "弹窗",
+                            href: "popups.html",
+                            name: "d1",
                         },
                     ]
                 }
@@ -1363,6 +1380,194 @@ module.exports = function (router, check) {
                             ]
                         }
                     },
+                ]
+            }
+        };
+        viewRend(login, function (state, html) {
+            if (state) {
+                res.end(html.templateHtml);
+            } else {
+                res.result({}, 2004, html);
+                console.error(html);
+            }
+        });
+    }));
+    
+    router.get('/popups.html', check([], function (req, res) {
+        //设置html请求头
+        res.set('Content-Type', 'text/html');
+        var login = {
+            //模板名称
+            pageType: "childPage",
+            children: {
+                title: "",
+                name: "页面模块",
+                content: [
+                    {
+                        template: "form_button",
+                        buttonText: "弹窗",
+                        butId: "tanchaung",
+                        children: {
+                            title: "",
+                            name: "按钮下子模板",
+                            content: [
+                                {
+                                    template: "popups",
+                                    popupsId: 6546514,
+                                    children: {
+                                        title: "",
+                                        name: "按钮下子模板",
+                                        content: [
+                                            {
+                                                template: "form_box",
+                                                buttonType: "block", //fixed,inline,block
+                                                children: {
+                                                    title: "",
+                                                    name: "表单form框模板",
+                                                    content: [
+                                                        
+                                                        {
+                                                            template: "form_item",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_item_inline",
+                                                                        title: "标题",
+                                                                        children: {
+                                                                            title: "",
+                                                                            name: "表单form列表模板",
+                                                                            content: [
+                                                                                {
+                                                                                    template: "form_input",
+                                                                                    name: "title",
+                                                                                    viewType: "block",
+                                                                                    verify: "title"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            template: "form_item",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_item_inline",
+                                                                        title: "单选框",
+                                                                        children: {
+                                                                            title: "",
+                                                                            name: "表单form列表模板",
+                                                                            content: [
+                                                                                {
+                                                                                    template: "form_radio",
+                                                                                    name: "text",
+                                                                                    checkedValue: 1,
+                                                                                    radioList: [
+                                                                                        {
+                                                                                            title: "写作",
+                                                                                            value: 0,
+                                                                                        },
+                                                                                        {
+                                                                                            title: "阅读",
+                                                                                            value: 1
+                                                                                        },
+                                                                                        {
+                                                                                            title: "游戏",
+                                                                                            value: 2
+                                                                                        },
+                                                                                        {
+                                                                                            title: "音乐",
+                                                                                            value: 3
+                                                                                        },
+                                                                                        {
+                                                                                            title: "旅行",
+                                                                                            value: 4
+                                                                                        },
+                                                                                    ]
+                                                                                },
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            template: "form_item",
+                                                            children: {
+                                                                title: "",
+                                                                name: "表单form列表模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "form_item_inline",
+                                                                        title: "文本域",
+                                                                        children: {
+                                                                            title: "",
+                                                                            name: "表单form列表模板",
+                                                                            content: [
+                                                                                {
+                                                                                    template: "form_textarea",
+                                                                                    name: "text",
+                                                                                },
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },       
+                                                    ]
+                                                },
+                                                children1: {
+                                                    title: "",
+                                                    name: "表单form列表模板",
+                                                    content: [
+                                                        {
+                                                            template: "form_button",
+                                                            formId: "fsdf3443",
+                                                            buttonType: "submit",
+                                                            buttonText: "立即提交",
+                                                            children: {
+                                                                title: "",
+                                                                name: "按钮下子模板",
+                                                                content: [{
+                                                                    template: "alert",
+                                                                    content: "'点击按钮！'",
+                                                                }]
+                                                            }
+                                                        },
+                                                        {
+                                                            template: "form_button",
+                                                            buttonText: "关闭",
+                                                            butId: "guanbi",
+                                                            children: {
+                                                                title: "",
+                                                                name: "按钮下子模板",
+                                                                content: [
+                                                                    {
+                                                                        template: "alert",
+                                                                        content: "'点击按钮！'",
+                                                                    },
+                                                                    {
+                                                                        template: "popups_close",
+                                                                        popupsId: 6546514
+                                                                    },
+                                                                ]
+                                                            }
+                                                        },
+                                                    ]
+                                                }
+                                            },
+                                        ]
+                                    }
+                                }]
+                        }
+                    }
+                    
                 ]
             }
         };

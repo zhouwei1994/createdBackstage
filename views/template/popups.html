@@ -1,0 +1,101 @@
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            title: "提示",
+            type: "module",
+            area: ['800px', '500px'],
+            offset:false,
+            time:false,
+            anim:false,
+            maxmin:false,
+            fixed:false,
+            resize:false,
+            scrollbar:false,
+            maxWidth:false,
+            maxHeight:false,
+            zIndex:false
+        };
+        var newData = Object.assign(defaultData, data);
+        
+        if (!newData.popupsId) {
+            return {
+                success:false,
+                result: "弹窗组件缺少弹窗ID：popupsId"
+            };
+        }
+        if (!newData.children) {
+            return {
+                success:false,
+                result: "弹窗组件缺少内容：children"
+            };
+        }
+        if(newData.area && newData.area instanceof Array){
+            newData.area = JSON.stringify(newData.area);
+        }
+        if (newData.offset && newData.offset instanceof Array) {
+            newData.offset = JSON.stringify(newData.offset);
+        }
+        if (newData.children && newData.children.content && newData.children.content instanceof Array) {
+            if (newData.children.content.length > 0) {
+                newData.children.content.map(item => {
+                    item.parentPopups = true;
+                    return item;
+                });
+            }
+        }
+        var callback = {
+            success: true,
+            result: newData
+        };
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    popup.open({
+        type: 1,
+        content: '<div class="popups_open_box" id="popups_open_<%= popupsId %>" style="padding:15px;"><!--&&htmlchildren&&--></div>', 
+        id:"popups_<%= popupsId %>",
+        title: "<%= title %>",
+        <% if (area) { %>
+        area:<%- area %>,
+        <% } %>
+        <% if (offset) { %>
+        offset:<%= offset %>,
+        <% } %>
+        <% if (time) { %>
+        time:<%= time %>,
+        <% } %>
+        <% if (anim) { %>
+        anim:<%= anim %>,
+        <% } %>
+        <% if (maxmin) { %>
+        maxmin:<%= maxmin %>,
+        <% } %>
+        <% if (fixed) { %>
+        fixed:<%= fixed %>,
+        <% } %>
+        <% if (resize) { %>
+        resize:<%= resize %>,
+        <% } %>
+        <% if (scrollbar) { %>
+        scrollbar:<%= scrollbar %>,
+        <% } %>
+        <% if (maxWidth) { %>
+        maxWidth:<%= maxWidth %>,
+        <% } %>
+        <% if (maxHeight) { %>
+        maxHeight:<%= maxHeight %>,
+        <% } %>
+        <% if(zIndex){ %>
+        zIndex:<%= zIndex %>,
+        <% } %>
+        success: function (layero, index) {
+            form.render();
+            $("#popups_open_<%= popupsId %>").attr("popups-index", index);
+            console.log(layero, index);
+        }
+    });
+    //&&insertStart:(scriptchildren99)&&
+        //&&scriptchildren&&
+    //&&insertEnd&&
+</script>

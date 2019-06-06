@@ -85,8 +85,8 @@ var defaultData = {
 
 module.exports = function (page, callback) {
     var pageContent = "";
-    if(page.pageType == "childPage" && page.children){
-        pageContent = getFile(page.children, "", "",0,"children");
+    if (page.pageType == "childPage" && page.children) {
+        pageContent = getFile(page.children, "", "", 0, "children");
     } else {
         pageContent = getFile(page, "", "");
     }
@@ -103,6 +103,19 @@ module.exports = function (page, callback) {
         if (pageHtmlContent) {
             pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("<!--&&htmlchildren&&-->", pageContent.templateHtml);
             if (pageContent.scriptText) {
+                console.log(pageContent.scriptText);
+                // let insertReg = /\/\/&&insertStart:\([\d\D]*?\/\/&&insertEnd&&/g;
+                // let reg = new RegExp("//&&scriptchildren99&&");
+                // if (insertReg.test(content.scriptText)) {
+                //     var insertList = content.scriptText.match(insertReg);
+                //     var normalScriptText = trim(content.scriptText.replace(insertReg, ""));
+                //     if (normalScriptText) {
+                //         callbackData.scriptText = pageTemplateScript.replace(reg, normalScriptText);
+                //     }
+                //     callbackData.scriptText = contentInsert(callbackData.scriptText, insertList, 0, name);
+                // } else {
+                //     callbackData.scriptText = pageTemplateScript.replace(reg, content.scriptText);
+                // }
                 pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("//&&scriptchildren&&", pageContent.scriptText);
             }
             callback(true, pageHtmlContent);
@@ -112,6 +125,7 @@ module.exports = function (page, callback) {
         callback(true, pageContent);
     }
     function getFile(options, pageTemplateHtml, pageTemplateScript, i, name) {
+        
         let pageOptions = options;
         let url;
         let len;
@@ -161,16 +175,16 @@ module.exports = function (page, callback) {
                     }
                     if (i >= 0 && name) {
                         if (i >= len - 1) {
-                            var ccc = forChild(pageOptions, {
+                            var ccc = forChild(compileData.result, {
                                 templateHtml: templateHtml,
                                 scriptText: scriptText
                             });
                             var qqq = dataProcessing(pageTemplateHtml, pageTemplateScript, childName,
-                                ccc
+                                ccc, compileData.result
                             );
                             return qqq;
                         } else {
-                            var forChildData = forChild(pageOptions, {
+                            var forChildData = forChild(compileData.result, {
                                 templateHtml: templateHtml,
                                 scriptText: scriptText
                             });
@@ -182,12 +196,14 @@ module.exports = function (page, callback) {
                                 forChildData.scriptText = forChildData.scriptText.replace(/\/\/&&script(.*?)&&/g, "");
                                 forChildData.scriptText = forChildData.scriptText + "//&&script" + childName + "&&";
                             }
+                            
                             var aaa = getFile(options, forChildData.templateHtml, forChildData.scriptText, i + 1, childName);
                             var bbb = dataProcessing(
                                 pageTemplateHtml,
                                 pageTemplateScript,
                                 childName,
-                                aaa
+                                aaa,
+                                compileData.result
                             );
                             return bbb;
                         }
@@ -196,7 +212,7 @@ module.exports = function (page, callback) {
                             forChild(pageOptions, {
                                 templateHtml: templateHtml,
                                 scriptText: scriptText
-                            }));
+                            }), compileData.result);
                     }
                 } else {
                     callback(false, "模板【" + pageOptions.template + "】错误消息：" + compileData.result);
@@ -238,6 +254,8 @@ module.exports = function (page, callback) {
                     "",
                     childrenNameList[index],
                     getFile(pageOptions[childrenNameList[index]], callbackData.templateHtml, callbackData.scriptText, 0, childrenNameList[index])
+                    ,
+                    pageOptions
                 );
                 if (getChildrenData.templateHtml) {
                     callbackData.templateHtml = getChildrenData.templateHtml;
@@ -252,17 +270,19 @@ module.exports = function (page, callback) {
         }
         return callbackData;
     }
-    function dataProcessing(pageTemplateHtml, pageTemplateScript, name, content) {
+    function dataProcessing(pageTemplateHtml, pageTemplateScript, name, content, options) {
         let callbackData = {
             templateHtml: pageTemplateHtml,
             scriptText: pageTemplateScript
         };
-        if (content.templateHtml) {
-            if (pageTemplateHtml) {
-                let reg = new RegExp("<!--&&html" + name + "&&-->");
-                callbackData.templateHtml = pageTemplateHtml.replace(reg, content.templateHtml);
-            } else {
-                callbackData.templateHtml = content.templateHtml;
+        if (!(options.parentPopups && pageTemplateScript)) {
+            if (content.templateHtml) {
+                if (pageTemplateHtml) {
+                    let reg = new RegExp("<!--&&html" + name + "&&-->");
+                    callbackData.templateHtml = pageTemplateHtml.replace(reg, content.templateHtml);
+                } else {
+                    callbackData.templateHtml = content.templateHtml;
+                }
             }
         }
         if (content.scriptText) {
@@ -279,7 +299,13 @@ module.exports = function (page, callback) {
                 } else {
                     callbackData.scriptText = pageTemplateScript.replace(reg, content.scriptText);
                 }
-                
+                if (options.parentPopups && pageTemplateScript) {
+                    callbackData.templateHtml = "";
+                    if (content.templateHtml) {
+                        let htmlReg = new RegExp("<!--&&html" + name + "&&-->");
+                        callbackData.scriptText = callbackData.scriptText.replace(htmlReg, content.templateHtml.replace(/[\r\n]/g, ""));
+                    }
+                }
             } else {
                 callbackData.scriptText = content.scriptText;
             }
@@ -293,6 +319,7 @@ module.exports = function (page, callback) {
         var insert = insertList[index];
         var len = insertList.length;
         insertContent = insert.substring(17, insert.length - 15);
+        
         var bitIndex = insertContent.indexOf(")&&");
         let reg;
         if (bitIndex == -1) {
@@ -301,7 +328,7 @@ module.exports = function (page, callback) {
             var subName = insertContent.substring(0, bitIndex);
             if (new RegExp("//&&" + subName + "&&").test(pageTemplateScript)) {
                 insertContent = insertContent.substring(bitIndex + 3);
-                if (subName ) {
+                if (subName) {
                     reg = new RegExp("//&&" + subName + "&&");
                     if ("script" + name != subName) {
                         insertContent = insertContent + "//&&" + subName + "&&";
@@ -319,16 +346,23 @@ module.exports = function (page, callback) {
         }
         if (index >= len - 1) {
             if (reg) {
-                var content = pageTemplateScript.replace(reg, insertContent);
-                return content;
+                if (reg.test(pageTemplateScript)) {
+                    return pageTemplateScript.replace(reg, insertContent);
+                } else {
+                    return pageTemplateScript + insert;
+                }
             } else {
-                return pageTemplateScript;
+                return pageTemplateScript + insert;
             }
         } else {
             if (reg) {
-                return contentInsert(pageTemplateScript, insertList, index + 1, name).replace(reg, insertContent);
+                if (reg.test(pageTemplateScript)) {
+                    return contentInsert(pageTemplateScript, insertList, index + 1, name).replace(reg, insertContent);
+                } else {
+                    return contentInsert(pageTemplateScript, insertList, index + 1, name) + insert;
+                }
             } else {
-                return contentInsert(pageTemplateScript, insertList, index + 1, name);
+                return contentInsert(pageTemplateScript, insertList, index + 1, name) + insert;
             }
         }
     }

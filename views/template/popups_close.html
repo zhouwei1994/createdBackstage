@@ -1,0 +1,22 @@
+<script name="compile">
+    function templateCompile(data) {
+        var defaultData = {
+            type: "module",
+            popupsId:false
+        };
+        var newData = Object.assign(defaultData, data);
+        var callback = {
+            success: true,
+            result: newData
+        };
+        return callback;
+    }
+</script>
+<script name="templateScript">
+    <% if( popupsId ){ %>
+        popup.close($("#popups_open_<%= popupsId %>").attr("popups-index"));
+    <% }else{ %>
+        popup.closeAll();
+    <% } %>
+    
+</script>

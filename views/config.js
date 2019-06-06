@@ -108,4 +108,12 @@ module.exports = {
     form_textarea: {
         path: "/views/template/form_textarea.html"
     },
+    //弹窗
+    popups: {
+        path: "/views/template/popups.html"
+    },
+    //弹窗关闭
+    popups_close: {
+        path: "/views/template/popups_close.html"
+    },
 }
