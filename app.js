@@ -14,6 +14,8 @@ var routes = require('./routes/index'); // page接口
 
 //常用工具
 require('./utils/utils');
+//启动redis
+require('./app/module/redis');
 //定义模板（views ）搜索路径，在根目录的 views 文件夹下,可自定义
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -29,6 +31,7 @@ app.use(bodyParser.urlencoded({
     limit: '50mb',
     extended: false
 }));
+app.use(bodyParser.json()); //数据JSON类型
 app.use(cookieParser());
 //指定静态文件名称是 public, 文件夹名可自定义
 app.use(express.static(path.join(__dirname, 'public')));

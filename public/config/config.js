@@ -44,7 +44,7 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function (exports) {
       listLotalName: "data.total", //表格最大数量参数
       listDataName: "data.data", //表格数据参数
       listPageSizeName: "pageSize",
-      listPageName:"page"
+      listPageName: "page"
     },
     //扩展的第三方模块
     extend: [
@@ -56,9 +56,9 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function (exports) {
       //内置主题配色方案
       color: [{
         main: '#20222A' //主题色
-        ,
+          ,
         selected: '#009688' //选中色
-        ,
+          ,
         alias: 'default' //默认别名
       }, {
         main: '#03152A',

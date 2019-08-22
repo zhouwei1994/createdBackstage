@@ -2,108 +2,26 @@ var ejs = require('ejs');
 var fs = require('fs');
 var config = require('./../../views/config');
 var path = require('path');
-//临时默认数据
-var defaultData = {
-    "baseSetting": {
-        //网站title
-        "title": "后台管理",
-        //网站说明
-        "keywords": "一个快速生成的后台管理",
-        //网站seo关键字
-        "description": "后台管理,后台,生成",
-        //网站图标
-        "favicon": ""
-    },
-    "request": {
-        "requestUrl": "http://localhost:8000",
-        "imageUrl": "http://localhost:8000",
-        "headers": {
-
-        }
-    },
-    "verifyList": [
-        {
-            name: "用户名验证",
-            value: "username",
-            verify: [
-                {
-                    rule: "!/^[a-zA-Z0-9_\\u4e00-\\u9fa5\\\\s·]+$/",
-                    prompt: "用户名不能有特殊字符"
-                },
-                {
-                    rule: "/(^\\_)|(\\__)|(\\_+$)/",
-                    prompt: "用户名首尾不能出现下划线\'_\'"
-                },
-                {
-                    rule: "/^\\d+\\d+\\d$/",
-                    prompt: "用户名不能全为数字"
-                },
-            ]
-        },
-        {
-            name: "密码验证",
-            value: "password",
-            verify: [
-                {
-                    rule: "/^[\S]{6,12}$/",
-                    prompt: "密码必须6到12位，且不能出现空格"
-                }
-            ]
-        },
-        {
-            name: "数字验证",
-            value: "number",
-            verify: [
-                {
-                    rule: "!/^\\b$/",
-                    prompt: "必须全部是数字"
-                }
-            ]
-        },
-        {
-            name: "手机号验证验证",
-            value: "phone",
-            verify: [
-                {
-                    rule: "!/^1\\d{10}$/",
-                    prompt: "手机号格式不正确"
-                }
-            ]
-        },
-        {
-            name: "标题验证",
-            value: "title",
-            verify: [
-                {
-                    rule: "!/.{5,}/",
-                    prompt: "标题至少得5个字符啊"
-                }
-            ]
-        },
-    ]
-};
-
-module.exports = function (page, callback) {
+module.exports = function (pageData, callback) {
     var pageContent = "";
-    if (page.pageType == "childPage" && page.children) {
-        pageContent = getFile(page.children, "", "", 0, "children");
+    if (pageData.page.pageType == "childPage" && pageData.page.children) {
+        pageContent = getFile(pageData.page.children, "", "", 0, "children");
     } else {
-        pageContent = getFile(page, "", "");
+        pageContent = getFile(pageData.page, "", "");
     }
-    if (page.pageType == "page" || page.pageType == "childPage") {
+    if (pageData.page.pageType == "page" || pageData.page.pageType == "childPage") {
         var template = "pageHtml";
-        if (page.pageType == "childPage") {
+        if (pageData.page.pageType == "childPage") {
             template = "childPage";
         }
         var pageHtmlContent = getFile({
             template: template,
-            ...defaultData.baseSetting,
-            verifyList: defaultData.verifyList
+            ...pageData.baseSetting,
+            verifyList: pageData.verifyList
         }, "", "");
         if (pageHtmlContent) {
             pageHtmlContent.templateHtml = pageHtmlContent.templateHtml.replace("<!--&&htmlchildren&&-->", pageContent.templateHtml);
             if (pageContent.scriptText) {
-                console.log(pageContent.scriptText);
                 // let insertReg = /\/\/&&insertStart:\([\d\D]*?\/\/&&insertEnd&&/g;
                 // let reg = new RegExp("//&&scriptchildren99&&");
                 // if (insertReg.test(content.scriptText)) {
@@ -120,12 +38,12 @@ module.exports = function (page, callback) {
             }
             callback(true, pageHtmlContent);
         }
-    }
-    if (pageContent) {
+    } else if (pageContent) {
         callback(true, pageContent);
     }
+
     function getFile(options, pageTemplateHtml, pageTemplateScript, i, name) {
-        
+
         let pageOptions = options;
         let url;
         let len;
@@ -163,8 +81,10 @@ module.exports = function (page, callback) {
                     let templateHtml;
                     let scriptText;
                     pageOptions = compileData.result;
-                    compileData.result.verifyList = defaultData.verifyList;
-                    compileData.result.baseSetting = defaultData.baseSetting;
+                    compileData.result.verifyList = pageData.verifyList;
+                    compileData.result.baseSetting = pageData.baseSetting;
+                    //加入编译模式
+                    compileData.result.mode = pageData.mode || "edit";
                     if (template) {
                         template = template[0].replace(/<template>|<\/template>/g, "");
                         templateHtml = ejs.render(template, compileData.result);
@@ -196,7 +116,7 @@ module.exports = function (page, callback) {
                                 forChildData.scriptText = forChildData.scriptText.replace(/\/\/&&script(.*?)&&/g, "");
                                 forChildData.scriptText = forChildData.scriptText + "//&&script" + childName + "&&";
                             }
-                            
+
                             var aaa = getFile(options, forChildData.templateHtml, forChildData.scriptText, i + 1, childName);
                             var bbb = dataProcessing(
                                 pageTemplateHtml,
@@ -227,6 +147,7 @@ module.exports = function (page, callback) {
             return false;
         }
     }
+
     function forChild(pageOptions, content) {
         let callbackData = content;
         let childrenNameList = [];
@@ -248,13 +169,13 @@ module.exports = function (page, callback) {
         let childrenLen = childrenNameList.length;
         if (childrenLen > 0) {
             recursive(0);
+
             function recursive(index) {
                 let getChildrenData = dataProcessing(
                     "",
                     "",
                     childrenNameList[index],
-                    getFile(pageOptions[childrenNameList[index]], callbackData.templateHtml, callbackData.scriptText, 0, childrenNameList[index])
-                    ,
+                    getFile(pageOptions[childrenNameList[index]], callbackData.templateHtml, callbackData.scriptText, 0, childrenNameList[index]),
                     pageOptions
                 );
                 if (getChildrenData.templateHtml) {
@@ -270,6 +191,7 @@ module.exports = function (page, callback) {
         }
         return callbackData;
     }
+
     function dataProcessing(pageTemplateHtml, pageTemplateScript, name, content, options) {
         let callbackData = {
             templateHtml: pageTemplateHtml,
@@ -312,14 +234,16 @@ module.exports = function (page, callback) {
         }
         return callbackData;
     }
+
     function trim(str) {
         return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '');
     }
+
     function contentInsert(pageTemplateScript, insertList, index, name) {
         var insert = insertList[index];
         var len = insertList.length;
         insertContent = insert.substring(17, insert.length - 15);
-        
+
         var bitIndex = insertContent.indexOf(")&&");
         let reg;
         if (bitIndex == -1) {

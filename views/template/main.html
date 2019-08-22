@@ -44,7 +44,7 @@
                     <% }); %>
                     <li class="layui-nav-item" lay-unselect>
                         <a href="javascript:;">
-                            <cite v-text="{{<%= nickname %>}}"></cite>
+                            <cite id="nickname"></cite>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a lay-href="set/user/info.html">基本资料</a></dd>
@@ -62,24 +62,8 @@
                     <div class="layui-logo" lay-href="home/console.html">
                         <span><%= projectName %></span>
                     </div>
-
-                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                    <ul class="layui-nav layui-nav-tree beg-navbar" lay-shrink="all" id="LAY-system-side-menu"
                         lay-filter="layadmin-system-side-menu">
-                        <li data-name="{{item.name}}" v-for="{{leftNav:(item,index)}}" class="layui-nav-item layui-nav-itemed {{item.href == defaultPage ? 'layui-this':''}}">
-                            <a href="javascript:;" v-if="{{item.href}}" lay-href="{{item.href}}" lay-tips="{{item.title}}" lay-direction="2">
-                                <i class="layui-icon layui-icon-home"></i>
-                                <cite>{{item.title}}</cite>
-                            </a>
-                            <a href="javascript:;" v-else lay-tips="{{item.title}}" lay-direction="2">
-                                <i class="layui-icon layui-icon-home"></i>
-                                <cite>{{item.title}}</cite>
-                            </a>
-                            <dl class="layui-nav-child" v-if="{{item.list}}">
-                                <dd v-for="{{item.list:(childItem,childIndex)}}" data-name="{{childItem.name}}">
-                                    <a lay-href="{{childItem.href}}">{{childItem.title}}</a>
-                                </dd>
-                            </dl>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -172,13 +156,19 @@
         }
         callback.success = true;
         callback.result = newData;
-        console.log(newData);
         return callback;
     }
 </script>
 <script name="templateScript">
-    pageData.leftNav = <%- leftNav %>;
-    pageData.defaultPage = '<%- defaultPage.href %>';
-    insert = dataDom("LAY_app", pageData);
+    console.log(layui);
+    $("#nickname").text(pageData.<%= nickname %>);
+    var navbar = layui.navbar();
+    // 设置navbar
+    navbar.set({
+        spreadOne: true,　　//设置是否只展开一个二级菜单
+        elem: "#LAY-system-side-menu",　　//存在组件的容器
+        data: <%- leftNav %>,　　//提供给组件的数据列表，请严格按照规定格式提供。
+    });
+    navbar.render();
     //&&scriptchildren&&
 </script>

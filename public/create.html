@@ -6,15 +6,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>创建页面</title>
+    <script src="./jquery-3.4.1.min.js"></script>
+    <style>
+        #create_iframe {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .create_box {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="app">
-        
+    <!-- 左下角萝莉图 开始 -->
+    <link rel="stylesheet" type="text/css" href="./create/waifu.css">
+    <div class="waifu" id="waifu">
+        <div class="waifu-tips" style="opacity: 1;"></div>
+        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+        <div class="waifu-tool">
+            <span class="fui-home"></span>
+            <span class="fui-chat"></span>
+            <span class="fui-heart"></span>
+            <span class="fui-user"></span>
+            <span class="fui-photo"></span>
+            <span class="fui-eye"></span>
+            <span class="fui-cross"></span>
+        </div>
     </div>
-    <script src="./dataDom.js"></script>
+    <script src="./create/live2d.js"></script>
+    <script src="./create/waifu-tips.js"></script>
+    <script type="text/javascript">
+        initModel()
+    </script>
+    <!-- 左下角萝莉图 结束 -->
+    <!-- 背景图 开始 -->
+    <canvas id="c_n9" width="1920" height="990"
+        style="position: fixed; top: 0px; left: 0px; z-index: -1; opacity: 1;"></canvas>
+    <script src="./create/back-cartoon.js"></script>
+    <!-- 背景图 结束 -->
+
+    <div class="login_box">
+        用户名：<input class="name" type="text" placeholder="用户名">
+        密码：<input class="password" type="password" placeholder="密码">
+        <button onclick="onLogin()">登录</button>
+    </div>
+    <div class="create_box">
+        <div class="user_info">欢迎登录！<span></span></div>
+        <input type="text" placeholder="项目名称">
+        <button onclick="onCreateProject()">创建项目</button>
+    </div>
+    <div id="create_iframe"></div>
+    <script src="./config/md5.js"></script>
+    <script src="./create/createProject.js"></script>
+
     <script>
-        
+        var userInfo = {};
+        var userInfoStr = sessionStorage.getItem("editUserInfo");
+        if (userInfoStr) {
+            userInfo = JSON.parse(userInfoStr);
+            $(".user_info span").text(userInfo.username);
+            $(".login_box").hide();
+            $(".create_box").show();
+        }
+
+        function onLogin() {
+            var name = $(".name").val();
+            var password = $(".password").val();
+            if (!name) {
+                alert("请输入用户名");
+                return;
+            }
+            if (!password) {
+                alert("请输入密码");
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8080/public/login",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                data: {
+                    username: name,
+                    password: md5(password),
+                    code: 123123
+                },
+                success: function (data) {
+                    if (data.code == 0) {
+                        sessionStorage.setItem("editUserInfo", JSON.stringify(data.data));
+                        userInfo = data.data;
+                        alert("登录成功");
+                        if(userInfo.projectUrl){
+                            location.href = userInfo.projectUrl;
+                        }else{
+                            $(".user_info span").text(data.data.username);
+                            $(".login_box").hide();
+                            $(".create_box").show();
+                        }
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+        //创建项目
+        function onCreateProject() {
+            var name = $(".create_box input").val();
+            if(name == ""){
+                alert("请输入项目名");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/create/project",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                data: {
+                    baseSetting: JSON.stringify(createProject.baseSetting),
+                    request: JSON.stringify(createProject.request),
+                    response: JSON.stringify(createProject.response),
+                    verifyList: JSON.stringify(createProject.verifyList),
+                    pages: JSON.stringify(createProject.pages),
+                    projectName:name
+                },
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader("user_id", userInfo.id);
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 0) {
+                        alert("项目创建成功！");
+                        location.href = "pages/"+userInfo.id+"/"+createProject.pages[0].pageName+".html";
+                    }
+                }
+            });
+        }
     </script>
 </body>
 

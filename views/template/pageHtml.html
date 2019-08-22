@@ -14,15 +14,21 @@
         <title><%= title %></title>
         <link rel="stylesheet" href="/layui/css/layui.css">
         <link rel="stylesheet" href="/layui/css/admin.css">
+        <% if ( mode ) { %>
+            <link rel="stylesheet" href="/create/edit.css">
+        <% } %>
     </head>
     <body class="layui-layout-body">
         <!--&&htmlchildren&&-->
         <script src="/layui/layui.js"></script>
         <script src="/config/md5.js"></script>
+        <% if ( mode ) { %>
+        <script src="/create/edit.js"></script>
+        <% } %>
         <script>
             layui.extend({
                 index: '/config/index',
-            }).use(['form',"index"], function () {
+            }).use(['form','navbar',"index"], function () {
                 var $ = layui.$,
                     form = layui.form,
                     $http = layui.$http,
