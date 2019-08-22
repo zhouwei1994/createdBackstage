@@ -173,9 +173,9 @@ layui.use(["jquery", "element", "index"], function () {
         }, function (res) {
             pages = res;
             //获取当前页面文件名和是否是主页面
-            isMainPage(data => {
+            isMainPage(function (data) {
                 var currentPageName;
-                if (res.currentMain) {
+                if (data.currentMain) {
                     var layAttr = $("#LAY_app_tabsheader .layui-this").attr("lay-attr");
                     currentPageName = layAttr.split('.')[0];
                 } else {
@@ -216,7 +216,7 @@ layui.use(["jquery", "element", "index"], function () {
             if (pageInfo.pageType == "page") {
                 location.href = pageInfo.pageName + ".html";
             } else if (pageInfo.pageType == "childPage") {
-                isMainPage(res => {
+                isMainPage(function (res) {
                     if (res.currentMain) {
                         //添加页面 打开页面(页面路径，页面标题)
                         layui.index.openTabsPage(pageInfo.pageName + '.html', pageInfo.pageTitle || pageInfo.pageName);
@@ -235,10 +235,111 @@ layui.use(["jquery", "element", "index"], function () {
     });
     //阻止冒泡
     $("body").on("click", ".remove_all_popup div", function (event) {
-        
+
     });
     // 点击结构图菜单
     function onStructureChart() {
-
+        isMainPage(function (res) {
+            var currentPageName;
+            if (res.currentMain) {
+                var layAttr = $("#LAY_app_tabsheader .layui-this").attr("lay-attr");
+                currentPageName = layAttr.split('.')[0];
+            } else {
+                currentPageName = res.currentPageName;
+            }
+            if (currentPageName == pageData.pageName) {
+                createdStructureChart(pageData);
+            } else {
+                if (pages.length > 0) {
+                    var state = false;
+                    layui.each(pages, function (index, item) {
+                        if (item.pageName == currentPageName) {
+                            state = true;
+                            pageData = item;
+                            createdStructureChart(item);
+                        }
+                    });
+                    if (!state) {
+                        layer.msg("未找到对应的页面，请刷新页面再试", {
+                            icon: 0
+                        });
+                    }
+                } else {
+                    $http({
+                        type: "get",
+                        url: "/create/pages/list",
+                    }, function (res) {
+                        pages = res;
+                        var state = false;
+                        layui.each(res, function (index, item) {
+                            if (item.pageName == currentPageName) {
+                                state = true;
+                                pageData = item;
+                                createdStructureChart(item);
+                            }
+                        });
+                        if (!state) {
+                            layer.msg("未找到对应的页面，请刷新页面再试", {
+                                icon: 0
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
+    // 渲染结构图
+    function createdStructureChart(page) {
+        console.log(page);
+        function getStructureDom(data) {
+            console.log(data);
+            var domHtml = "";
+            domHtml += '<div class="model_info">';
+            domHtml += '<div class="title">';
+            domHtml += '<span class="type">组件</span>';
+            domHtml += '<span class="name">'+(data.title || data.name)+'</span>';
+            domHtml += '</div>';
+            domHtml += '<div class="model_content_box">';
+            domHtml += '<div class="model_info_box">';
+            layui.each(data, function (key, item) {
+                if (/^children/.test(key)) {
+                    domHtml += getStructureDom(item);
+                }
+            });
+            domHtml += '</div>';
+            domHtml += '</div>';
+            domHtml += '</div>';
+            return domHtml;
+        }
+        var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
+        html += '<div class="edit_mode_structure_chart">' +
+            '<div class="structure_chart_box">';
+        if (page.pageType == "page") {
+            html += '<div class="model_content_box">';
+            html += '<div class="model_info">';
+            html += '<div class="title">';
+            html += '<span class="type">页面</span>';
+            html += '<span class="name">'+(page.pageTitle || page.pageName)+'</span>';
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="model_info_box">';
+            layui.each(page, function (key, item) {
+                if (/^children/.test(key)) {
+                    html += getStructureDom(item);
+                }
+            });
+            html += '</div>';
+            html += '</div>';
+        } else {
+            layui.each(page, function (key, item) {
+                if (/^children/.test(key)) {
+                    html += getStructureDom(item);
+                }
+            });
+        }
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        $("body").append(html);
     }
 });

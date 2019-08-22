@@ -179,3 +179,31 @@
     width: 16px;
     height: 16px;
 }
+/* 结构图 */
+.edit_mode_structure_chart {
+    position: relative;
+    z-index: 1;
+}
+.edit_mode_structure_chart .structure_chart_box {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.edit_mode_structure_chart .structure_chart_box .model_info_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.edit_mode_structure_chart .structure_chart_box .model_content_box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.edit_mode_structure_chart .structure_chart_box .model_info {
+    background-color: #FFF;
+    border-radius: 8px;
+}
