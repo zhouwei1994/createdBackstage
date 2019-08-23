@@ -20,10 +20,10 @@
             success: true,
             result: newData
         };
-        if (!newData.title) {
+        if (!newData.placeholder) {
             return {
                 success: false,
-                result: "请输入表单名称，参数名：title"
+                result: "请输入表单提示，参数名：placeholder"
             };
         }
         if (!newData.name) {

@@ -91,12 +91,12 @@ var createProject = {
             template: "login",
             pageType: "page",
             pageName:"login",
-            forget: {
+            leftLink: {
                 title: "忘记密码？",
                 path: "forget.html"
             },
             projectName: "一个后台管理",
-            registered: {
+            rightLink: {
                 title: "去注册",
                 path: "registered.html"
             },
@@ -177,8 +177,8 @@ var createProject = {
             pageName:"forget",
             submitText: "找回密码",
             projectName: "忘记密码",
-            registered: false,
-            forget: {
+            rightLink: false,
+            leftLink: {
                 title: "已有账号？去登录",
                 path: "login.html"
             },
@@ -280,8 +280,8 @@ var createProject = {
             pageName:"registered",
             submitText: "立即注册",
             projectName: "注册",
-            registered: false,
-            forget: {
+            rightLink: false,
+            leftLink: {
                 title: "已有账号？去登录",
                 path: "login.html"
             },

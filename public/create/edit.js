@@ -1,6 +1,7 @@
-layui.use(["jquery", "element", "index"], function () {
+layui.use(["jquery", "element", "index","form"], function () {
     var $ = layui.jquery;
     var element = layui.element;
+    var form = layui.form;
     //获取登录储存的信息
     var userInfo,
         //页面列表
@@ -184,7 +185,7 @@ layui.use(["jquery", "element", "index"], function () {
                 var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
                 html += '<div class="edit_mode_pages">' +
                     '<div class="page_list_box">' +
-                    '<div class="title"><span>项目页面</span><button>新增页面</button></div>';
+                    '<div class="title"><span>项目页面</span><button class="add_new_page">新增页面</button></div>';
                 for (var index in res) {
                     var item = res[index];
                     html += '<div class="page_list ' + (currentPageName == item.pageName ? 'active' : '') + '" data-index="' + index + '">' +
@@ -291,41 +292,52 @@ layui.use(["jquery", "element", "index"], function () {
     // 渲染结构图
     function createdStructureChart(page) {
         console.log(page);
+
         function getStructureDom(data) {
             console.log(data);
             var domHtml = "";
-            domHtml += '<div class="model_info">';
-            domHtml += '<div class="title">';
-            domHtml += '<span class="type">组件</span>';
-            domHtml += '<span class="name">'+(data.title || data.name)+'</span>';
-            domHtml += '</div>';
-            domHtml += '<div class="model_content_box">';
-            domHtml += '<div class="model_info_box">';
+            if (data["template"]) {
+                domHtml += '<div class="model_content_box">';
+                domHtml += '<div class="model_info">';
+                domHtml += '<div class="title">';
+                domHtml += '<span class="type">模块</span>';
+                domHtml += '<span class="name">' + (data.templateName || data.template || "暂无说明") + '</span>';
+                domHtml += '</div>';
+                domHtml += '</div>';
+                domHtml += '<div class="model_info_box">';
+            }
+
             layui.each(data, function (key, item) {
-                if (/^children/.test(key)) {
+                if (typeof (item) == "object") {
                     domHtml += getStructureDom(item);
                 }
             });
-            domHtml += '</div>';
-            domHtml += '</div>';
-            domHtml += '</div>';
+            if (data["template"]) {
+                domHtml += '</div>';
+                domHtml += '</div>';
+            }
             return domHtml;
         }
         var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
         html += '<div class="edit_mode_structure_chart">' +
-            '<div class="structure_chart_box">';
+            '<div class="structure_chart_box">' +
+            '<div class="chart_box">';
         if (page.pageType == "page") {
             html += '<div class="model_content_box">';
             html += '<div class="model_info">';
             html += '<div class="title">';
             html += '<span class="type">页面</span>';
-            html += '<span class="name">'+(page.pageTitle || page.pageName)+'</span>';
+            html += '<span class="name">' + (page.pageTitle || page.pageName) + '</span>';
             html += '</div>';
             html += '</div>';
             html += '<div class="model_info_box">';
             layui.each(page, function (key, item) {
                 if (/^children/.test(key)) {
                     html += getStructureDom(item);
+                } else if (typeof (item) == "object") {
+                    if (!["leftNav"].includes(key)) {
+                        html += getStructureDom(item);
+                    }
                 }
             });
             html += '</div>';
@@ -333,13 +345,133 @@ layui.use(["jquery", "element", "index"], function () {
         } else {
             layui.each(page, function (key, item) {
                 if (/^children/.test(key)) {
-                    html += getStructureDom(item);
+                    html += getStructureDom(item, "children");
+                } else if (typeof (item) == "object") {
+                    html += getStructureDom(item, "object");
                 }
             });
         }
         html += '</div>';
         html += '</div>';
         html += '</div>';
+        html += '</div>';
         $("body").append(html);
+    }
+
+    // 打开编辑窗口
+    function openEditPopup(data) {
+        var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
+        html += '<div class="edit_popup_box">';
+        html += '<div class="layui-card">';
+        html += '<div class="layui-card-header">' + (data.templateName || data.template) + '</div>';
+        html += '<div class="layui-card-body" style="padding: 15px;">';
+
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+    }
+    //点击创建新页面
+    $("body").on("click", ".add_new_page", function () {
+        addNewPage();
+    });
+    //创建新页面
+    function addNewPage() {
+        var html = '<div class="layui-form" style="padding:30px;">';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">页面名称</label>';
+        html += '<div class="layui-input-block">';
+        html += '<input type="text" name="title" lay-verify="required" placeholder="请输入页面名称" class="layui-input">';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">页面文件名</label>';
+        html += '<div class="layui-input-block">';
+        html += '<input type="text" name="name" lay-verify="required" placeholder="页面文件名为英文和字母" class="layui-input">';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">页面类型</label>';
+        html += '<div class="layui-input-block">';
+        html += '<input type="radio" name="pageType" value="1000" title="页面">';
+        html += '<input type="radio" name="pageType" value="2000" title="iframe页面" checked>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<div class="layui-input-block">';
+        html += '<button class="layui-btn" lay-submit lay-filter="onAddPage">确定</button>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        layer.open({
+            type: 1 ,
+            title: '新增页面',
+            area: ['600px', 'auto'],
+            shade: 0,
+            maxmin: true,
+            content: html,
+            zIndex: layer.zIndex, //重点1
+            success: function (layero) {
+                form.render();
+                layer.setTop(layero); //重点2
+                // layer.closeAll();
+                form.on('submit(onAddPage)', function(data){
+                    console.log(data.field)
+                    if (!/[a-zA-Z0-9]/.test(data.field.name)) {
+                        layer.msg("文件名格式错误，格式为大小写字母或数字组成", {
+                            icon: 2
+                        });
+                        return;
+                    }
+                    $http({
+                        type: "get",
+                        url: "/create/pages/add",
+                        data: data.field
+                    }, function (res) {
+                        
+                    });
+                });
+            }
+        });
+    }
+    templateView();
+    // 模板选择
+    function templateView() {
+        $http({
+            type: "get",
+            url: "/create/pages/template",
+            data: {
+                type:""
+            }
+        }, function (res) {
+            var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
+            html += '<div class="template_view_box">';
+            // html += '<div class="title">模板</div>';
+            html += '<div class="template_tab_box">';
+            html += '<div class="active" type="">全部</div>';
+            html += '<div type="template">HTML模板</div>';
+            html += '<div type="js">js模板</div>';
+            html += '<div type="form">表单模板</div>';
+            html += '<div type="loginHtml">登录模板</div>';
+            html += '<div type="html">页面</div>';
+            html += '</div>';
+            html += '<div class="template_list_box">';
+            layui.each(res, function (key, item) {
+                html += '<div class="template_list">';
+                html += '<div class="template_img">';
+                html += '<img src="https://qn.kemean.cn/upload/201908/23/356751a1c1c34ea6a7f086bce27385fb"/>';
+                html += '</div>';
+                html += '<div class="template_info">';
+                html += '<span class="name">'+item.title+'</span>';
+                html += '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+            $("body").append(html);
+        });
+       
     }
 });

@@ -10,12 +10,12 @@
                 <!--&&htmlchildren&&-->
                 <!--&&htmlchildren1&&-->
                 <div class="layui-form-item" style="margin-bottom: 20px;">
-                    <% if ( registered ) { %>
-                        <a href="<%= registered.path %>" style="margin-top: 7px;float: left;" class="layadmin-link"><%= registered.title %></a>
+                    <% if ( leftLink && leftLink.length > 0 ) { %>
+                        <a href="<%= leftLink.path %>" style="margin-top: 7px;float: left;" class="layadmin-link"><%= leftLink.title %></a>
                     <% } %>
-                    <% if ( forget ) { %>
-                    <a href="<%= forget.path %>" class="layadmin-user-jump-change layadmin-link"
-                        style="margin-top: 7px;"><%= forget.title %></a>
+                    <% if ( rightLink && rightLink.length > 0 ) { %>
+                    <a href="<%= rightLink.path %>" class="layadmin-user-jump-change layadmin-link"
+                        style="margin-top: 7px;"><%= rightLink.title %></a>
                     <% } %>
                 </div>
                 <div class="layui-form-item">
@@ -39,8 +39,8 @@
         var defaultData = {
             projectName: "周威-后台管理",
             description: "一个快速生成的后台管理",
-            forget: false,
-            registered: false,
+            leftLink: false,
+            rightLink: false,
             supplier: false,
             type: "module",
             submitText:"登 入",
@@ -88,7 +88,7 @@
     form.on('submit(LAY-user-login-submit)', function (obj) {
         console.log(obj);
         var data = obj.field;
-        <% if( md5 ){ %>
+        <% if( md5.langth > 0 ){ %>
             <% md5.forEach(function(item,index){ %>
                 data.<%= item %> = md5(data.<%= item %>);
             <% }); %>

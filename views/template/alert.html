@@ -10,7 +10,7 @@
             width:"800px",
             height:"350px",
             maxlength: 140,
-            verify:false
+            verifyList:false
         };
         var callback = {
             success: true,
@@ -60,8 +60,8 @@
             maxlength: <%- maxlength %>,
             area: ["<%- width %>", "<%- height %>"] //自定义文本域宽高
         }, function (value, index, elem) {
-            <% if (verify) { %>
-                <% verify.forEach(function(item,index){ %>
+            <% if (verifyList && verifyList.length > 0) { %>
+                <% verifyList.forEach(function(item,index){ %>
                     if (<%- item.rule %>.test(value)) {
                         popup.msg("<%- item.prompt %>");
                         return false;

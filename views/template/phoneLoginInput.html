@@ -20,7 +20,6 @@
         var defaultData = {
             type: "module",
             placeholder: "",
-            required: true,
             inputType: "text",
             verify: "required",
             phoneVerify:false
@@ -29,10 +28,10 @@
             success: true,
             result: Object.assign(defaultData, data)
         };
-        if (!data.title) {
+        if (!data.placeholder) {
             return {
                 success: false,
-                result: "请输入表单名称，参数名：title"
+                result: "请输入表单提示，参数名：placeholder"
             };
         }
         if (!data.name) {
