@@ -282,7 +282,7 @@
 .template_view_box {
     position: relative;
     z-index: 1;
-    padding-top: 50px;
+    padding-top: 20px;
 }
 .template_view_box .template_tab_box {
     width: 1000px;
@@ -317,9 +317,13 @@
 .template_view_box .template_list_box {
     display: flex;
     flex-wrap: wrap;
+    align-items:flex-start;
     width: 1000px;
+    height: calc(100vh - 180px);
+    overflow-y: auto;
 }
-.template_view_box .template_list_box .template_list {
+
+.template_list_box .template_list {
     width: 300px;
     margin-right: 33px;
     overflow: hidden;
@@ -351,4 +355,66 @@
 .template_view_box .template_list_box .template_list .template_info .name {
     font-size: 16px;
     color: #FFF;
+}
+.template_select_box.template_list_box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items:flex-start;
+    padding: 15px;
+}
+.template_select_box.template_list_box .template_list {
+    width: 32%;
+    margin-right: 2%;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+    cursor: pointer;
+    border:1px solid #f5f5f5;
+    box-sizing: border-box;
+}
+.template_select_box.template_list_box .template_list:nth-child(3n){
+    margin-right: 0;
+}
+.template_select_box.template_list_box .template_list .template_img {
+    height: 120px;
+}
+.template_select_box.template_list_box .template_list .select {
+    position: absolute;
+    top:10px;
+    right: 10px;
+    background-image: url("https://qn.kemean.cn/upload/201908/26/aa7e654190334991ae4f6b8a89baded6");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 26px;
+    height: 26px;
+}
+.template_select_box.template_list_box .template_list .select.active {
+    background-image: url("https://qn.kemean.cn/upload/201908/26/0adf7caa72314b3c97ecd2836344165a");
+}
+.template_select_box.template_list_box .template_list .template_img  img {
+    height: 100%;
+    width: 100%;
+}
+.template_select_box.template_list_box .template_list .template_info {
+    margin-top: 15px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0.8) 100%);
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
+}
+.template_select_box.template_list_box .template_list .template_info .name {
+    font-size: 16px;
+    color: #FFF;
+}
+/* 其他样式 */
+.text-right-view {
+    text-align: right;
+}
+.view-style {
+    margin-right: 15px;
 }

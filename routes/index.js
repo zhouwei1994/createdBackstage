@@ -44,11 +44,11 @@ function check(must, callback) {
         var data = req.method == "POST" ? req.body : req.query;
         var success = true;
         for (var item of must) {
-            if (!data[item]) {
+            if (data[item] == undefined) {
                 success = false;
                 res.send({
                     success: false,
-                    code: 0,
+                    code: 999,
                     data: {},
                     msg: "缺少参数：" + item
                 });

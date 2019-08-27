@@ -1,4 +1,4 @@
-layui.use(["jquery", "element", "index","form"], function () {
+layui.use(["jquery", "element", "index", "form"], function () {
     var $ = layui.jquery;
     var element = layui.element;
     var form = layui.form;
@@ -111,7 +111,7 @@ layui.use(["jquery", "element", "index","form"], function () {
             } else if (type == 3000) {
                 onPages();
             } else if (type == 4000) {
-
+                templateView();
             } else if (type == 5000) {
 
             }
@@ -359,17 +359,113 @@ layui.use(["jquery", "element", "index","form"], function () {
     }
 
     // 打开编辑窗口
-    function openEditPopup(data) {
-        var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
-        html += '<div class="edit_popup_box">';
-        html += '<div class="layui-card">';
-        html += '<div class="layui-card-header">' + (data.templateName || data.template) + '</div>';
-        html += '<div class="layui-card-body" style="padding: 15px;">';
-
+    function openEditPopup(data, parameter,options) {
+        var html = '<div class="layui-form" style="padding:30px;">';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">页面名称</label>';
+        html += '<div class="layui-input-block">';
+        html += '<input type="text" name="pageTitle" value="'+data.pageTitle+'" lay-verify="required" placeholder="请输入页面名称" class="layui-input">';
         html += '</div>';
         html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">页面文件名</label>';
+        html += '<div class="layui-input-inline">';
+        html += '<input type="text" name="pageName" value="'+data.pageName+'" lay-verify="required" placeholder="页面文件名为英文和字母" class="layui-input">';
+        html += '</div>';
+        html += '<div class="layui-form-mid layui-word-aux">.html</div>';
+        html += '</div>';
+        layui.each(parameter, function (index, item) {
+            if (item.defaultShow == 3000) {
+                data[item.name] = item.defaultValue;
+            } else if (item.defaultShow == 1000 || data[item.name]) {
+                var value;
+                if (data[item.name]) {
+                    value = data[item.name];
+                } else if (item.defaultValue) {
+                    value = item.defaultValue;
+                } else {
+                    if (item.type == "string") {
+                        value = "";
+                    } else if (item.type == "array") {
+                        value = [];
+                    } else if (item.type == "object") {
+                        value = {};
+                    } else if (item.type == "number") {
+                        value = "";
+                    }
+                }
+                html += '<div class="layui-form-item">';
+                html += '<label class="layui-form-label">'+item.name+'</label>';
+                html += '<div class="layui-input-block">';
+                if (item.inputType == "input") {
+                    html += '<input type="text" name="' + item.name + '" value="'+value+'"';
+                    if (item.required) {
+                        html += 'lay-verify="required"';
+                    }
+                    html += ' placeholder="' + item.title + '" class="layui-input">';
+                } else if (item.inputType == "radio") {
+                    html += '<select name="' + item.name + '">';
+                    if (item.required) {
+                        html += 'lay-verify="required"';
+                    }
+                    html += '>';
+                    if (item.selectList && item.selectList instanceof Array && item.selectList.length > 0) {
+                        layui.each(item.selectList, function (childIndex, childItem) {
+                            if (childItem.value == value) {
+                                html += '<option value="' + childItem.value + '" selected="selected">' + childItem.name + '</option>';
+                            } else {
+                                html += '<option value="' + childItem.value + '">' + childItem.name + '</option>';
+                            }
+                        });
+                    }
+                    html += '</select>';
+                } else if (item.inputType == "checkbox") { 
+                    if (item.selectList && item.selectList instanceof Array && item.selectList.length > 0) {
+                        layui.each(item.selectList, function (childIndex, childItem) {
+                            if (childItem.value == value) {
+                                html += '<input type="checkbox" name="' + item.name + '[' + childItem.value + ']" title="' + childItem.name + '" checked></input>';
+                            } else {
+                                html += '<input type="checkbox" name="' + item.name + '[' + childItem.value + ']" title="' + childItem.name + '"></input>';
+                            }
+                        });
+                    } else if (item.selectList == "verifyList") {
+                        layui.each(options.verifyList, function (childIndex, childItem) {
+                            if (childItem.value == value) {
+                                html += '<input type="checkbox" name="' + item.name + '[' + childItem.value + ']" title="' + childItem.name + '" checked></input>';
+                            } else {
+                                html += '<input type="checkbox" name="' + item.name + '[' + childItem.value + ']" title="' + childItem.name + '"></input>';
+                            }
+                        });
+                    }
+                }
+                html += '</div>';
+                html += '</div>';
+            }
+        });
+        html += '<div class="layui-form-item">';
+        html += '<label class="layui-form-label">添加参数</label>';
+        html += '<div class="layui-input-block">';
+        html += '<button class="layui-btn">选择参数</button>';
         html += '</div>';
         html += '</div>';
+        html += '<div class="layui-form-item">';
+        html += '<div class="layui-input-block">';
+        html += '<button class="layui-btn" lay-submit lay-filter="onEditTemplate">确定</button>';
+        html += '</div>';
+        html += '</div>';
+        layer.open({
+            type: 1,
+            title: '模板编辑',
+            area: ['600px', 'auto'],
+            shade: 0,
+            maxmin: true,
+            id: "open_edit_popup",
+            content: html,
+            zIndex: layer.zIndex, //重点1
+            success: function (layero) {
+                form.render();
+            }
+        });
     }
     //点击创建新页面
     $("body").on("click", ".add_new_page", function () {
@@ -386,15 +482,23 @@ layui.use(["jquery", "element", "index","form"], function () {
         html += '</div>';
         html += '<div class="layui-form-item">';
         html += '<label class="layui-form-label">页面文件名</label>';
-        html += '<div class="layui-input-block">';
+        html += '<div class="layui-input-inline">';
         html += '<input type="text" name="name" lay-verify="required" placeholder="页面文件名为英文和字母" class="layui-input">';
         html += '</div>';
+        html += '<div class="layui-form-mid layui-word-aux">.html</div>';
         html += '</div>';
         html += '<div class="layui-form-item">';
         html += '<label class="layui-form-label">页面类型</label>';
         html += '<div class="layui-input-block">';
-        html += '<input type="radio" name="pageType" value="1000" title="页面">';
-        html += '<input type="radio" name="pageType" value="2000" title="iframe页面" checked>';
+        html += '<input type="radio" name="pageType" value="1000" title="页面" lay-filter="pageSelect">';
+        html += '<input type="radio" name="pageType" value="2000" title="iframe页面" checked  lay-filter="pageSelect">';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="layui-form-item page-select-form" style="display:none;">';
+        html += '<label class="layui-form-label">页面模板</label>';
+        html += '<div class="layui-input-block text-right-view">';
+        html += '<span class="view-style">请选择模板</span>';
+        html += '<button class="layui-btn">选择模板</button>';
         html += '</div>';
         html += '</div>';
         html += '<div class="layui-form-item">';
@@ -405,56 +509,136 @@ layui.use(["jquery", "element", "index","form"], function () {
         html += '</div>';
 
         layer.open({
-            type: 1 ,
+            type: 1,
             title: '新增页面',
-            area: ['600px', 'auto'],
+            area: ['600px', '400px'],
             shade: 0,
             maxmin: true,
+            id: "add_new_page",
             content: html,
             zIndex: layer.zIndex, //重点1
             success: function (layero) {
                 form.render();
-                layer.setTop(layero); //重点2
+                // layer.setTop(layero); //置顶当前窗口
                 // layer.closeAll();
-                form.on('submit(onAddPage)', function(data){
-                    console.log(data.field)
+                var templateInfo = null;
+                form.on('submit(onAddPage)', function (data) {
                     if (!/[a-zA-Z0-9]/.test(data.field.name)) {
                         layer.msg("文件名格式错误，格式为大小写字母或数字组成", {
                             icon: 2
                         });
                         return;
                     }
+                    if (data.field.pageType == 1000) {
+                        if (templateInfo && templateInfo.templateName) {
+                            data.field.templateName = templateInfo.templateName;
+                        } else {
+                            layer.msg("请选择页面模板", {
+                                icon: 0
+                            });
+                            return;
+                        }
+                    }
                     $http({
-                        type: "get",
+                        type: "post",
                         url: "/create/pages/add",
                         data: data.field
                     }, function (res) {
-                        
+                        layer.closeAll();
+                        openEditPopup(res.data, res.parameter,res.options)
+                    });
+                });
+                //监听
+                form.on('radio(pageSelect)', function (data) {
+                    if (data.value == 1000) {
+                        $(".page-select-form").show();
+                    } else {
+                        $(".page-select-form").hide();
+                    }
+                });
+                $(".page-select-form .layui-btn").on("click", function () {
+                    templateSelect("page", function (data) {
+                        templateInfo = data;
+                        $(".page-select-form .view-style").text(data.title);
                     });
                 });
             }
         });
     }
-    templateView();
+    //模板选择弹窗
+    function templateSelect(type, callback) {
+        var html = "";
+        $http({
+            type: "get",
+            url: "/create/pages/template",
+            data: {
+                type: type
+            }
+        }, function (res) {
+            html += '<div class="template_list_box template_select_box">';
+            layui.each(res, function (index, item) {
+                html += '<div class="template_list">';
+                html += '<div class="template_img">';
+                html += '<img src="https://qn.kemean.cn/upload/201908/23/356751a1c1c34ea6a7f086bce27385fb"/>';
+                html += '</div>';
+                html += '<span class="select" data-index="' + index + '"></span>';
+                html += '<div class="template_info">';
+                html += '<span class="name">' + item.title + '</span>';
+                html += '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            layer.open({
+                type: 1,
+                title: '模板选择',
+                area: ['670px', '400px'],
+                shade: 0,
+                maxmin: true,
+                id: "template_select",
+                content: html,
+                zIndex: layer.zIndex, //重点1
+                btn: ['确定'],
+                success: function (layero) {
+                    form.render();
+                    // layer.setTop(layero); //置顶当前窗口
+                    $(".template_select_box .template_list").on("click", function () {
+                        if (!$(this).find(".select").hasClass("active")) {
+                            $(".template_select_box .template_list").find(".select").removeClass("active");
+                            $(this).find(".select").addClass("active");
+                        }
+                    });
+                },
+                yes: function (index, layero) {
+                    var active = $(".template_select_box .template_list").find(".active");
+                    if (active.length > 0) {
+                        var dataIndex = active.attr("data-index");
+                        layer.close(index);
+                        callback && callback(res[dataIndex]);
+                    } else {
+                        layer.msg("请选择模板");
+                    }
+                }
+            });
+        });
+    }
     // 模板选择
     function templateView() {
         $http({
             type: "get",
             url: "/create/pages/template",
             data: {
-                type:""
+                type: ""
             }
         }, function (res) {
             var html = '<div class="edit_mode_popup"><div class="edit_mode_mask remove_all_popup"></div>';
             html += '<div class="template_view_box">';
-            // html += '<div class="title">模板</div>';
             html += '<div class="template_tab_box">';
             html += '<div class="active" type="">全部</div>';
             html += '<div type="template">HTML模板</div>';
             html += '<div type="js">js模板</div>';
             html += '<div type="form">表单模板</div>';
             html += '<div type="loginHtml">登录模板</div>';
-            html += '<div type="html">页面</div>';
+            html += '<div type="page">页面模板</div>';
             html += '</div>';
             html += '<div class="template_list_box">';
             layui.each(res, function (key, item) {
@@ -463,7 +647,7 @@ layui.use(["jquery", "element", "index","form"], function () {
                 html += '<img src="https://qn.kemean.cn/upload/201908/23/356751a1c1c34ea6a7f086bce27385fb"/>';
                 html += '</div>';
                 html += '<div class="template_info">';
-                html += '<span class="name">'+item.title+'</span>';
+                html += '<span class="name">' + item.title + '</span>';
                 html += '</div>';
                 html += '</div>';
             });
@@ -472,6 +656,32 @@ layui.use(["jquery", "element", "index","form"], function () {
             html += '</div>';
             $("body").append(html);
         });
-       
     }
+    //模板页面点击
+    $("body").on("click", ".template_tab_box div", function () {
+        if (!$(this).hasClass("active")) {
+            $(".template_tab_box div").removeClass("active");
+            $(this).addClass("active");
+            $http({
+                type: "get",
+                url: "/create/pages/template",
+                data: {
+                    type: $(this).attr("type")
+                }
+            }, function (res) {
+                var html = "";
+                layui.each(res, function (key, item) {
+                    html += '<div class="template_list">';
+                    html += '<div class="template_img">';
+                    html += '<img src="https://qn.kemean.cn/upload/201908/23/356751a1c1c34ea6a7f086bce27385fb"/>';
+                    html += '</div>';
+                    html += '<div class="template_info">';
+                    html += '<span class="name">' + item.title + '</span>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                $(".template_list_box").html(html);
+            });
+        }
+    });
 });
